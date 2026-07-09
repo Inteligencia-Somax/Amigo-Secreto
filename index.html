@@ -2179,11 +2179,15 @@
             background: var(--error, #c0392b);
             color: var(--white);
             border: 1px solid var(--error, #c0392b);
-            border-radius: 8px;
-            height: 40px;
+            border-radius: 10px;
+            height: 38px;
             padding: 0 16px;
+            font-size: 0.86rem;
             font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
             cursor: pointer;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 4px;
@@ -2192,6 +2196,95 @@
         .btn-eliminar-lote:hover {
             background: #a5311f;
             border-color: #a5311f;
+        }
+
+        .btn-vincular-lote {
+            background: var(--primary);
+            color: var(--white);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            height: 38px;
+            padding: 0 16px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-vincular-lote:hover:not(:disabled) {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+
+        .btn-vincular-lote:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ==================== BARRA FLOTANTE DE SELECCIÓN (participantes) ==================== */
+        .participantes-seleccion-bar {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translate(-50%, 16px);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            max-width: calc(100vw - 32px);
+            background: var(--dark, #0d3b26);
+            color: var(--white);
+            padding: 12px 18px;
+            border-radius: 14px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.28);
+            z-index: 900;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .participantes-seleccion-bar.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, 0);
+        }
+
+        .participantes-seleccion-label {
+            font-weight: 700;
+            font-size: 0.88rem;
+            white-space: nowrap;
+        }
+
+        .participantes-seleccion-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .participantes-vincular-grupo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .participantes-vincular-grupo-select {
+            height: 38px;
+            border-radius: 10px;
+            border: none;
+            padding: 0 10px;
+            font-size: 0.86rem;
+            font-family: inherit;
+            font-weight: 600;
+            color: var(--text);
+            background: var(--white);
+            max-width: 220px;
+            cursor: pointer;
         }
 
         .grupo-detail-tabs {
@@ -2912,7 +3005,7 @@
         .grupo-participantes-readonly-table .icon-actions {
             justify-content: center;
             align-items: center;
-            gap: 0;
+            gap: 14px;
             width: fit-content;
             margin: 0 auto;
             padding: 0;
@@ -2925,30 +3018,41 @@
         #centros-table .icon-action-btn,
         .participantes-admin-table .icon-action-btn,
         .grupo-participantes-readonly-table .icon-action-btn {
+            position: relative;
             width: 28px;
             height: 28px;
             flex: 0 0 28px;
             border: 0;
-            border-radius: 0;
+            border-radius: 8px;
             background: transparent;
             box-shadow: none;
             color: var(--primary);
         }
 
-        #centros-table .icon-action-btn + .icon-action-btn,
-        .participantes-admin-table .icon-action-btn + .icon-action-btn,
-        .grupo-participantes-readonly-table .icon-action-btn + .icon-action-btn {
-            border-left: 1px solid #dbe5df;
-            padding-left: 10px;
-            margin-left: 10px;
+        /* El separador entre "Editar" y "Eliminar" ahora es un pseudo-elemento
+           que vive en el espacio (gap) entre los dos botones, en vez de ser el
+           border-left del propio botón. Así el óvalo/sombra del hover queda
+           SOLO sobre el ícono — nunca se "come" la rayita divisoria. */
+        #centros-table .icon-action-btn + .icon-action-btn::before,
+        .participantes-admin-table .icon-action-btn + .icon-action-btn::before,
+        .grupo-participantes-readonly-table .icon-action-btn + .icon-action-btn::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 16px;
+            background: #dbe5df;
         }
 
         #centros-table .icon-action-btn:hover,
         .participantes-admin-table .icon-action-btn:hover,
         .grupo-participantes-readonly-table .icon-action-btn:hover {
             transform: none;
-            background: transparent;
+            background: #eaf2ee;
             color: #17583a;
+            box-shadow: 0 2px 6px rgba(26, 95, 63, 0.18);
         }
 
         #centros-table .icon-action-btn.icon-delete,
@@ -2960,8 +3064,9 @@
         #centros-table .icon-action-btn.icon-delete:hover,
         .participantes-admin-table .icon-action-btn.icon-delete:hover,
         .grupo-participantes-readonly-table .icon-action-btn.icon-delete:hover {
-            background: transparent;
+            background: #fbebeb;
             color: #bf4d4d;
+            box-shadow: 0 2px 6px rgba(191, 77, 77, 0.22);
         }
 
         #centros-table .centro-edit-input {
@@ -5888,7 +5993,23 @@
 
                     <button type="button" class="btn btn-outline abrir-crear-grupo-btn btn-plain-action participante-inline-action-btn" onclick="abrirImportarParticipantes()">Importar</button>
                     <button type="button" class="btn-excel participante-export-btn" onclick="exportarParticipantesFiltradosExcel()">Excel</button>
-                    <button type="button" id="participantes-eliminar-seleccionados-btn" class="btn-eliminar-lote" style="display:none;" onclick="eliminarParticipantesSeleccionados()">Eliminar (<span id="participantes-seleccionados-count">0</span>)</button>
+                </div>
+
+                <!-- Barra flotante de acciones en lote: solo aparece cuando hay 1+
+                     participantes seleccionados en la tabla. La opción "Vincular a
+                     grupo abierto" solo se muestra si alguno de los seleccionados
+                     todavía no está vinculado a ningún grupo. -->
+                <div id="participantes-seleccion-bar" class="participantes-seleccion-bar">
+                    <span class="participantes-seleccion-label"><span id="participantes-seleccion-total-label">0</span> seleccionado(s)</span>
+                    <div class="participantes-seleccion-actions">
+                        <div class="participantes-vincular-grupo-wrap" id="participantes-vincular-grupo-wrap" style="display:none;">
+                            <select id="participantes-vincular-grupo-select" class="participantes-vincular-grupo-select" onchange="document.getElementById('participantes-vincular-grupo-btn').disabled = !this.value;">
+                                <option value="">Vincular a grupo abierto...</option>
+                            </select>
+                            <button type="button" class="btn-vincular-lote" id="participantes-vincular-grupo-btn" onclick="vincularParticipantesSeleccionadosAGrupo()" disabled>Vincular</button>
+                        </div>
+                        <button type="button" id="participantes-eliminar-seleccionados-btn" class="btn-eliminar-lote" onclick="eliminarParticipantesSeleccionados()">Eliminar (<span id="participantes-seleccionados-count">0</span>)</button>
+                    </div>
                 </div>
 
                 <div id="participantes-list-container" class="table-container">
@@ -8355,19 +8476,102 @@
         }
 
         function actualizarBotonEliminarSeleccionadosParticipantes() {
-            const seleccionados = document.querySelectorAll('.participante-row-checkbox:checked');
-            const btn = document.getElementById('participantes-eliminar-seleccionados-btn');
-            const countEl = document.getElementById('participantes-seleccionados-count');
-            if (!btn || !countEl) return;
+            const seleccionadosCheckboxes = Array.from(document.querySelectorAll('.participante-row-checkbox:checked'));
+            const total = seleccionadosCheckboxes.length;
 
-            countEl.textContent = seleccionados.length;
-            btn.style.display = seleccionados.length > 0 ? 'inline-flex' : 'none';
+            const bar = document.getElementById('participantes-seleccion-bar');
+            const countEl = document.getElementById('participantes-seleccionados-count');
+            const labelEl = document.getElementById('participantes-seleccion-total-label');
+            if (countEl) countEl.textContent = total;
+            if (labelEl) labelEl.textContent = total;
+            if (bar) bar.classList.toggle('active', total > 0);
+
+            // La opción "Vincular a grupo abierto" solo aparece si, entre los
+            // seleccionados, hay al menos uno que todavía no está vinculado a
+            // ningún grupo (a uno ya vinculado no tiene sentido ofrecerle otro).
+            const vincularWrap = document.getElementById('participantes-vincular-grupo-wrap');
+            if (vincularWrap) {
+                const hayElegibles = seleccionadosCheckboxes.some(cb => {
+                    const p = appState.participantesRegistrados.find(x => x.id === cb.value);
+                    return p && (p.grupos || []).length === 0;
+                });
+                vincularWrap.style.display = hayElegibles ? 'flex' : 'none';
+                if (hayElegibles) poblarSelectVincularGrupoLote();
+            }
 
             // El checkbox "seleccionar todos" refleja si TODOS los habilitados están marcados.
             const selectAll = document.getElementById('participantes-select-all-checkbox');
             const habilitados = document.querySelectorAll('.participante-row-checkbox:not(:disabled)');
             if (selectAll) {
                 selectAll.checked = habilitados.length > 0 && Array.from(habilitados).every(cb => cb.checked);
+            }
+        }
+
+        // Llena el <select> de la barra flotante con los grupos que todavía
+        // están "abiertos" (a un grupo ya sorteado no se puede vincular gente
+        // nueva). Mantiene la unidad de negocio en el texto para que quede
+        // claro a cuál corresponde cada uno.
+        function poblarSelectVincularGrupoLote() {
+            const select = document.getElementById('participantes-vincular-grupo-select');
+            if (!select) return;
+            const valorPrevio = select.value;
+            const gruposAbiertos = (appState.gruposActuales || []).filter(g => g.estado === 'abierto');
+
+            select.innerHTML = '<option value="">Vincular a grupo abierto...</option>' +
+                gruposAbiertos.map(g => `<option value="${g.id}">${escaparHtml(g.nombre)} (${escaparHtml(g.centroNombre || g.filial || '')})</option>`).join('');
+
+            if (gruposAbiertos.some(g => g.id === valorPrevio)) {
+                select.value = valorPrevio;
+            }
+            const btnVincular = document.getElementById('participantes-vincular-grupo-btn');
+            if (btnVincular) btnVincular.disabled = !select.value;
+        }
+
+        // Vincula a un grupo abierto todos los participantes seleccionados que
+        // todavía no tengan grupo Y sean de la misma unidad de negocio que el
+        // grupo elegido (un grupo solo puede tener gente de su propia unidad).
+        // Los que no cumplen se omiten y se avisa cuántos fueron.
+        async function vincularParticipantesSeleccionadosAGrupo() {
+            const select = document.getElementById('participantes-vincular-grupo-select');
+            const grupoId = select ? select.value : '';
+            if (!grupoId) return;
+
+            const grupo = appState.gruposActuales.find(g => g.id === grupoId);
+            if (!grupo) return;
+
+            const seleccionadosIds = Array.from(document.querySelectorAll('.participante-row-checkbox:checked')).map(cb => cb.value);
+            const sinGrupo = seleccionadosIds
+                .map(id => appState.participantesRegistrados.find(p => p.id === id))
+                .filter(p => p && (p.grupos || []).length === 0);
+
+            const validos = sinGrupo.filter(p => p.centroId === grupo.centroId);
+            const omitidos = sinGrupo.length - validos.length;
+
+            if (validos.length === 0) {
+                showAlert('admin-error', `Ningún participante seleccionado es de la unidad de negocio "${grupo.centroNombre || grupo.filial}", así que no se pudo vincular a "${grupo.nombre}".`);
+                return;
+            }
+
+            showAlert('admin-error', `Vinculando ${validos.length} participante(s)...`, 'info');
+
+            try {
+                for (const participante of validos) {
+                    participante.grupos = participante.grupos || [];
+                    if (!participante.grupos.includes(grupo.id)) participante.grupos.push(grupo.id);
+                    await db.collection('participantes').doc(participante.id).update({ grupos: participante.grupos });
+                    if (!grupo.participantes.includes(participante.id)) grupo.participantes.push(participante.id);
+                }
+                await syncGrupoFirestore(grupo);
+
+                hideAlert('admin-error');
+                const notaOmitidos = omitidos > 0 ? ` (${omitidos} se omitieron por ser de otra unidad de negocio)` : '';
+                showAlert('admin-success', `${validos.length} participante(s) vinculado(s) al grupo "${grupo.nombre}"${notaOmitidos}`);
+
+                document.querySelectorAll('.participante-row-checkbox').forEach(cb => { cb.checked = false; });
+                updateParticipantesList();
+                updateGruposList();
+            } catch (error) {
+                showAlert('admin-error', (error && error.message) ? error.message : 'No se pudo vincular. Intenta de nuevo.');
             }
         }
 
