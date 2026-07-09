@@ -6859,7 +6859,7 @@
                 <div class="form-group participante-modal-full">
                     <label for="modal-participante-password">Nueva contraseña (opcional)</label>
                     <div class="login-password-row">
-                        <input type="password" id="modal-participante-password" autocomplete="new-password" placeholder="Dejar en blanco para no cambiar">
+                        <input type="password" id="modal-participante-password" autocomplete="new-password" placeholder="Dejar en blanco para no cambiar" oninput="validarPasswordEditarParticipanteEnVivo()">
                         <button type="button" class="btn btn-outline btn-small password-eye-btn" onclick="togglePasswordVisibility('modal-participante-password')" aria-label="Ver contraseña" title="Ver contraseña">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"></path>
@@ -6867,6 +6867,7 @@
                             </svg>
                         </button>
                     </div>
+                    <p id="modal-participante-password-hint" class="text-muted" style="font-size: 0.85rem; margin-top: 5px;">Déjala en blanco para no cambiarla. Si la cambias, debe tener mínimo 6 caracteres, con letras y números</p>
                 </div>
             </div>
 
@@ -7174,6 +7175,41 @@
 
             if (!password) {
                 hint.textContent = 'Debe tener mínimo 6 caracteres, con letras y números';
+                hint.className = 'text-muted';
+                hint.style.fontSize = '0.85rem';
+                hint.style.marginTop = '5px';
+                return;
+            }
+
+            const tieneLetras = /[a-zA-Z]/.test(password);
+            const tieneNumeros = /[0-9]/.test(password);
+            const tieneLongitud = password.length >= 6;
+
+            if (tieneLetras && tieneNumeros && tieneLongitud) {
+                hint.textContent = '✓ Contraseña válida';
+                hint.className = 'login-hint login-hint-success';
+            } else {
+                const faltantes = [];
+                if (!tieneLongitud) faltantes.push('mínimo 6 caracteres');
+                if (!tieneLetras) faltantes.push('letras');
+                if (!tieneNumeros) faltantes.push('números');
+                hint.textContent = '✗ Falta: ' + faltantes.join(', ');
+                hint.className = 'login-hint login-hint-error';
+            }
+        }
+
+        // Misma regla de siempre (mínimo 6 caracteres, con letras y números),
+        // aplicada acá al campo "Nueva contraseña" del modal Editar Participante.
+        // Como el campo es opcional (dejarlo vacío = no cambiar la contraseña),
+        // en blanco no marca error, solo recuerda la regla.
+        function validarPasswordEditarParticipanteEnVivo() {
+            const hint = document.getElementById('modal-participante-password-hint');
+            const passwordInput = document.getElementById('modal-participante-password');
+            if (!hint || !passwordInput) return;
+            const password = passwordInput.value;
+
+            if (!password) {
+                hint.textContent = 'Déjala en blanco para no cambiarla. Si la cambias, debe tener mínimo 6 caracteres, con letras y números';
                 hint.className = 'text-muted';
                 hint.style.fontSize = '0.85rem';
                 hint.style.marginTop = '5px';
@@ -8521,6 +8557,13 @@
                 inputPassword.type = 'password';
                 inputPassword.value = '';
             }
+            const passwordHint = document.getElementById('modal-participante-password-hint');
+            if (passwordHint) {
+                passwordHint.textContent = 'Déjala en blanco para no cambiarla. Si la cambias, debe tener mínimo 6 caracteres, con letras y números';
+                passwordHint.className = 'text-muted';
+                passwordHint.style.fontSize = '0.85rem';
+                passwordHint.style.marginTop = '5px';
+            }
 
             const selectCentro = document.getElementById('modal-participante-centro');
             const centroLockHint = document.getElementById('modal-participante-centro-lock-hint');
@@ -8561,6 +8604,13 @@
             if (inputPassword) {
                 inputPassword.type = 'password';
                 inputPassword.value = '';
+            }
+            const passwordHint = document.getElementById('modal-participante-password-hint');
+            if (passwordHint) {
+                passwordHint.textContent = 'Déjala en blanco para no cambiarla. Si la cambias, debe tener mínimo 6 caracteres, con letras y números';
+                passwordHint.className = 'text-muted';
+                passwordHint.style.fontSize = '0.85rem';
+                passwordHint.style.marginTop = '5px';
             }
             participanteEnEdicionId = null;
         }
@@ -9555,7 +9605,7 @@
 
             const log = {
                 id: appState.logsActuales.length + 1,
-                fecha: new Date().toLocaleString(),
+                fecha: formatDateTime(new Date()),
                 usuario: appState.usuarioActual.login,
                 accion: 'Cambiar unidad de negocio de ' + participante.nombreCompleto + ' a ' + nuevoCentro.nombre,
                 grupo: '-'
@@ -11335,7 +11385,7 @@
 
             const log = {
                 id: appState.logsActuales.length + 1,
-                fecha: new Date().toLocaleString(),
+                fecha: formatDateTime(new Date()),
                 usuario: appState.usuarioActual.login,
                 accion: 'Realizar sorteo',
                 grupo: grupo.nombre
@@ -11469,7 +11519,11 @@
                 date = new Date(dateStr);
             }
             if (isNaN(date.getTime())) return '-';
-            return new Intl.DateTimeFormat('es-PY').format(date);
+            // Formato fijo dd/mm/aaaa (con ceros a la izquierda) en toda la app —
+            // no usamos el formato de Intl porque varía según el navegador/locale
+            // (a veces sale sin cero adelante, tipo "9/7/2026").
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
         }
 
         // Igual que formatDate, pero incluye la HORA — usado para Fecha de
@@ -11485,7 +11539,10 @@
                 date = new Date(dateStr);
             }
             if (isNaN(date.getTime())) return '-';
-            return new Intl.DateTimeFormat('es-PY', { dateStyle: 'short', timeStyle: 'short' }).format(date);
+            const pad = (n) => String(n).padStart(2, '0');
+            const fecha = `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+            const hora = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+            return `${fecha} ${hora}`;
         }
 
         // Convierte cualquier formato guardado (solo fecha "YYYY-MM-DD" de
