@@ -2065,7 +2065,29 @@
 
         .admin-stats-row .resultado-mini-card {
             flex: 0 0 auto;
+            width: 112px;
+            min-width: 112px;
             background: #f4f9f6;
+        }
+
+        .admin-stats-row .resultado-mini-card span {
+            white-space: normal;
+            overflow-wrap: break-word;
+        }
+
+        .admin-stats-row .resultado-mini-card.estado-abierto {
+            background: #fff3cd;
+            border-color: #f5e2a8;
+        }
+
+        .admin-stats-row .resultado-mini-card.estado-sorteado {
+            background: #d4edda;
+            border-color: #b7dcc0;
+        }
+
+        .admin-stats-row .resultado-mini-card.estado-revelado {
+            background: #cfe2ff;
+            border-color: #b1cdf5;
         }
 
         .admin-stats-row:empty {
@@ -7622,7 +7644,8 @@
             html += gruposOrdenados.map(grupo => {
                 const nombreUnidad = grupo.centroNombre || grupo.filial || grupo.nombre;
                 const total = (grupo.participantes || []).length;
-                return `<div class="resultado-mini-card"><span>${escaparHtml(nombreUnidad)}</span><strong>${total}</strong></div>`;
+                const estadoClase = 'estado-' + (grupo.estado || 'abierto');
+                return `<div class="resultado-mini-card ${estadoClase}"><span>${escaparHtml(nombreUnidad)}</span><strong>${total}</strong></div>`;
             }).join('');
 
             el.innerHTML = html;
