@@ -399,7 +399,7 @@
             justify-content: center;
             border: none;
             border-radius: 8px;
-            background: #eceeec;
+            background: transparent;
             color: var(--primary);
             cursor: pointer;
             transition: all 0.2s ease;
@@ -409,12 +409,12 @@
 
         .header-gear-btn:hover {
             transform: translateY(-1px);
-            background: #dfe3df;
+            background: #f0f2f0;
         }
 
         .header-gear-btn svg {
-            width: 19px;
-            height: 19px;
+            width: 24px;
+            height: 24px;
             stroke: currentColor;
         }
 
@@ -2178,6 +2178,9 @@
             padding: 0 16px;
             font-weight: 700;
             cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
 
         .btn-eliminar-lote:hover {
@@ -2370,87 +2373,165 @@
             font-size: 0.95rem;
         }
 
+        .resultado-sorteo-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 0 14px;
+            margin-bottom: 14px;
+            background: var(--white);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .resultado-sorteo-search:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 5px rgba(26, 95, 63, 0.25);
+        }
+
+        .resultado-sorteo-search svg {
+            flex-shrink: 0;
+            color: #8a9690;
+        }
+
+        .resultado-sorteo-search input {
+            flex: 1;
+            border: none;
+            padding: 11px 0;
+            font-size: 0.92rem;
+            font-family: inherit;
+            background: transparent;
+        }
+
+        .resultado-sorteo-search input:focus {
+            outline: none;
+        }
+
         .resultado-sorteo-container {
             max-height: 52vh;
             overflow-y: auto;
-            padding-right: 4px;
-        }
-
-        .resultado-sorteo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-            gap: 12px;
-        }
-
-        .resultado-sorteo-card {
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr);
-            gap: 12px;
-            align-items: center;
-            padding: 14px;
             border: 1px solid #e2ece5;
             border-radius: 14px;
             background: #ffffff;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .resultado-sorteo-card-index {
-            width: 30px;
-            height: 30px;
+        /* Encabezado fijo — reemplaza las etiquetas "Quien sorteó" / "Regala a"
+           que antes se repetían en cada tarjeta (33 veces cada una) por una
+           sola vez arriba, como en una tabla. Así cada fila queda liviana y
+           el ojo puede bajar la lista sin ruido repetido. */
+        .resultado-sorteo-list-header {
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr) 32px minmax(0, 1fr);
+            gap: 14px;
+            align-items: center;
+            padding: 10px 16px;
+            position: sticky;
+            top: 0;
+            background: #f4faf7;
+            border-bottom: 1px solid #e2ece5;
+            border-radius: 14px 14px 0 0;
+            z-index: 1;
+        }
+
+        .resultado-sorteo-list-header span {
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            color: #5c7568;
+        }
+
+        .resultado-sorteo-row {
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr) 32px minmax(0, 1fr);
+            gap: 14px;
+            align-items: center;
+            padding: 11px 16px;
+            border-bottom: 1px solid #eef2ef;
+            transition: background 0.15s ease;
+        }
+
+        .resultado-sorteo-row:last-child {
+            border-bottom: none;
+        }
+
+        .resultado-sorteo-row:nth-child(even) {
+            background: #fafcfb;
+        }
+
+        .resultado-sorteo-row:hover {
+            background: #f1f8f3;
+        }
+
+        .resultado-sorteo-row-index {
+            width: 26px;
+            height: 26px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
             background: #f4faf7;
             color: var(--primary);
-            font-size: 0.78rem;
+            font-size: 0.7rem;
             font-weight: 800;
             border: 1px solid #d7e9de;
         }
 
-        .resultado-sorteo-persona {
+        .resultado-sorteo-row-persona {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             min-width: 0;
         }
 
-        .resultado-sorteo-persona span {
-            display: block;
-            color: #738077;
-            font-size: 0.72rem;
+        .resultado-sorteo-row-avatar {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            margin-bottom: 3px;
+            font-size: 0.7rem;
+            color: var(--white);
         }
 
-        .resultado-sorteo-persona strong {
+        .resultado-sorteo-row-persona.es-origen .resultado-sorteo-row-avatar {
+            background: var(--primary);
+        }
+
+        .resultado-sorteo-row-persona.es-destino .resultado-sorteo-row-avatar {
+            background: #b6862c;
+        }
+
+        .resultado-sorteo-row-persona-info {
+            min-width: 0;
+        }
+
+        .resultado-sorteo-row-persona-info strong {
             display: block;
             color: var(--dark);
-            font-size: 0.94rem;
+            font-size: 0.9rem;
             line-height: 1.25;
-            white-space: normal;
-            overflow: visible;
-            text-overflow: clip;
-            word-break: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .resultado-sorteo-cargo {
-            display: inline-flex;
-            align-items: center;
-            max-width: 100%;
-            margin-top: 6px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: #f4faf7;
-            color: #52645a;
-            border: 1px solid #dcebe1;
-            font-size: 0.75rem;
-            font-weight: 600;
-            line-height: 1.2;
+        .resultado-sorteo-row-persona-info span {
+            display: block;
+            color: #8a978f;
+            font-size: 0.76rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .resultado-sorteo-card-arrow {
-            width: 28px;
-            height: 28px;
+        .resultado-sorteo-row-arrow {
+            width: 26px;
+            height: 26px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -2458,7 +2539,16 @@
             background: #fff4d8;
             color: #9a6a00;
             font-weight: 900;
+            font-size: 0.85rem;
             flex: 0 0 auto;
+            justify-self: center;
+        }
+
+        .resultado-sorteo-empty {
+            padding: 24px 16px;
+            color: #999;
+            font-size: 0.92rem;
+            text-align: center;
         }
 
         .resultado-sorteo-footer-actions {
@@ -2501,17 +2591,19 @@
                 justify-content: flex-start;
             }
 
-            .resultado-sorteo-grid {
+            .resultado-sorteo-list-header {
+                display: none;
+            }
+
+            .resultado-sorteo-row {
                 grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 14px 16px;
             }
 
-            .resultado-sorteo-card {
-                grid-template-columns: auto minmax(0, 1fr) auto;
-            }
-
-            .resultado-sorteo-card .resultado-sorteo-persona:last-child {
-                grid-column: 2 / -1;
-                padding-left: 0;
+            .resultado-sorteo-row-arrow {
+                justify-self: flex-start;
+                margin-left: 32px;
             }
         }
 
@@ -3320,19 +3412,6 @@
         .participante-grupo-icon-btn:hover {
             background: var(--primary);
             filter: brightness(1.1);
-        }
-
-        .participante-grupo-popover {
-            display: inline-block;
-            margin-left: 6px;
-            font-size: 0.76rem;
-            font-weight: 600;
-            color: var(--primary);
-            background: #eaf5ee;
-            border: 1px solid #d6e6dd;
-            border-radius: 5px;
-            padding: 2px 8px;
-            animation: slideIn 0.15s ease-out;
         }
 
 
@@ -4734,11 +4813,11 @@
 
         .resultado-sorteo-hero,
         .resultado-mini-card,
-        .resultado-sorteo-card {
+        .resultado-sorteo-container {
             border-color: #dcebe1;
         }
 
-        .resultado-sorteo-card,
+        .resultado-sorteo-container,
         #grupo-detalle-participantes.table-container {
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.055);
         }
@@ -6677,7 +6756,23 @@
                     </div>
                 </div>
 
-                <div id="grupo-detalle-resultados" class="resultado-sorteo-container"></div>
+                <div class="resultado-sorteo-search">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="resultado-sorteo-buscar" placeholder="Buscar por nombre o cargo..." oninput="filtrarResultadoSorteo()">
+                </div>
+
+                <div class="resultado-sorteo-container">
+                    <div class="resultado-sorteo-list-header">
+                        <span></span>
+                        <span>Quien sorteó</span>
+                        <span></span>
+                        <span>Regala a</span>
+                    </div>
+                    <div id="grupo-detalle-resultados"></div>
+                </div>
 
                 <div class="resultado-sorteo-footer-actions">
                     <div class="grupo-detail-created">Fecha de Creación: <span id="grupo-detalle-creado-resultados">-</span></div>
@@ -8288,7 +8383,7 @@
                     </td>
                     <td title="${nombreMostrar}">
                         <strong>${nombreMostrar}</strong>
-                        ${grupoVinculado ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" title="Ver unidad vinculada" aria-label="Ver grupo vinculado">🔗</button>` : ''}
+                        ${grupoVinculado ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-id="${grupoVinculado.id}" title="Ir al grupo &quot;${escaparHtml(grupoVinculado.nombre)}&quot;" aria-label="Ver grupo vinculado">🔗</button>` : ''}
                     </td>
                     <td title="${p.login || ''}">${p.login || '-'}</td>
                     <td title="${p.telefono || ''}">${p.telefono || '-'}</td>
@@ -8882,6 +8977,9 @@
             if (revelacionEl) revelacionEl.textContent = formatDateTime(grupo.fecha_revelacion);
             if (creadoEl) creadoEl.textContent = formatDate(grupo.fecha_sorteio);
 
+            const buscarEl = document.getElementById('resultado-sorteo-buscar');
+            if (buscarEl) buscarEl.value = '';
+
             renderResultadoSorteoGrupo(grupo);
             document.getElementById('grupo-resultados-modal').classList.add('active');
         }
@@ -9134,11 +9232,11 @@
             if (!cont) return;
 
             if (!grupo || grupo.estado !== 'sorteado' || !grupo.sorteados || Object.keys(grupo.sorteados).length === 0) {
-                cont.innerHTML = '<p class="text-muted" style="padding: 10px 0;">El resultado del sorteo todavía no está disponible.</p>';
+                cont.innerHTML = '<p class="resultado-sorteo-empty">El resultado del sorteo todavía no está disponible.</p>';
                 return;
             }
 
-            const cards = grupo.participantes.map((participanteId, index) => {
+            const filas = grupo.participantes.map((participanteId, index) => {
                 const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
                 const sorteadoParaId = grupo.sorteados[participanteId];
                 const sorteadoPara = appState.participantesRegistrados.find(p => p.id === sorteadoParaId);
@@ -9146,26 +9244,42 @@
                 const sorteadoNombre = escaparHtml(sorteadoPara ? sorteadoPara.nombreCompleto : '-');
                 const participanteCargo = escaparHtml(participante && participante.cargo ? participante.cargo : 'Sin cargo');
                 const sorteadoCargo = escaparHtml(sorteadoPara && sorteadoPara.cargo ? sorteadoPara.cargo : 'Sin cargo');
+                const busqueda = (participanteNombre + ' ' + participanteCargo + ' ' + sorteadoNombre + ' ' + sorteadoCargo).toLowerCase();
 
                 return `
-                    <div class="resultado-sorteo-card">
-                        <div class="resultado-sorteo-card-index">${index + 1}</div>
-                        <div class="resultado-sorteo-persona">
-                            <span>Quien sorteó</span>
-                            <strong title="${participanteNombre}">${participanteNombre}</strong>
-                            <div class="resultado-sorteo-cargo" title="Cargo: ${participanteCargo}">Cargo: ${participanteCargo}</div>
+                    <div class="resultado-sorteo-row" data-search="${busqueda}">
+                        <div class="resultado-sorteo-row-index">${index + 1}</div>
+                        <div class="resultado-sorteo-row-persona es-origen">
+                            <span class="resultado-sorteo-row-avatar">${escaparHtml(inicialesParticipante(participante ? participante.nombreCompleto : ''))}</span>
+                            <div class="resultado-sorteo-row-persona-info">
+                                <strong title="${participanteNombre}">${participanteNombre}</strong>
+                                <span title="${participanteCargo}">${participanteCargo}</span>
+                            </div>
                         </div>
-                        <div class="resultado-sorteo-card-arrow">→</div>
-                        <div class="resultado-sorteo-persona">
-                            <span>Regala a</span>
-                            <strong title="${sorteadoNombre}">${sorteadoNombre}</strong>
-                            <div class="resultado-sorteo-cargo" title="Cargo: ${sorteadoCargo}">Cargo: ${sorteadoCargo}</div>
+                        <div class="resultado-sorteo-row-arrow">→</div>
+                        <div class="resultado-sorteo-row-persona es-destino">
+                            <span class="resultado-sorteo-row-avatar">${escaparHtml(inicialesParticipante(sorteadoPara ? sorteadoPara.nombreCompleto : ''))}</span>
+                            <div class="resultado-sorteo-row-persona-info">
+                                <strong title="${sorteadoNombre}">${sorteadoNombre}</strong>
+                                <span title="${sorteadoCargo}">${sorteadoCargo}</span>
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            cont.innerHTML = `<div class="resultado-sorteo-grid">${cards}</div>`;
+            cont.innerHTML = filas;
+        }
+
+        // Filtra en vivo la lista de resultados del sorteo por nombre o cargo
+        // (de cualquiera de los dos lados: quien sortea o a quien le regala).
+        function filtrarResultadoSorteo() {
+            const buscar = document.getElementById('resultado-sorteo-buscar');
+            const q = (buscar && buscar.value || '').trim().toLowerCase();
+            document.querySelectorAll('#grupo-detalle-resultados .resultado-sorteo-row').forEach(row => {
+                const coincide = !q || (row.dataset.search || '').includes(q);
+                row.style.display = coincide ? '' : 'none';
+            });
         }
 
         function renderParticipantesDeGrupo(grupo) {
@@ -11621,30 +11735,22 @@
             });
         }
 
-        // Un único listener delegado en document maneja el ícono de grupo (🔗):
-        // abre/cierra el popover con el nombre, y lo cierra si se hace clic afuera.
-        // Delegar en document (en vez de onclick individual en cada botón) evita
-        // que se pierda el evento cuando la tabla se vuelve a dibujar.
+        // Ícono de grupo (🔗) en la tabla de participantes: lleva directo a la
+        // pantalla de gestión de ese grupo (Editar / Participantes / Sorteo),
+        // la misma que se abre al hacer clic en la tarjeta del grupo en la
+        // pestaña "Grupo". Delegado en document para que siga funcionando
+        // aunque la tabla se vuelva a dibujar.
         document.addEventListener('click', (event) => {
             const grupoBtn = event.target.closest('.participante-grupo-icon-btn');
             if (grupoBtn) {
                 event.preventDefault();
                 event.stopPropagation();
-                const nombreGrupo = grupoBtn.getAttribute('data-grupo-nombre') || '';
-                const existente = grupoBtn.nextElementSibling;
-                if (existente && existente.classList.contains('participante-grupo-popover')) {
-                    existente.remove();
-                    return;
+                const grupoId = grupoBtn.getAttribute('data-grupo-id');
+                if (grupoId) {
+                    abrirGrupoAcciones(grupoId);
                 }
-                document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
-                const span = document.createElement('span');
-                span.className = 'participante-grupo-popover';
-                span.textContent = nombreGrupo;
-                grupoBtn.insertAdjacentElement('afterend', span);
                 return;
             }
-            if (event.target.closest('.participante-grupo-popover')) return;
-            document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
         });
 
         // ===== BLOQUEO DE SCROLL DE FONDO CUANDO HAY UN MODAL ABIERTO =====
