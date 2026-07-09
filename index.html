@@ -5479,11 +5479,17 @@
 
             <div class="form-group" id="grupo-nuevo-participantes-wrapper" style="display: none;">
                 <label>Participantes de esta unidad</label>
-                <label class="grupo-vincular-select-all-label" style="display:flex; align-items:center; gap:8px; font-weight:600; margin-bottom:8px;">
-                    <input type="checkbox" id="grupo-nuevo-select-all" onchange="toggleSeleccionarTodosCrearGrupo(this)">
-                    Marcar todos
-                </label>
-                <div id="grupo-nuevo-participantes-lista" class="grupo-vincular-lista"></div>
+                <button type="button" id="grupo-nuevo-participantes-btn" class="btn btn-outline" style="width: 100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="abrirSeleccionarParticipantesCrearGrupo()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        <line x1="19" y1="8" x2="19" y2="14"/>
+                        <line x1="16" y1="11" x2="22" y2="11"/>
+                    </svg>
+                    <span id="grupo-nuevo-participantes-btn-texto">+ Participante</span>
+                </button>
             </div>
 
             <div class="form-group">
@@ -5494,11 +5500,11 @@
             <div class="crear-grupo-grid">
                 <div class="form-group">
                     <label for="grupo-nuevo-fecha-revelacion">Fecha de Revelación</label>
-                    <input type="date" id="grupo-nuevo-fecha-revelacion" placeholder="Ingresa una fecha">
+                    <input type="datetime-local" id="grupo-nuevo-fecha-revelacion" placeholder="Ingresa una fecha y hora">
                 </div>
                 <div class="form-group">
                     <label for="grupo-nuevo-fecha-evento">Fecha del Evento</label>
-                    <input type="date" id="grupo-nuevo-fecha-evento" placeholder="Ingresa una fecha">
+                    <input type="datetime-local" id="grupo-nuevo-fecha-evento" placeholder="Ingresa una fecha y hora">
                 </div>
             </div>
 
@@ -5509,6 +5515,36 @@
                     </svg>
                 </button>
                 <button type="button" class="icon-action-btn icon-cancel" aria-label="Cancelar" title="Cancelar" onclick="cerrarCrearGrupoModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============== MODAL SELECCIONAR PARTICIPANTES (al crear grupo) =============== -->
+    <div id="grupo-nuevo-participantes-modal" class="modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3>Seleccionar Participantes</h3>
+                <button class="close-btn" onclick="cancelarSeleccionParticipantesCrearGrupo()">&times;</button>
+            </div>
+
+            <label class="grupo-vincular-select-all-label" style="display:flex; align-items:center; gap:8px; font-weight:600; margin-bottom:8px;">
+                <input type="checkbox" id="grupo-nuevo-modal-select-all" onchange="toggleSeleccionarTodosCrearGrupo(this)">
+                Marcar todos
+            </label>
+            <div id="grupo-nuevo-participantes-lista" class="grupo-vincular-lista"></div>
+
+            <div class="crear-grupo-actions">
+                <button type="button" class="icon-action-btn icon-save" aria-label="Confirmar" title="Confirmar" onclick="confirmarSeleccionParticipantesCrearGrupo()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </button>
+                <button type="button" class="icon-action-btn icon-cancel" aria-label="Cancelar" title="Cancelar" onclick="cancelarSeleccionParticipantesCrearGrupo()">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
@@ -5589,11 +5625,11 @@
                     </div>
                     <div class="form-group">
                         <label for="grupo-detalle-fecha-revelacion">Fecha de Revelación</label>
-                        <input type="date" id="grupo-detalle-fecha-revelacion">
+                        <input type="datetime-local" id="grupo-detalle-fecha-revelacion">
                     </div>
                     <div class="form-group">
                         <label for="grupo-detalle-fecha-evento">Fecha del Evento</label>
-                        <input type="date" id="grupo-detalle-fecha-evento">
+                        <input type="datetime-local" id="grupo-detalle-fecha-evento">
                     </div>
                 </div>
                 <div class="grupo-detail-form-actions">
@@ -6736,40 +6772,70 @@
                 ).join('');
         }
 
+        // Guarda los IDs de participantes elegidos mientras se está creando un grupo nuevo.
+        let grupoNuevoParticipantesSeleccionados = [];
+
         function renderParticipantesCentroEnCrearGrupo() {
             const centroId = document.getElementById('grupo-nuevo-centro').value;
             const wrapper = document.getElementById('grupo-nuevo-participantes-wrapper');
+            if (!wrapper) return;
+
+            // Cambiar de unidad de negocio reinicia la selección (los
+            // participantes de la unidad anterior ya no aplican).
+            grupoNuevoParticipantesSeleccionados = [];
+            actualizarBotonParticipantesCrearGrupo();
+
+            wrapper.style.display = centroId ? 'block' : 'none';
+        }
+
+        function actualizarBotonParticipantesCrearGrupo() {
+            const texto = document.getElementById('grupo-nuevo-participantes-btn-texto');
+            if (!texto) return;
+            texto.textContent = grupoNuevoParticipantesSeleccionados.length > 0
+                ? `${grupoNuevoParticipantesSeleccionados.length} participante(s) seleccionado(s)`
+                : '+ Participante';
+        }
+
+        function abrirSeleccionarParticipantesCrearGrupo() {
+            const centroId = document.getElementById('grupo-nuevo-centro').value;
             const cont = document.getElementById('grupo-nuevo-participantes-lista');
-            const selectAll = document.getElementById('grupo-nuevo-select-all');
-            if (!wrapper || !cont) return;
-
-            if (!centroId) {
-                wrapper.style.display = 'none';
-                cont.innerHTML = '';
-                return;
-            }
-
-            wrapper.style.display = 'block';
-            if (selectAll) selectAll.checked = false;
+            const selectAll = document.getElementById('grupo-nuevo-modal-select-all');
+            if (!cont || !centroId) return;
 
             const candidatos = appState.participantesRegistrados.filter(p => p.centroId === centroId);
 
             if (candidatos.length === 0) {
                 cont.innerHTML = '<div class="grupo-vincular-empty">Todavía no hay participantes registrados en esta unidad de negocio. Puedes crear el grupo igual y vincularlos después.</div>';
-                return;
+            } else {
+                cont.innerHTML = candidatos.map(p => `
+                    <div class="grupo-vincular-item">
+                        <label>
+                            <input type="checkbox" class="grupo-nuevo-vincular-checkbox" value="${p.id}" ${grupoNuevoParticipantesSeleccionados.includes(p.id) ? 'checked' : ''}>
+                            <span class="grupo-vincular-item-info">
+                                <strong>${p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim()}</strong>
+                                <span>${p.login || '-'}${p.cargo ? ' · ' + p.cargo : ''}</span>
+                            </span>
+                        </label>
+                    </div>
+                `).join('');
             }
 
-            cont.innerHTML = candidatos.map(p => `
-                <div class="grupo-vincular-item">
-                    <label>
-                        <input type="checkbox" class="grupo-nuevo-vincular-checkbox" value="${p.id}">
-                        <span class="grupo-vincular-item-info">
-                            <strong>${p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim()}</strong>
-                            <span>${p.login || '-'}${p.cargo ? ' · ' + p.cargo : ''}</span>
-                        </span>
-                    </label>
-                </div>
-            `).join('');
+            if (selectAll) {
+                selectAll.checked = candidatos.length > 0 && candidatos.every(p => grupoNuevoParticipantesSeleccionados.includes(p.id));
+            }
+
+            document.getElementById('grupo-nuevo-participantes-modal').classList.add('active');
+        }
+
+        function confirmarSeleccionParticipantesCrearGrupo() {
+            grupoNuevoParticipantesSeleccionados = Array.from(document.querySelectorAll('.grupo-nuevo-vincular-checkbox:checked')).map(cb => cb.value);
+            actualizarBotonParticipantesCrearGrupo();
+            document.getElementById('grupo-nuevo-participantes-modal').classList.remove('active');
+        }
+
+        function cancelarSeleccionParticipantesCrearGrupo() {
+            // Cierra sin guardar cambios (descarta lo que se haya marcado/desmarcado acá).
+            document.getElementById('grupo-nuevo-participantes-modal').classList.remove('active');
         }
 
         function toggleSeleccionarTodosCrearGrupo(checkbox) {
@@ -6844,7 +6910,7 @@
             };
 
             // Vincula de una vez a los participantes marcados en el formulario.
-            const idsSeleccionados = Array.from(document.querySelectorAll('.grupo-nuevo-vincular-checkbox:checked')).map(cb => cb.value);
+            const idsSeleccionados = [...grupoNuevoParticipantesSeleccionados];
             idsSeleccionados.forEach(participanteId => {
                 const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
                 if (participante) {
@@ -6869,6 +6935,8 @@
             if (wrapperParticipantes) wrapperParticipantes.style.display = 'none';
             const listaParticipantes = document.getElementById('grupo-nuevo-participantes-lista');
             if (listaParticipantes) listaParticipantes.innerHTML = '';
+            grupoNuevoParticipantesSeleccionados = [];
+            actualizarBotonParticipantesCrearGrupo();
 
             updateGruposList();
             updateSelectMenus();
@@ -7837,7 +7905,7 @@
 
             if (nombreEl) nombreEl.textContent = grupo.nombre ? 'Sorteo realizado · ' + grupo.nombre : 'Sorteo realizado';
             if (participantesEl) participantesEl.textContent = (grupo.participantes || []).length + ' personas';
-            if (revelacionEl) revelacionEl.textContent = formatDate(grupo.fecha_revelacion);
+            if (revelacionEl) revelacionEl.textContent = formatDateTime(grupo.fecha_revelacion);
             if (creadoEl) creadoEl.textContent = formatDate(grupo.fecha_sorteio);
 
             renderResultadoSorteoGrupo(grupo);
@@ -8498,11 +8566,11 @@
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Revelación</span>
-                                <span class="info-value">${formatDate(grupo.fecha_revelacion)}</span>
+                                <span class="info-value">${formatDateTime(grupo.fecha_revelacion)}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Fecha del Evento</span>
-                                <span class="info-value">${formatDate(grupo.fecha_evento)}</span>
+                                <span class="info-value">${formatDateTime(grupo.fecha_evento)}</span>
                             </div>
                         </div>
                         ${grupo.estado === 'sorteado' && sorteadoInfo ? `
@@ -8719,6 +8787,8 @@
             if (wrapperParticipantes) wrapperParticipantes.style.display = 'none';
             const listaParticipantes = document.getElementById('grupo-nuevo-participantes-lista');
             if (listaParticipantes) listaParticipantes.innerHTML = '';
+            grupoNuevoParticipantesSeleccionados = [];
+            actualizarBotonParticipantesCrearGrupo();
         }
 
         async function loadAdminData() {
@@ -8889,12 +8959,12 @@
 
                         <div class="info-item">
                             <span class="info-label">Fecha de Revelación</span>
-                            <span class="info-value">${formatDate(g.fecha_revelacion)}</span>
+                            <span class="info-value">${formatDateTime(g.fecha_revelacion)}</span>
                         </div>
 
                         <div class="info-item">
                             <span class="info-label">Fecha del Evento</span>
-                            <span class="info-value">${formatDate(g.fecha_evento)}</span>
+                            <span class="info-value">${formatDateTime(g.fecha_evento)}</span>
                         </div>
 
                         <div class="info-item">
@@ -10234,6 +10304,22 @@
             }
             if (isNaN(date.getTime())) return '-';
             return new Intl.DateTimeFormat('es-PY').format(date);
+        }
+
+        // Igual que formatDate, pero incluye la HORA — usado para Fecha de
+        // Revelación y Fecha del Evento, donde la hora exacta importa (la
+        // revelación tiene que pasar a la hora indicada, no "en algún
+        // momento de ese día").
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            let date;
+            if (typeof dateStr === 'object' && typeof dateStr.toDate === 'function') {
+                date = dateStr.toDate();
+            } else {
+                date = new Date(dateStr);
+            }
+            if (isNaN(date.getTime())) return '-';
+            return new Intl.DateTimeFormat('es-PY', { dateStyle: 'short', timeStyle: 'short' }).format(date);
         }
 
         function randomShuffle(array) {
