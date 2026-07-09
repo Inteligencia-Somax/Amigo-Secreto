@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amigo Secreto - Somax Agro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         * {
             margin: 0;
@@ -181,6 +182,81 @@
             background-color: #eaf5ee;
         }
 
+        /* Campo "amigable" que reemplaza visualmente al datetime-local nativo
+           (generado por flatpickr). El input real queda oculto y este es el
+           que la persona ve y toca — mismo estilo que los demás campos de
+           texto, con un ícono de calendario para que quede claro que abre un
+           selector. */
+        .date-friendly-input {
+            width: 100%;
+            padding: 12px 40px 12px 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--text);
+            background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231a5f3f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E") no-repeat right 12px center;
+            background-size: 18px 18px;
+            cursor: pointer;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .date-friendly-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 5px rgba(26, 95, 63, 0.3);
+        }
+
+        .date-friendly-input::placeholder {
+            color: #9aa39d;
+            opacity: 1;
+        }
+
+        /* Selector de fecha/hora (flatpickr) con la paleta de la marca */
+        .flatpickr-calendar {
+            font-family: inherit;
+            box-shadow: 0 8px 24px rgba(13, 59, 38, 0.18);
+            border-radius: 10px;
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.selected:hover,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .flatpickr-day.today {
+            border-color: var(--primary);
+        }
+
+        .flatpickr-day:hover {
+            background: #eaf5ee;
+        }
+
+        .flatpickr-months .flatpickr-month,
+        .flatpickr-current-month input.cur-year,
+        span.flatpickr-weekday {
+            color: var(--primary);
+        }
+
+        .flatpickr-months .flatpickr-prev-month:hover svg,
+        .flatpickr-months .flatpickr-next-month:hover svg {
+            fill: var(--primary);
+        }
+
+        .flatpickr-time input:hover,
+        .flatpickr-time .flatpickr-am-pm:hover,
+        .flatpickr-time input:focus,
+        .flatpickr-time .flatpickr-am-pm:focus {
+            background: #eaf5ee;
+        }
+
+        .flatpickr-day.selected.today {
+            border-color: var(--primary);
+        }
+
         /* Texto de ejemplo (placeholder) más claro, para que no parezca
            un valor ya escrito por el usuario */
         input::placeholder,
@@ -321,12 +397,11 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: 1.5px solid var(--primary);
+            border: none;
             border-radius: 8px;
-            background: var(--white);
+            background: #eceeec;
             color: var(--primary);
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(26, 95, 63, 0.12);
             transition: all 0.2s ease;
             padding: 0;
             flex-shrink: 0;
@@ -334,8 +409,7 @@
 
         .header-gear-btn:hover {
             transform: translateY(-1px);
-            background: #f4f8f5;
-            box-shadow: 0 5px 14px rgba(26, 95, 63, 0.18);
+            background: #dfe3df;
         }
 
         .header-gear-btn svg {
@@ -1769,13 +1843,14 @@
         }
 
         .icon-action-btn.icon-reset {
-            color: #b6862c;
-            border-color: #e6d3a3;
+            background: #96691c;
+            border-color: #96691c;
+            color: var(--white);
         }
 
         .icon-action-btn.icon-reset:hover {
-            background: #b6862c;
-            border-color: #b6862c;
+            background: #7a5416;
+            border-color: #7a5416;
             color: var(--white);
         }
 
@@ -6550,6 +6625,8 @@
 
     <!-- =============== SCRIPT ==================== -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -7577,8 +7654,8 @@
             document.getElementById('grupo-nuevo-nombre').value = '';
             document.getElementById('grupo-nuevo-centro').value = '';
             document.getElementById('grupo-nuevo-presupuesto').value = '';
-            document.getElementById('grupo-nuevo-fecha-revelacion').value = '';
-            document.getElementById('grupo-nuevo-fecha-evento').value = '';
+            setFechaAmigableValue('grupo-nuevo-fecha-revelacion', '');
+            setFechaAmigableValue('grupo-nuevo-fecha-evento', '');
             const wrapperParticipantes = document.getElementById('grupo-nuevo-participantes-wrapper');
             if (wrapperParticipantes) wrapperParticipantes.style.display = 'none';
             const listaParticipantes = document.getElementById('grupo-nuevo-participantes-lista');
@@ -8440,8 +8517,8 @@
 
             document.getElementById('grupo-detalle-nombre-input').value = grupo.nombre || '';
             document.getElementById('grupo-detalle-presupuesto').value = grupo.presupuesto ?? '';
-            document.getElementById('grupo-detalle-fecha-revelacion').value = formatearParaDatetimeLocal(grupo.fecha_revelacion);
-            document.getElementById('grupo-detalle-fecha-evento').value = formatearParaDatetimeLocal(grupo.fecha_evento);
+            setFechaAmigableValue('grupo-detalle-fecha-revelacion', formatearParaDatetimeLocal(grupo.fecha_revelacion));
+            setFechaAmigableValue('grupo-detalle-fecha-evento', formatearParaDatetimeLocal(grupo.fecha_evento));
             const centroSelect = document.getElementById('grupo-detalle-centro-select');
             const centroHint = document.getElementById('grupo-detalle-centro-bloqueado-hint');
             const tieneParticipantes = (grupo.participantes || []).length > 0;
@@ -8664,8 +8741,8 @@
             if (grupo) {
                 document.getElementById('grupo-detalle-nombre-input').value = grupo.nombre || '';
                 document.getElementById('grupo-detalle-presupuesto').value = grupo.presupuesto ?? '';
-                document.getElementById('grupo-detalle-fecha-revelacion').value = formatearParaDatetimeLocal(grupo.fecha_revelacion);
-                document.getElementById('grupo-detalle-fecha-evento').value = formatearParaDatetimeLocal(grupo.fecha_evento);
+                setFechaAmigableValue('grupo-detalle-fecha-revelacion', formatearParaDatetimeLocal(grupo.fecha_revelacion));
+                setFechaAmigableValue('grupo-detalle-fecha-evento', formatearParaDatetimeLocal(grupo.fecha_evento));
 
                 const centroSelect = document.getElementById('grupo-detalle-centro-select');
                 const centroHint = document.getElementById('grupo-detalle-centro-bloqueado-hint');
@@ -9155,8 +9232,8 @@
                 if (grupoActualizado) {
                     document.getElementById('grupo-detalle-nombre-input').value = grupoActualizado.nombre || '';
                     document.getElementById('grupo-detalle-presupuesto').value = grupoActualizado.presupuesto ?? '';
-                    document.getElementById('grupo-detalle-fecha-revelacion').value = formatearParaDatetimeLocal(grupoActualizado.fecha_revelacion);
-                    document.getElementById('grupo-detalle-fecha-evento').value = formatearParaDatetimeLocal(grupoActualizado.fecha_evento);
+                    setFechaAmigableValue('grupo-detalle-fecha-revelacion', formatearParaDatetimeLocal(grupoActualizado.fecha_revelacion));
+                    setFechaAmigableValue('grupo-detalle-fecha-evento', formatearParaDatetimeLocal(grupoActualizado.fecha_evento));
                     const centroSelect = document.getElementById('grupo-detalle-centro-select');
                     if (centroSelect) {
                         centroSelect.innerHTML = opcionesCentrosGrupoHtml(grupoActualizado.centroId || '', grupoActualizado.id);
@@ -9449,13 +9526,11 @@
             const nombre = document.getElementById('grupo-nuevo-nombre');
             const centro = document.getElementById('grupo-nuevo-centro');
             const presupuesto = document.getElementById('grupo-nuevo-presupuesto');
-            const fecha = document.getElementById('grupo-nuevo-fecha-revelacion');
-            const fechaEvento = document.getElementById('grupo-nuevo-fecha-evento');
             if (nombre) nombre.value = '';
             if (centro) centro.value = '';
             if (presupuesto) presupuesto.value = '';
-            if (fecha) fecha.value = '';
-            if (fechaEvento) fechaEvento.value = '';
+            setFechaAmigableValue('grupo-nuevo-fecha-revelacion', '');
+            setFechaAmigableValue('grupo-nuevo-fecha-evento', '');
 
             const wrapperParticipantes = document.getElementById('grupo-nuevo-participantes-wrapper');
             if (wrapperParticipantes) wrapperParticipantes.style.display = 'none';
@@ -11090,6 +11165,51 @@
             return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
         }
 
+        // ==================== SELECTOR DE FECHA Y HORA "AMIGABLE" ====================
+        // El input nativo type="datetime-local" es incómodo de llenar a mano
+        // (hay que tocar cada segmento — día, mes, año, hora, minuto — por
+        // separado, y en el celular es aún peor). Acá lo reemplazamos por un
+        // calendario + selector de hora con flatpickr, mucho más fácil de
+        // usar con un par de toques. El input original se mantiene oculto en
+        // el DOM y sigue guardando el valor en el mismo formato de siempre
+        // ("YYYY-MM-DDTHH:mm"), así que el resto del código (guardar en
+        // Firestore, leer .value, etc.) no necesita cambios.
+        function inicializarSelectoresFechaAmigables(root = document) {
+            if (typeof flatpickr === 'undefined') return;
+            root.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+                if (input._flatpickr) return; // ya inicializado
+                flatpickr(input, {
+                    locale: 'es',
+                    enableTime: true,
+                    time_24hr: true,
+                    dateFormat: 'Y-m-d\\TH:i',
+                    altInput: true,
+                    altFormat: 'd/m/Y H:i',
+                    altInputClass: 'date-friendly-input',
+                    minuteIncrement: 5,
+                    disableMobile: true, // fuerza el mismo selector táctil también en el celular
+                    allowInput: false
+                });
+            });
+        }
+
+        // Cambia el valor de un campo de fecha/hora y mantiene sincronizado
+        // el selector "amigable" (flatpickr) que lo reemplaza visualmente.
+        // Usar esta función en vez de asignar .value directamente a los
+        // campos de Fecha de Revelación / Fecha del Evento.
+        function setFechaAmigableValue(id, value) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.value = value || '';
+            if (el._flatpickr) {
+                if (value) {
+                    el._flatpickr.setDate(value, false);
+                } else {
+                    el._flatpickr.clear();
+                }
+            }
+        }
+
         function randomShuffle(array) {
             const arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -11473,6 +11593,7 @@
             cargarCentrosEnSelect();
 
             poblarSelectCentroGrupo();
+            inicializarSelectoresFechaAmigables();
 
             scheduleEnhanceAllTables();
             const tableObserver = new MutationObserver(() => {
