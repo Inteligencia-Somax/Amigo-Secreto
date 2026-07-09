@@ -4803,6 +4803,34 @@
             box-shadow: 0 9px 20px rgba(26, 95, 63, 0.18);
         }
 
+        /* Botón "Ver Resultado" en el pie del modal "Participantes" — mismo
+           tamaño/tipografía que el de Excel, con estilo outline en vez de
+           relleno para no competir visualmente con él. */
+        .btn-ver-resultado-inline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            min-height: 40px;
+            padding: 0 16px;
+            border-radius: 10px;
+            border: 1.5px solid var(--primary);
+            background: var(--white);
+            color: var(--primary);
+            font-size: 0.88rem;
+            font-weight: 800;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-ver-resultado-inline:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-1px);
+        }
+
         @media (min-width: 769px) {
             .participante-filters-row .btn-excel.participante-export-btn {
                 flex: 0 0 96px;
@@ -5416,6 +5444,29 @@
         .table-filter-input-wrap:focus-within {
             border-color: #8eb4a0;
             box-shadow: none;
+        }
+
+        /* Selector "Vinculado / No vinculado" que reemplaza el campo de texto
+           en la columna de checkbox de la tabla de participantes. */
+        .table-filter-select {
+            width: 100%;
+            min-width: 0;
+            height: 24px;
+            border: 0;
+            border-bottom: 1px solid #d4e0d9;
+            outline: none;
+            background: transparent;
+            color: #375246;
+            font-size: 0.74rem;
+            font-weight: 600;
+            line-height: 1;
+            padding: 0 2px 4px;
+            border-radius: 0;
+            cursor: pointer;
+        }
+
+        .table-filter-select:focus {
+            border-color: #8eb4a0;
         }
 
     
@@ -6977,6 +7028,7 @@
                 <div class="resultado-sorteo-footer-actions participantes-footer-actions">
                     <div class="grupo-detail-created">Fecha de Creación: <span id="grupo-detalle-creado">-</span></div>
                     <div class="participantes-actions-right">
+                        <button type="button" id="grupo-participantes-ver-resultado-btn" class="btn-ver-resultado-inline" style="display:none;" onclick="verResultadoDesdeParticipantesModal()">Ver Resultado</button>
                         <button type="button" class="btn-excel" onclick="exportarGrupoExcel()">Excel</button>
                         <button id="grupo-participantes-save-btn" class="icon-action-btn icon-save" type="button" aria-label="Guardar" title="Guardar" onclick="guardarParticipantesGrupoModal()">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -8848,7 +8900,7 @@
                 const codigoCentro = getCodigoCentroParticipante(p);
                 const fechaRegistro = formatDate(p.fecha_registro || p.fechaRegistro || '');
                 return `
-                <tr>
+                <tr data-vinculado="${vinculadoAGrupo ? 'si' : 'no'}">
                     <td class="participante-checkbox-col">
                         ${grupoVinculado
                             ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" aria-label="Ver nombre del grupo">🔗</button>`
@@ -9378,10 +9430,23 @@
             renderParticipantesDeGrupo(grupo);
             const btnGuardarParticipantes = document.getElementById('grupo-participantes-save-btn');
             if (btnGuardarParticipantes) btnGuardarParticipantes.style.display = grupo.estado === 'sorteado' ? 'none' : 'inline-flex';
+
+            const tieneResultado = grupo.sorteados && Object.keys(grupo.sorteados).length > 0;
+            const btnVerResultado = document.getElementById('grupo-participantes-ver-resultado-btn');
+            if (btnVerResultado) btnVerResultado.style.display = tieneResultado ? 'inline-flex' : 'none';
+
             cerrarVincularParticipantesModal();
 
             cerrarGrupoAccionesModal();
             document.getElementById('grupo-participantes-modal').classList.add('active');
+        }
+
+        // Desde el modal "Participantes", lleva directo al resultado del
+        // sorteo del mismo grupo (mismo destino que el botón "Ver Resultado"
+        // de la tarjeta del grupo).
+        function verResultadoDesdeParticipantesModal() {
+            cerrarParticipantesGrupoModal();
+            abrirResultadosGrupoModal();
         }
 
         function cerrarParticipantesGrupoModal() {
@@ -10310,7 +10375,7 @@
 
             usuario.deseos[grupoId].push(texto);
             db.collection('participantes').doc(usuario.id).update({ deseos: usuario.deseos }).catch(err => console.error('Error al guardar idea de regalo:', err));
-            showAlert('usuario-alert', 'Idea agregada a tu lista');
+            showAlert('usuario-alert', 'Idea agregada a tu lista', 'success');
             loadUsuarioData();
         }
 
@@ -10602,11 +10667,6 @@
                         <div class="info-item">
                             <span class="info-label">Fecha del Evento</span>
                             <span class="info-value">${formatDateTime(g.fecha_evento)}</span>
-                        </div>
-
-                        <div class="info-item">
-                            <span class="info-label">Fecha de Creación</span>
-                            <span class="info-value">${formatDate(g.fecha_sorteio)}</span>
                         </div>
                     </div>
                 </div>
@@ -11945,10 +12005,15 @@
         }, true);
 
         function showAlert(id, message, type = 'error') {
-            // Evita exceso de avisos por acciones normales (guardar, crear, exportar,
-            // descartar, agregar, etc.). Dejamos visibles solo los avisos realmente
-            // críticos: errores/validaciones, importación y login/registro.
-            const allowedAlertIds = new Set(['admin-error', 'login-error', 'registro-error']);
+            // Esta lista tiene que incluir TODOS los ids que el código realmente
+            // usa (buscar "showAlert(" en el archivo). Antes le faltaban
+            // 'admin-success' y 'usuario-alert' — eso hacía que success de
+            // guardar/crear/vincular/etc. y los avisos del panel del
+            // participante nunca se mostraran (la función cortaba acá mismo,
+            // en silencio, sin error visible). Por eso parecía que "el
+            // cargando" o la confirmación habían dejado de aparecer en varios
+            // lugares del sitio.
+            const allowedAlertIds = new Set(['admin-error', 'admin-success', 'login-error', 'registro-error', 'usuario-alert']);
             if (!allowedAlertIds.has(id)) return;
 
             const el = document.getElementById(id);
@@ -12394,6 +12459,9 @@
                 value: normalizeTableFilterText(input.value)
             }));
 
+            const selectVinculo = filterRow.querySelector('.table-filter-select');
+            const filtroVinculo = selectVinculo ? selectVinculo.value : '';
+
             const rows = Array.from(table.tBodies[0].rows);
             rows.forEach(row => {
                 let visible = true;
@@ -12405,6 +12473,9 @@
                         visible = false;
                     }
                 });
+                if (visible && filtroVinculo && row.dataset.vinculado !== filtroVinculo) {
+                    visible = false;
+                }
                 row.style.display = visible ? '' : 'none';
             });
         }
@@ -12426,6 +12497,30 @@
 
                 Array.from(headerRow.cells).forEach((th, columnIndex) => {
                     const filterCell = document.createElement('th');
+
+                    // Caso especial: la columna de checkbox de la tabla de
+                    // participantes no tiene texto para filtrar por escritura,
+                    // pero sí tiene un estado claro (vinculado a un grupo o
+                    // no) — le ponemos un selector en vez de dejarla vacía.
+                    if (columnIndex === 0 && table.id === 'participantes-table' && th.querySelector('input[type="checkbox"]')) {
+                        const select = document.createElement('select');
+                        select.className = 'table-filter-select';
+                        select.innerHTML = `
+                            <option value="">Todos</option>
+                            <option value="si">Vinculado</option>
+                            <option value="no">No vinculado</option>
+                        `;
+                        select.value = savedState.vinculo || '';
+                        select.addEventListener('change', () => {
+                            if (!tableFilterState[filterKey]) tableFilterState[filterKey] = {};
+                            tableFilterState[filterKey].vinculo = select.value;
+                            applyTableFilters(table);
+                        });
+                        filterCell.appendChild(select);
+                        filterRow.appendChild(filterCell);
+                        return;
+                    }
+
                     if (!isFilterableTableHeader(th)) {
                         filterCell.className = 'table-filter-empty';
                         filterRow.appendChild(filterCell);
@@ -12479,6 +12574,8 @@
                     const idx = Number(input.dataset.columnIndex);
                     input.value = savedState[idx] || '';
                 });
+                const selectExistente = filterRow.querySelector('.table-filter-select');
+                if (selectExistente) selectExistente.value = savedState.vinculo || '';
             }
 
             applyTableFilters(table);
