@@ -3189,6 +3189,30 @@
             border: 1px solid #f5c6cb;
         }
 
+        .alert-info {
+            background: #eef4f0;
+            color: var(--primary, #1a5f3f);
+            border: 1px solid #d6e6dd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .alert-info .alert-spinner {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            border: 2.5px solid rgba(26, 95, 63, 0.25);
+            border-top-color: var(--primary, #1a5f3f);
+            border-radius: 50%;
+            animation: alertSpin 0.7s linear infinite;
+        }
+
+        @keyframes alertSpin {
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 520px) {
             .crear-grupo-card {
                 padding: 16px;
@@ -5525,6 +5549,15 @@
                             <line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </button>
+                    <button id="grupo-detalle-eliminar-btn" class="icon-action-btn icon-delete" type="button" aria-label="Eliminar grupo" title="Eliminar grupo" onclick="eliminarGrupo()" style="margin-left: auto;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                            <path d="M10 11v6"/>
+                            <path d="M14 11v6"/>
+                            <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
@@ -6196,7 +6229,7 @@
             const centroDatos = appState.centrosActuales.find(c => c.id === filial);
             const nombreCentro = centroDatos ? centroDatos.nombre : filial;
 
-            showAlert('registro-error', 'Creando tu cuenta...');
+            showAlert('registro-error', 'Creando tu cuenta...', 'info');
 
             try {
                 // Crea la cuenta real en Firebase Authentication. Si el usuario
@@ -6284,7 +6317,7 @@
                 return;
             }
 
-            showAlert('login-error', 'Ingresando...');
+            showAlert('login-error', 'Ingresando...', 'info');
 
             try {
                 const credencial = await comTimeout(auth.signInWithEmailAndPassword(loginParaEmailFake(login), password));
@@ -7109,7 +7142,7 @@
             const nombre = participante.nombreCompleto || 'este participante';
             if (!confirm('¿Eliminar a ' + nombre + '? Esta acción no se puede deshacer.')) return;
 
-            showAlert('admin-error', 'Eliminando...');
+            showAlert('admin-error', 'Eliminando...', 'info');
 
             try {
                 // Borra el login de verdad en Firebase Authentication Y el perfil
@@ -7221,7 +7254,7 @@
                 return;
             }
 
-            showAlert('admin-error', 'Guardando...');
+            showAlert('admin-error', 'Guardando...', 'info');
 
             try {
                 const centroDatos = appState.centrosActuales.find(c => c.id === centroId);
@@ -7386,6 +7419,9 @@
                 centroSelect.disabled = tieneParticipantes;
             }
             if (centroHint) centroHint.style.display = tieneParticipantes ? 'block' : 'none';
+
+            const btnEliminar = document.getElementById('grupo-detalle-eliminar-btn');
+            if (btnEliminar) btnEliminar.style.display = (grupo.estado === 'abierto') ? 'flex' : 'none';
 
             cerrarGrupoAccionesModal();
             document.getElementById('grupo-editar-modal').classList.add('active');
@@ -7612,6 +7648,42 @@
 
             // Cancelar/cerrar solo descarta cambios visualmente. No dispara toast.
             cerrarEditarGrupoModal();
+        }
+
+        function eliminarGrupo() {
+            if (!grupoDetalleActualId) return;
+            const grupo = appState.gruposActuales.find(g => g.id === grupoDetalleActualId);
+            if (!grupo) return;
+
+            if (grupo.estado === 'sorteado' || grupo.estado === 'revelado') {
+                showAlert('admin-error', 'No se puede eliminar un grupo que ya fue sorteado.');
+                return;
+            }
+
+            if (!confirm('¿Eliminar el grupo "' + grupo.nombre + '"? Esta acción no se puede deshacer.')) return;
+
+            // Desvincula a los participantes de este grupo (en pantalla y en Firestore).
+            (grupo.participantes || []).forEach(participanteId => {
+                const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
+                if (participante) {
+                    participante.grupos = (participante.grupos || []).filter(gid => gid !== grupo.id);
+                    db.collection('participantes').doc(participanteId).update({ grupos: participante.grupos }).catch(err => console.error('Error al actualizar grupos del participante:', err));
+                }
+            });
+
+            const grupoId = grupo.id;
+            appState.gruposActuales = appState.gruposActuales.filter(g => g.id !== grupoId);
+            db.collection('grupos').doc(grupoId).delete().catch(error => {
+                console.error('Error al eliminar grupo en Firestore:', error);
+                showAlert('admin-error', 'Se eliminó en pantalla, pero no se pudo sincronizar con el servidor. Verifica tu conexión.');
+            });
+
+            grupoDetalleActualId = null;
+            cerrarTodosModalesGrupo();
+            showAlert('admin-success', 'Grupo eliminado');
+            updateGruposList();
+            updateParticipantesList();
+            updateSelectMenus();
         }
 
         function guardarNombreGrupo() {
@@ -9634,7 +9706,7 @@
             document.getElementById('sorteio-modal').classList.remove('active');
         }
 
-        function confirmarSorteio() {
+        async function confirmarSorteio() {
             if (!grupoParaSortear) {
                 showAlert('admin-error', 'Error al cargar grupo');
                 return;
@@ -9653,12 +9725,39 @@
                 confirmarBtn.textContent = 'Sorteando...';
             }
 
+            // Guarda los valores anteriores por si hay que revertir (si falla el
+            // guardado en el servidor, no podemos dejar el sorteo "a medias" en
+            // pantalla — eso es justamente el tipo de error de "quién le tocó a
+            // quién" que hay que evitar a toda costa).
+            const estadoAnterior = grupo.estado;
+            const sorteadosAnterior = grupo.sorteados;
+            const fechaRevelacionAnterior = grupo.fecha_revelacion;
+
             const ids = [...grupo.participantes]; // Ya son IDs
             grupo.sorteados = generarSorteoAmigoSecreto(ids);
-
             grupo.estado = 'sorteado';
             grupo.fecha_revelacion = grupoParaSortear.fecha;
-            syncGrupoFirestore(grupo);
+
+            try {
+                // Espera de verdad la confirmación del servidor antes de avisar
+                // éxito — si la conexión falla acá, el sorteo NO queda guardado
+                // a medias, y el admin puede intentar de nuevo con seguridad.
+                await comTimeout(db.collection('grupos').doc(grupo.id).set(grupo), 20000);
+            } catch (error) {
+                console.error('Error al guardar el sorteo en Firestore:', error);
+                // Revierte todo en pantalla — el sorteo no se realizó de verdad.
+                grupo.estado = estadoAnterior;
+                grupo.sorteados = sorteadosAnterior;
+                grupo.fecha_revelacion = fechaRevelacionAnterior;
+
+                showAlert('admin-error', 'No se pudo guardar el sorteo en el servidor. El sorteo NO se realizó — verifica tu conexión e intenta de nuevo.');
+
+                if (confirmarBtn) {
+                    confirmarBtn.disabled = false;
+                    confirmarBtn.textContent = 'Confirmar Sorteo';
+                }
+                return;
+            }
 
             showAlert('admin-success', 'Sorteo realizado exitosamente');
             closeSorteioModal();
@@ -9732,7 +9831,7 @@
             }
         }, true);
 
-        function showAlert(id, message) {
+        function showAlert(id, message, type = 'error') {
             // Evita exceso de avisos por acciones normales (guardar, crear, exportar,
             // descartar, agregar, etc.). Dejamos visibles solo los avisos realmente
             // críticos: errores/validaciones, importación y login/registro.
@@ -9748,14 +9847,24 @@
                 clearTimeout(alertTimeouts[id]);
             }
 
-            el.textContent = message;
+            el.classList.remove('alert-error', 'alert-success', 'alert-info');
+            el.classList.add('alert-' + type);
+
+            el.innerHTML = type === 'info'
+                ? '<span class="alert-spinner" aria-hidden="true"></span><span>' + escaparHtml(message) + '</span>'
+                : escaparHtml(message);
             el.style.display = 'block';
             el.classList.add('active');
             el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-            alertTimeouts[id] = setTimeout(() => {
-                hideAlert(id);
-            }, 6000);
+            // Los avisos de "cargando" (info) se quedan hasta que el propio código
+            // los reemplace por un éxito/error — no tiene sentido que desaparezcan
+            // solos mientras la acción todavía está en curso.
+            if (type !== 'info') {
+                alertTimeouts[id] = setTimeout(() => {
+                    hideAlert(id);
+                }, 6000);
+            }
         }
 
         function formatDate(dateStr) {
