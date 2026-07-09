@@ -862,6 +862,16 @@
             margin-top: 18px;
         }
 
+        .grupo-card-deseos {
+            margin-top: -5px;
+        }
+
+        .grupo-card-deseos .deseos-box {
+            margin-top: 0;
+            background: transparent;
+            padding: 0;
+        }
+
         .deseos-box .deseos-titulo {
             font-weight: 600;
             color: var(--primary);
@@ -2043,6 +2053,24 @@
             background: rgba(255, 255, 255, 0.82);
             border: 1px solid #dcebe1;
             text-align: center;
+        }
+
+        .admin-stats-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: thin;
+        }
+
+        .admin-stats-row .resultado-mini-card {
+            flex: 0 0 auto;
+            background: #f4f9f6;
+        }
+
+        .admin-stats-row:empty {
+            display: none;
         }
 
         .resultado-mini-card span {
@@ -4824,7 +4852,7 @@
                 <div class="user-info">
                     <h2>Bienvenido, <span id="admin-nombre">Admin</span></h2>
                     <p id="admin-meta" class="text-muted">Administrador</p>
-                    <p id="admin-stats-summary" class="text-muted" style="margin-top:4px; font-weight:600;"></p>
+                    <div id="admin-stats-summary" class="admin-stats-row"></div>
                 </div>
                 <button class="header-gear-btn" type="button" aria-label="Opciones" title="Opciones" onclick="abrirAdminHeaderMenu()">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -7155,25 +7183,37 @@
         function actualizarResumenAdminParticipantes() {
             const el = document.getElementById('admin-stats-summary');
             if (!el) return;
-            const filterInput = document.getElementById('participante-centro-filter');
-            const centroId = filterInput ? filterInput.value : 'todos';
 
-            if (!centroId || centroId === 'todos') {
-                const total = appState.participantesRegistrados.length;
-                el.textContent = `Todas las unidades · ${total} participante${total === 1 ? '' : 's'}`;
-            } else {
-                const centro = appState.centrosActuales.find(c => c.id === centroId);
-                const total = appState.participantesRegistrados.filter(p => p.centroId === centroId).length;
-                el.textContent = `${centro ? centro.nombre : 'Unidad'} · ${total} participante${total === 1 ? '' : 's'}`;
+            if (appState.centrosActuales.length === 0) {
+                el.innerHTML = '';
+                return;
             }
+
+            const totalGeneral = appState.participantesRegistrados.length;
+            let html = `<div class="resultado-mini-card"><span>Total</span><strong>${totalGeneral}</strong></div>`;
+
+            appState.centrosActuales.forEach(centro => {
+                const total = appState.participantesRegistrados.filter(p => p.centroId === centro.id).length;
+                html += `<div class="resultado-mini-card"><span>${escaparHtml(centro.nombre)}</span><strong>${total}</strong></div>`;
+            });
+
+            el.innerHTML = html;
         }
 
         function actualizarResumenAdminGrupos() {
             const el = document.getElementById('admin-stats-summary');
             if (!el) return;
-            const totalGrupos = appState.gruposActuales.length;
-            const totalParticipantes = appState.gruposActuales.reduce((acc, g) => acc + (g.participantes || []).length, 0);
-            el.textContent = `${totalGrupos} grupo${totalGrupos === 1 ? '' : 's'} · ${totalParticipantes} participante${totalParticipantes === 1 ? '' : 's'} vinculado${totalParticipantes === 1 ? '' : 's'}`;
+
+            if (appState.gruposActuales.length === 0) {
+                el.innerHTML = '';
+                return;
+            }
+
+            el.innerHTML = appState.gruposActuales.map(grupo => {
+                const nombreUnidad = grupo.centroNombre || grupo.filial || grupo.nombre;
+                const total = (grupo.participantes || []).length;
+                return `<div class="resultado-mini-card"><span>${escaparHtml(nombreUnidad)}</span><strong>${total}</strong></div>`;
+            }).join('');
         }
 
         function updateParticipantesList() {
@@ -8482,8 +8522,12 @@
                                 `}
                             </div>
                         ` : ''}
-                        ${grupo.estado !== 'sorteado' ? renderDeseosBox(grupo) : ''}
                     </div>
+                    ${grupo.estado !== 'sorteado' ? `
+                        <div class="grupo-card grupo-status-${grupo.estado} grupo-card-deseos">
+                            ${renderDeseosBox(grupo)}
+                        </div>
+                    ` : ''}
                 `;
             }).join('');
 
