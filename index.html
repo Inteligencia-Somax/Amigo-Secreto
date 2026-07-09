@@ -1410,6 +1410,155 @@
             margin-bottom: 14px;
         }
 
+        /* ==================== SELECTOR DE PARTICIPANTES (Crear Grupo) ==================== */
+        .participantes-picker-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 0 14px;
+            margin-bottom: 12px;
+            background: var(--white);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .participantes-picker-search:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 5px rgba(26, 95, 63, 0.25);
+        }
+
+        .participantes-picker-search svg {
+            flex-shrink: 0;
+            color: #8a9690;
+        }
+
+        .participantes-picker-search input {
+            flex: 1;
+            border: none;
+            padding: 12px 0;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: transparent;
+        }
+
+        .participantes-picker-search input:focus {
+            outline: none;
+        }
+
+        .participantes-picker-select-all {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .participantes-picker-select-all input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .participantes-picker-contador {
+            margin-left: auto;
+            background: #eaf5ee;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .participantes-picker-lista {
+            max-height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+            padding-right: 2px;
+        }
+
+        .participantes-picker-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: var(--white);
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .participantes-picker-item:hover {
+            border-color: #b9d3c2;
+            background: #f7fbf8;
+        }
+
+        .participantes-picker-item.is-checked {
+            border-color: var(--primary);
+            background: #eaf5ee;
+        }
+
+        .participantes-picker-item input[type="checkbox"] {
+            width: 19px;
+            height: 19px;
+            flex-shrink: 0;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .participantes-picker-avatar {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: var(--white);
+            background: var(--primary);
+        }
+
+        .participantes-picker-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            min-width: 0;
+        }
+
+        .participantes-picker-info strong {
+            color: var(--text);
+            font-size: 0.92rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .participantes-picker-info span {
+            color: #888;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .participantes-picker-empty {
+            padding: 22px 4px;
+            color: #999;
+            font-size: 0.92rem;
+            text-align: center;
+        }
+
         .grupo-participante-centro-distinto {
             background: #fdecea !important;
         }
@@ -3387,6 +3536,16 @@
             z-index: 3000;
             max-width: min(92vw, 480px);
             box-shadow: 0 12px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* Fondo oscuro semitransparente detrás del aviso "cargando" (tipo info),
+           para dejar en claro que la pantalla está bloqueada mientras se procesa. */
+        body.alert-info-backdrop-active::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 30, 22, 0.55);
+            z-index: 2999;
         }
 
         @keyframes toastPopCenter {
@@ -5527,7 +5686,7 @@
             <div id="recuperacion-form" style="display: none;">
                 <h2>Recuperar Contraseña</h2>
 
-                <div style="background: #f0f4f8; padding: 20px; border-radius: 8px; border-left: 4px solid var(--secondary); margin-bottom: 20px;">
+                <div style="background: #f0f4f8; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
                     <p style="color: var(--primary); font-weight: 600; margin-bottom: 10px;">¿Olvidaste tu contraseña?</p>
                     <p style="color: #666; margin-bottom: 14px; font-size: 0.9rem;">
                         Ponte en contacto con el equipo de Inteligencia Estratégica para que puedan ayudarte a recuperar el acceso a tu cuenta.
@@ -6231,7 +6390,6 @@
             </div>
 
             <div class="form-group" id="grupo-nuevo-participantes-wrapper" style="display: none;">
-                <label>Participantes de esta unidad</label>
                 <button type="button" id="grupo-nuevo-participantes-btn" class="btn-crear-estilo-full" onclick="abrirSeleccionarParticipantesCrearGrupo()">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -6285,11 +6443,21 @@
                 <button class="close-btn" onclick="cancelarSeleccionParticipantesCrearGrupo()">&times;</button>
             </div>
 
-            <label class="grupo-vincular-select-all-label" style="display:flex; align-items:center; gap:8px; font-weight:600; margin-bottom:8px;">
+            <div class="participantes-picker-search">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="grupo-nuevo-participantes-buscar" placeholder="Buscar por nombre, usuario o cargo..." oninput="filtrarParticipantesCrearGrupo()">
+            </div>
+
+            <label class="participantes-picker-select-all">
                 <input type="checkbox" id="grupo-nuevo-modal-select-all" onchange="toggleSeleccionarTodosCrearGrupo(this)">
                 Marcar todos
+                <span id="grupo-nuevo-participantes-contador" class="participantes-picker-contador">0 seleccionados</span>
             </label>
-            <div id="grupo-nuevo-participantes-lista" class="grupo-vincular-lista"></div>
+
+            <div id="grupo-nuevo-participantes-lista" class="participantes-picker-lista"></div>
 
             <div class="crear-grupo-actions">
                 <button type="button" class="icon-action-btn icon-save" aria-label="Confirmar" title="Confirmar" onclick="confirmarSeleccionParticipantesCrearGrupo()">
@@ -7520,35 +7688,82 @@
                 : '+ Participante';
         }
 
+        function inicialesParticipante(nombre) {
+            if (!nombre) return '?';
+            const partes = nombre.trim().split(/\s+/).filter(Boolean);
+            const iniciales = partes.slice(0, 2).map(p => p[0].toUpperCase()).join('');
+            return iniciales || '?';
+        }
+
         function abrirSeleccionarParticipantesCrearGrupo() {
             const centroId = document.getElementById('grupo-nuevo-centro').value;
             const cont = document.getElementById('grupo-nuevo-participantes-lista');
             const selectAll = document.getElementById('grupo-nuevo-modal-select-all');
+            const buscar = document.getElementById('grupo-nuevo-participantes-buscar');
             if (!cont || !centroId) return;
 
             const candidatos = appState.participantesRegistrados.filter(p => p.centroId === centroId);
 
             if (candidatos.length === 0) {
-                cont.innerHTML = '<div class="grupo-vincular-empty">Todavía no hay participantes registrados en esta unidad de negocio. Puedes crear el grupo igual y vincularlos después.</div>';
+                cont.innerHTML = '<div class="participantes-picker-empty">Todavía no hay participantes registrados en esta unidad de negocio. Puedes crear el grupo igual y vincularlos después.</div>';
             } else {
-                cont.innerHTML = candidatos.map(p => `
-                    <div class="grupo-vincular-item">
-                        <label>
-                            <input type="checkbox" class="grupo-nuevo-vincular-checkbox" value="${p.id}" ${grupoNuevoParticipantesSeleccionados.includes(p.id) ? 'checked' : ''}>
-                            <span class="grupo-vincular-item-info">
-                                <strong>${p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim()}</strong>
-                                <span>${p.login || '-'}${p.cargo ? ' · ' + p.cargo : ''}</span>
+                cont.innerHTML = candidatos.map(p => {
+                    const nombre = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
+                    const subtitulo = `${p.login || '-'}${p.cargo ? ' · ' + p.cargo : ''}`;
+                    const checked = grupoNuevoParticipantesSeleccionados.includes(p.id);
+                    const busqueda = (nombre + ' ' + (p.login || '') + ' ' + (p.cargo || '')).toLowerCase();
+                    return `
+                        <label class="participantes-picker-item${checked ? ' is-checked' : ''}" data-search="${escaparHtml(busqueda)}">
+                            <input type="checkbox" class="grupo-nuevo-vincular-checkbox" value="${p.id}" ${checked ? 'checked' : ''} onchange="onCambioParticipanteCrearGrupo(this)">
+                            <span class="participantes-picker-avatar">${escaparHtml(inicialesParticipante(nombre))}</span>
+                            <span class="participantes-picker-info">
+                                <strong>${escaparHtml(nombre)}</strong>
+                                <span>${escaparHtml(subtitulo)}</span>
                             </span>
                         </label>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
 
+            if (buscar) buscar.value = '';
             if (selectAll) {
                 selectAll.checked = candidatos.length > 0 && candidatos.every(p => grupoNuevoParticipantesSeleccionados.includes(p.id));
             }
 
+            actualizarContadorParticipantesCrearGrupo();
             document.getElementById('grupo-nuevo-participantes-modal').classList.add('active');
+        }
+
+        // Se llama cada vez que se marca/desmarca un participante — actualiza
+        // el resalte de la fila y el contador de seleccionados en vivo.
+        function onCambioParticipanteCrearGrupo(checkbox) {
+            const item = checkbox.closest('.participantes-picker-item');
+            if (item) item.classList.toggle('is-checked', checkbox.checked);
+            actualizarContadorParticipantesCrearGrupo();
+
+            const selectAll = document.getElementById('grupo-nuevo-modal-select-all');
+            if (selectAll) {
+                const todas = document.querySelectorAll('.grupo-nuevo-vincular-checkbox');
+                selectAll.checked = todas.length > 0 && Array.from(todas).every(cb => cb.checked);
+            }
+        }
+
+        function actualizarContadorParticipantesCrearGrupo() {
+            const contador = document.getElementById('grupo-nuevo-participantes-contador');
+            if (!contador) return;
+            const n = document.querySelectorAll('.grupo-nuevo-vincular-checkbox:checked').length;
+            contador.textContent = n === 1 ? '1 seleccionado' : `${n} seleccionados`;
+        }
+
+        // Filtra la lista en vivo por nombre, usuario o cargo, sin tener que
+        // volver a pedir los datos — solo esconde las filas que no coinciden.
+        function filtrarParticipantesCrearGrupo() {
+            const buscar = document.getElementById('grupo-nuevo-participantes-buscar');
+            const q = (buscar && buscar.value || '').trim().toLowerCase();
+            document.querySelectorAll('#grupo-nuevo-participantes-lista .participantes-picker-item').forEach(item => {
+                const coincide = !q || (item.dataset.search || '').includes(q);
+                item.style.display = coincide ? '' : 'none';
+            });
         }
 
         function confirmarSeleccionParticipantesCrearGrupo() {
@@ -7563,9 +7778,17 @@
         }
 
         function toggleSeleccionarTodosCrearGrupo(checkbox) {
-            document.querySelectorAll('.grupo-nuevo-vincular-checkbox').forEach(cb => {
-                cb.checked = checkbox.checked;
+            // Solo afecta las filas visibles según el filtro de búsqueda activo —
+            // si hay una búsqueda escrita, "Marcar todos" marca solo esos resultados.
+            document.querySelectorAll('#grupo-nuevo-participantes-lista .participantes-picker-item').forEach(item => {
+                if (item.style.display === 'none') return;
+                const cb = item.querySelector('.grupo-nuevo-vincular-checkbox');
+                if (cb) {
+                    cb.checked = checkbox.checked;
+                    item.classList.toggle('is-checked', cb.checked);
+                }
             });
+            actualizarContadorParticipantesCrearGrupo();
         }
 
         function crearGrupo() {
@@ -11040,6 +11263,12 @@
 
             el.classList.remove('active');
             el.style.display = 'none';
+
+            // Si el aviso que se está ocultando era del tipo "cargando", también
+            // quitamos el fondo oscuro que lo acompañaba.
+            if (el.classList.contains('alert-info')) {
+                document.body.classList.remove('alert-info-backdrop-active');
+            }
         }
 
         function hideAllAlerts() {
@@ -11091,9 +11320,16 @@
                    </svg>
                    <span class="alert-info-text">${escaparHtml(message)}</span>`
                 : escaparHtml(message);
-            el.style.display = 'block';
+            // No forzamos display:block por JS — el estilo inline pisaría con más
+            // prioridad la regla ".alert.active.alert-info { display: flex }" de
+            // abajo (que es la que centra el ícono y el texto), dejando el spinner
+            // descentrado. Con la clase "active" alcanza para mostrar el aviso.
             el.classList.add('active');
             el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // En los avisos de "cargando" (info) oscurecemos el fondo para que
+            // quede claro que la pantalla está bloqueada mientras se procesa.
+            document.body.classList.toggle('alert-info-backdrop-active', type === 'info');
 
             // Los avisos de "cargando" (info) se quedan hasta que el propio código
             // los reemplace por un éxito/error — no tiene sentido que desaparezcan
