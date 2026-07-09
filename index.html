@@ -4824,6 +4824,7 @@
                 <div class="user-info">
                     <h2>Bienvenido, <span id="admin-nombre">Admin</span></h2>
                     <p id="admin-meta" class="text-muted">Administrador</p>
+                    <p id="admin-stats-summary" class="text-muted" style="margin-top:4px; font-weight:600;"></p>
                 </div>
                 <button class="header-gear-btn" type="button" aria-label="Opciones" title="Opciones" onclick="abrirAdminHeaderMenu()">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -7151,11 +7152,36 @@
             return participantesFiltrados;
         }
 
+        function actualizarResumenAdminParticipantes() {
+            const el = document.getElementById('admin-stats-summary');
+            if (!el) return;
+            const filterInput = document.getElementById('participante-centro-filter');
+            const centroId = filterInput ? filterInput.value : 'todos';
+
+            if (!centroId || centroId === 'todos') {
+                const total = appState.participantesRegistrados.length;
+                el.textContent = `Todas las unidades · ${total} participante${total === 1 ? '' : 's'}`;
+            } else {
+                const centro = appState.centrosActuales.find(c => c.id === centroId);
+                const total = appState.participantesRegistrados.filter(p => p.centroId === centroId).length;
+                el.textContent = `${centro ? centro.nombre : 'Unidad'} · ${total} participante${total === 1 ? '' : 's'}`;
+            }
+        }
+
+        function actualizarResumenAdminGrupos() {
+            const el = document.getElementById('admin-stats-summary');
+            if (!el) return;
+            const totalGrupos = appState.gruposActuales.length;
+            const totalParticipantes = appState.gruposActuales.reduce((acc, g) => acc + (g.participantes || []).length, 0);
+            el.textContent = `${totalGrupos} grupo${totalGrupos === 1 ? '' : 's'} · ${totalParticipantes} participante${totalParticipantes === 1 ? '' : 's'} vinculado${totalParticipantes === 1 ? '' : 's'}`;
+        }
+
         function updateParticipantesList() {
             const cont = document.getElementById('participantes-list-container');
             if (!cont) return;
 
             renderParticipanteCentroFilter();
+            actualizarResumenAdminParticipantes();
 
             if (appState.participantesRegistrados.length === 0) {
                 cont.innerHTML = '<p class="text-muted" style="padding: 10px 0;">Todavía no hay participantes registrados.</p>';
@@ -8670,8 +8696,8 @@
             cargarCentrosEnSelect();
             poblarSelectCentroGrupo();
             cargarCentrosEnSelectParticipante();
-            updateParticipantesList();
             updateGruposList();
+            updateParticipantesList();
             updateSelectMenus();
             updateLogsList();
         }
@@ -8724,6 +8750,7 @@
             if (!container) return;
 
             renderGrupoStatusFilter();
+            actualizarResumenAdminGrupos();
 
             if (appState.gruposActuales.length === 0) {
                 container.innerHTML = '<p class="text-muted" style="padding: 10px 0;">Todavía no hay grupos creados.</p>';
