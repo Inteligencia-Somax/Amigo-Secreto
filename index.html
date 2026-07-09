@@ -220,8 +220,19 @@
         /* Selector de fecha/hora (flatpickr) con la paleta de la marca */
         .flatpickr-calendar {
             font-family: inherit;
-            box-shadow: 0 8px 24px rgba(13, 59, 38, 0.18);
-            border-radius: 10px;
+            box-shadow: 0 12px 32px rgba(13, 59, 38, 0.22);
+            border-radius: 12px;
+            border: 1px solid #e2ece5;
+        }
+
+        /* Con static:true, flatpickr envuelve el input en un <div> propio para
+           anclar el calendario justo debajo — por defecto ese div es
+           "inline-block" y encogía el campo a su contenido. Lo forzamos a
+           ocupar todo el ancho para que el campo de fecha se vea igual que
+           los demás inputs del formulario. */
+        .flatpickr-wrapper {
+            display: block !important;
+            width: 100%;
         }
 
         .flatpickr-day.selected,
@@ -3251,6 +3262,8 @@
         .participante-checkbox-col {
             padding-left: 6px !important;
             padding-right: 6px !important;
+            text-align: center;
+            position: relative;
         }
 
         .participantes-import-preview-table-readonly {
@@ -3509,7 +3522,6 @@
             justify-content: center;
             width: 20px;
             height: 20px;
-            margin-right: 6px;
             padding: 0;
             border: 1px solid #d6e6dd;
             border-radius: 6px;
@@ -3526,22 +3538,28 @@
         }
 
         .participante-grupo-popover {
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            margin-left: 8px;
+            transform: translateY(-50%);
             display: inline-block;
-            margin-left: 6px;
             font-size: 0.76rem;
             font-weight: 600;
             color: var(--primary);
             background: #eaf5ee;
             border: 1px solid #d6e6dd;
             border-radius: 5px;
-            padding: 2px 8px;
-            vertical-align: middle;
+            padding: 4px 10px;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+            z-index: 20;
             animation: participanteGrupoPopoverCiclo 5s ease forwards;
         }
 
         @keyframes participanteGrupoPopoverCiclo {
-            0% { opacity: 0; transform: translateY(-2px); }
-            8% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(-50%) translateX(-4px); }
+            8% { opacity: 1; transform: translateY(-50%) translateX(0); }
             85% { opacity: 1; }
             100% { opacity: 0; }
         }
@@ -5950,8 +5968,8 @@
             </div>
 
             <div class="admin-tabs">
-                <button class="tab-btn active" onclick="switchTab('participantes')">Participantes</button>
-                <button class="tab-btn" onclick="switchTab('ver-grupos')">Grupo</button>
+                <button class="tab-btn active" data-tab="participantes" onclick="switchTab('participantes')">Participantes</button>
+                <button class="tab-btn" data-tab="ver-grupos" onclick="switchTab('ver-grupos')">Grupo</button>
             </div>
 
             <!-- ===== Tab: Grupo ===== -->
@@ -6057,10 +6075,19 @@
                 <button class="close-btn" onclick="closeSorteioModal()">&times;</button>
             </div>
             <p style="margin-bottom: 20px;">¿Estás seguro de que deseas realizar el sorteo? Esta acción no se puede deshacer.</p>
-            <p style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; color: #856404;">Después del sorteo, cada participante verá quién recibió su regalo.</p>
-            <div style="display: flex; gap: 10px;">
-                <button id="confirmar-sorteio-btn" class="btn btn-primary" style="flex: 1;" onclick="confirmarSorteio()">Confirmar Sorteo</button>
-                <button class="btn btn-outline" style="flex: 1;" onclick="closeSorteioModal()">Cancelar</button>
+            <p id="sorteio-modal-revelacion-info" style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; color: #856404;">Cada participante va a poder ver a quién le regala recién en la fecha y hora de Revelación configurada para este grupo.</p>
+            <div class="crear-grupo-actions">
+                <button id="confirmar-sorteio-btn" class="icon-action-btn icon-save" type="button" aria-label="Confirmar sorteo" title="Confirmar sorteo" onclick="confirmarSorteio()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </button>
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cancelar" title="Cancelar" onclick="closeSorteioModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -7690,7 +7717,21 @@
                     const centro = appState.usuarioActual.centroNombre || 'Sin centro asignado';
                     metaEl.textContent = cargo + ' · Unidad de Negocio: ' + centro;
                 }
-                loadAdminData();
+                await loadAdminData();
+
+                // Si la persona ya había estado en la pestaña "Grupo" antes de
+                // recargar la página (o de que la sesión se restaure sola),
+                // la volvemos a abrir ahí en vez de reiniciar siempre en
+                // "Participantes".
+                let ultimaTab = 'participantes';
+                try {
+                    ultimaTab = localStorage.getItem('somaxAmigoSecretoAdminTab') || 'participantes';
+                } catch (e) {
+                    // Sin acceso a localStorage, se queda con "participantes" por defecto.
+                }
+                if (ultimaTab === 'ver-grupos') {
+                    switchTab('ver-grupos');
+                }
             } else {
                 switchPanel('usuario');
                 document.getElementById('usuario-nombre').textContent = appState.usuarioActual.nombreCompleto.toUpperCase();
@@ -7736,8 +7777,25 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            const targetContent = document.getElementById(tabName);
+            if (targetContent) targetContent.classList.add('active');
+
+            // Antes esto dependía del "event" global del click (event.target),
+            // lo cual rompía si se llamaba a switchTab() desde código (por
+            // ejemplo, al restaurar la última pestaña luego de recargar la
+            // página). Ahora busca el botón por su data-tab, así funciona
+            // igual venga de un clic real o de una llamada programática.
+            const targetBtn = document.querySelector('.tab-btn[data-tab="' + tabName + '"]');
+            if (targetBtn) targetBtn.classList.add('active');
+
+            // Recuerda la última pestaña elegida para que, si la página se
+            // recarga (por ejemplo, la sesión ya estaba iniciada), se vuelva
+            // a abrir en la misma pestaña en vez de siempre en "Participantes".
+            try {
+                localStorage.setItem('somaxAmigoSecretoAdminTab', tabName);
+            } catch (e) {
+                // Si el navegador bloquea localStorage (modo privado, etc.), no pasa nada grave.
+            }
 
             // Limpia los avisos de la pestaña anterior al cambiar de pestaña
             const errorEl = document.getElementById('admin-error');
@@ -8468,8 +8526,18 @@
             return participantesFiltrados;
         }
 
+        // La fila puede estar oculta por el filtro rápido de columna (el buscador
+        // que aparece bajo cada encabezado) — ese filtro solo esconde filas con
+        // display:none, no las saca de la tabla. "Seleccionar todos" tiene que
+        // respetar eso y no tocar lo que el filtro dejó afuera de la vista.
+        function filaParticipanteVisible(checkbox) {
+            const row = checkbox.closest('tr');
+            return !!row && row.style.display !== 'none';
+        }
+
         function toggleTodosParticipantesCheckboxes(checkbox) {
             document.querySelectorAll('.participante-row-checkbox:not(:disabled)').forEach(cb => {
+                if (!filaParticipanteVisible(cb)) return;
                 cb.checked = checkbox.checked;
             });
             actualizarBotonEliminarSeleccionadosParticipantes();
@@ -8487,21 +8555,28 @@
             if (bar) bar.classList.toggle('active', total > 0);
 
             // La opción "Vincular a grupo abierto" solo aparece si, entre los
-            // seleccionados, hay al menos uno que todavía no está vinculado a
-            // ningún grupo (a uno ya vinculado no tiene sentido ofrecerle otro).
+            // seleccionados, hay al menos uno sin grupo Y además existe un
+            // grupo abierto de su misma unidad de negocio — si no hay ningún
+            // grupo al que en verdad pueda vincularse, no tiene sentido
+            // mostrar la opción.
             const vincularWrap = document.getElementById('participantes-vincular-grupo-wrap');
             if (vincularWrap) {
-                const hayElegibles = seleccionadosCheckboxes.some(cb => {
-                    const p = appState.participantesRegistrados.find(x => x.id === cb.value);
-                    return p && (p.grupos || []).length === 0;
-                });
-                vincularWrap.style.display = hayElegibles ? 'flex' : 'none';
-                if (hayElegibles) poblarSelectVincularGrupoLote();
+                const sinGrupoSeleccionados = seleccionadosCheckboxes
+                    .map(cb => appState.participantesRegistrados.find(x => x.id === cb.value))
+                    .filter(p => p && (p.grupos || []).length === 0);
+                const centrosSeleccionados = new Set(sinGrupoSeleccionados.map(p => p.centroId));
+                const hayGrupoDisponible = (appState.gruposActuales || []).some(g => g.estado === 'abierto' && centrosSeleccionados.has(g.centroId));
+                vincularWrap.style.display = hayGrupoDisponible ? 'flex' : 'none';
+                if (hayGrupoDisponible) poblarSelectVincularGrupoLote();
             }
 
-            // El checkbox "seleccionar todos" refleja si TODOS los habilitados están marcados.
+            // El checkbox "seleccionar todos" refleja si TODAS las filas
+            // habilitadas Y VISIBLES (según el filtro de columna activo) están
+            // marcadas — así no aparece marcado si hay filas fuera del filtro
+            // sin marcar, y "seleccionar todos" nunca marca de más.
             const selectAll = document.getElementById('participantes-select-all-checkbox');
-            const habilitados = document.querySelectorAll('.participante-row-checkbox:not(:disabled)');
+            const habilitados = Array.from(document.querySelectorAll('.participante-row-checkbox:not(:disabled)'))
+                .filter(filaParticipanteVisible);
             if (selectAll) {
                 selectAll.checked = habilitados.length > 0 && Array.from(habilitados).every(cb => cb.checked);
             }
@@ -8511,11 +8586,22 @@
         // están "abiertos" (a un grupo ya sorteado no se puede vincular gente
         // nueva). Mantiene la unidad de negocio en el texto para que quede
         // claro a cuál corresponde cada uno.
+        // Solo lista grupos abiertos de las unidades de negocio a las que
+        // pertenecen los participantes seleccionados (sin grupo) — no tiene
+        // sentido ofrecer un grupo al que ninguno de los marcados podría
+        // vincularse igual.
         function poblarSelectVincularGrupoLote() {
             const select = document.getElementById('participantes-vincular-grupo-select');
             if (!select) return;
             const valorPrevio = select.value;
-            const gruposAbiertos = (appState.gruposActuales || []).filter(g => g.estado === 'abierto');
+
+            const seleccionadosSinGrupo = Array.from(document.querySelectorAll('.participante-row-checkbox:checked'))
+                .map(cb => appState.participantesRegistrados.find(p => p.id === cb.value))
+                .filter(p => p && (p.grupos || []).length === 0);
+
+            const centrosSeleccionados = new Set(seleccionadosSinGrupo.map(p => p.centroId));
+            const gruposAbiertos = (appState.gruposActuales || [])
+                .filter(g => g.estado === 'abierto' && centrosSeleccionados.has(g.centroId));
 
             select.innerHTML = '<option value="">Vincular a grupo abierto...</option>' +
                 gruposAbiertos.map(g => `<option value="${g.id}">${escaparHtml(g.nombre)} (${escaparHtml(g.centroNombre || g.filial || '')})</option>`).join('');
@@ -8530,7 +8616,7 @@
         // Vincula a un grupo abierto todos los participantes seleccionados que
         // todavía no tengan grupo Y sean de la misma unidad de negocio que el
         // grupo elegido (un grupo solo puede tener gente de su propia unidad).
-        // Los que no cumplen se omiten y se avisa cuántos fueron.
+        // A los que no cumplen se les avisa por nombre, no solo la cantidad.
         async function vincularParticipantesSeleccionadosAGrupo() {
             const select = document.getElementById('participantes-vincular-grupo-select');
             const grupoId = select ? select.value : '';
@@ -8545,7 +8631,7 @@
                 .filter(p => p && (p.grupos || []).length === 0);
 
             const validos = sinGrupo.filter(p => p.centroId === grupo.centroId);
-            const omitidos = sinGrupo.length - validos.length;
+            const omitidos = sinGrupo.filter(p => p.centroId !== grupo.centroId);
 
             if (validos.length === 0) {
                 showAlert('admin-error', `Ningún participante seleccionado es de la unidad de negocio "${grupo.centroNombre || grupo.filial}", así que no se pudo vincular a "${grupo.nombre}".`);
@@ -8564,8 +8650,11 @@
                 await syncGrupoFirestore(grupo);
 
                 hideAlert('admin-error');
-                const notaOmitidos = omitidos > 0 ? ` (${omitidos} se omitieron por ser de otra unidad de negocio)` : '';
-                showAlert('admin-success', `${validos.length} participante(s) vinculado(s) al grupo "${grupo.nombre}"${notaOmitidos}`);
+                const nombresOmitidos = omitidos.map(p => p.nombreCompleto || p.nombre).join(', ');
+                const notaOmitidos = omitidos.length > 0
+                    ? ` No se vinculó a ${nombresOmitidos} porque no ${omitidos.length === 1 ? 'es' : 'son'} de la unidad "${grupo.centroNombre || grupo.filial}".`
+                    : '';
+                showAlert('admin-success', `${validos.length} participante(s) vinculado(s) al grupo "${grupo.nombre}".${notaOmitidos}`);
 
                 document.querySelectorAll('.participante-row-checkbox').forEach(cb => { cb.checked = false; });
                 updateParticipantesList();
@@ -8639,10 +8728,12 @@
                 return `
                 <tr>
                     <td class="participante-checkbox-col">
-                        <input type="checkbox" class="participante-row-checkbox" value="${p.id}" onchange="actualizarBotonEliminarSeleccionadosParticipantes()" ${bloqueado ? `disabled title="${motivoBloqueo}"` : ''}>
+                        ${grupoVinculado
+                            ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" title="Ver nombre del grupo" aria-label="Ver nombre del grupo">🔗</button>`
+                            : `<input type="checkbox" class="participante-row-checkbox" value="${p.id}" onchange="actualizarBotonEliminarSeleccionadosParticipantes()" ${bloqueado ? `disabled title="${motivoBloqueo}"` : ''}>`
+                        }
                     </td>
                     <td title="${nombreMostrar}">
-                        ${grupoVinculado ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" title="Ver nombre del grupo" aria-label="Ver nombre del grupo">🔗</button>` : ''}
                         <strong>${nombreMostrar}</strong>
                     </td>
                     <td title="${p.login || ''}">${p.login || '-'}</td>
@@ -9322,6 +9413,12 @@
             }
 
             grupoParaSortear = { grupoId: grupo.id, fecha: grupo.fecha_revelacion };
+
+            const infoEl = document.getElementById('sorteio-modal-revelacion-info');
+            if (infoEl) {
+                infoEl.textContent = `Cada participante va a poder ver a quién le regala recién el ${formatDateTime(grupo.fecha_revelacion)} (fecha y hora de Revelación configurada para este grupo). La Fecha del Evento es aparte y no afecta cuándo se revela.`;
+            }
+
             cerrarGrupoAccionesModal();
             document.getElementById('sorteio-modal').classList.add('active');
         }
@@ -10263,6 +10360,15 @@
                     <div class="grupo-card-header">
                         <div class="grupo-title">${g.nombre}</div>
                         <div class="grupo-header-actions">
+                            <button type="button" class="grupo-participantes-resumen-btn" onclick="abrirParticipantesDesdeCard(event, '${g.id}')" aria-label="Ver participantes del grupo ${g.nombre}" title="Ver participantes">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </button>
+
                             ${tieneResultado ? `
                                 <button type="button" class="grupo-accion-btn grupo-accion-card-header grupo-accion-resultados-header" onclick="abrirResultadosDesdeCard(event, '${g.id}')" aria-label="Ver resultado del sorteo del grupo ${g.nombre}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -10316,14 +10422,6 @@
                             <span class="info-label">Participantes</span>
                             <div class="info-value grupo-participantes-resumen-wrap">
                                 <span>${g.participantes.length} personas</span>
-                                <button type="button" class="grupo-participantes-resumen-btn" onclick="abrirParticipantesDesdeCard(event, '${g.id}')" aria-label="Ver participantes del grupo ${g.nombre}" title="Ver participantes">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                        <circle cx="9" cy="7" r="4"/>
-                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                                    </svg>
-                                </button>
                             </div>
                         </div>
 
@@ -11819,7 +11917,8 @@
                     altInputClass: 'date-friendly-input',
                     minuteIncrement: 5,
                     disableMobile: true, // fuerza el mismo selector táctil también en el celular
-                    allowInput: false
+                    allowInput: false,
+                    static: true // ancla el calendario justo debajo del campo (en vez de flotar suelto por la pantalla), clave para que se vea bien dentro de un modal
                 });
             });
         }
@@ -12017,16 +12116,23 @@
         }
 
         // Ícono de grupo (🔗) en la tabla de participantes: solo muestra el
-        // nombre del grupo al que está vinculado, en un aviso chiquito que
-        // desaparece solo a los 5 segundos. Delegado en document para que
-        // siga funcionando aunque la tabla se vuelva a dibujar.
+        // nombre del grupo al que está vinculado. Es un toggle — un clic lo
+        // abre, y un clic de nuevo sobre el mismo ícono lo cierra al toque
+        // (además de cerrarse solo a los 5 segundos, o si se hace clic afuera).
+        // Delegado en document para que siga funcionando aunque la tabla se
+        // vuelva a dibujar.
         document.addEventListener('click', (event) => {
             const grupoBtn = event.target.closest('.participante-grupo-icon-btn');
             if (grupoBtn) {
                 event.preventDefault();
                 event.stopPropagation();
 
+                const existente = grupoBtn.nextElementSibling;
+                const yaAbierto = existente && existente.classList.contains('participante-grupo-popover');
+
                 document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
+
+                if (yaAbierto) return;
 
                 const nombreGrupo = grupoBtn.getAttribute('data-grupo-nombre') || '';
                 const span = document.createElement('span');
