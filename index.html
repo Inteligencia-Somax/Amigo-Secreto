@@ -7374,7 +7374,77 @@
             }
         }
 
-        function agregarParticipanteAdmin() {
+        // Crea participantes (uno o muchos) de verdad: llama la Cloud Function
+        // que crea el login en Firebase Authentication + el perfil en
+        // Firestore, y después vincula a cada uno recién creado al grupo
+        // abierto de su unidad de negocio (si ya existe uno).
+        // datosLista: [{ nombre, apellido, login, telefono, cargo, centroId, password }, ...]
+        async function crearParticipantesEnLote(datosLista) {
+            const listaParaEnviar = datosLista.map(d => {
+                const centro = appState.centrosActuales.find(c => c.id === d.centroId);
+                return {
+                    nombre: d.nombre,
+                    apellido: d.apellido,
+                    login: normalizarLoginParticipante(d.login),
+                    telefono: d.telefono,
+                    cargo: d.cargo,
+                    centroId: d.centroId,
+                    centroNombre: centro ? centro.nombre : '',
+                    password: d.password
+                };
+            });
+
+            const criarFn = functionsFirebase.httpsCallable('criarParticipantes');
+            const respuesta = await comTimeout(criarFn({ participantes: listaParaEnviar }), 180000);
+            const resultados = (respuesta.data && respuesta.data.resultados) || [];
+
+            const gruposParaSincronizar = new Set();
+
+            resultados.forEach(r => {
+                if (!r.ok) return;
+                const original = listaParaEnviar.find(d => d.login === r.login);
+                if (!original) return;
+
+                const centro = appState.centrosActuales.find(c => c.id === r.centroId);
+                const nuevoParticipante = {
+                    id: r.uid,
+                    nombre: capitalize(original.nombre),
+                    apellido: capitalize(original.apellido),
+                    nombreCompleto: `${capitalize(original.nombre)} ${capitalize(original.apellido)}`,
+                    login: r.login,
+                    telefono: original.telefono,
+                    cargo: capitalize(original.cargo),
+                    centroId: r.centroId,
+                    centroNombre: centro ? centro.nombre : original.centroNombre,
+                    grupos: [],
+                    deseos: {},
+                    debesCambiarPassword: false,
+                    fecha_registro: new Date().toISOString()
+                };
+
+                // Vincula automáticamente al grupo abierto de su unidad de negocio, si ya existe uno.
+                const grupoDelCentro = obtenerGrupoAbiertoParaCentro(centro);
+                if (grupoDelCentro && !grupoDelCentro.participantes.includes(nuevoParticipante.id)) {
+                    grupoDelCentro.participantes.push(nuevoParticipante.id);
+                    nuevoParticipante.grupos.push(grupoDelCentro.id);
+                    gruposParaSincronizar.add(grupoDelCentro.id);
+                }
+
+                appState.participantesRegistrados.push(nuevoParticipante);
+            });
+
+            // Sincroniza en Firestore los grupos que ganaron participantes nuevos.
+            gruposParaSincronizar.forEach(grupoId => {
+                const grupo = appState.gruposActuales.find(g => g.id === grupoId);
+                if (grupo) syncGrupoFirestore(grupo);
+            });
+
+            const creados = resultados.filter(r => r.ok);
+            const errores = resultados.filter(r => !r.ok);
+            return { creados, errores };
+        }
+
+        async function agregarParticipanteAdmin() {
             const nombreInput = document.getElementById('participante-nuevo-nombre');
             const apellidoInput = document.getElementById('participante-nuevo-apellido');
             if (nombreInput.value) nombreInput.value = capitalize(nombreInput.value);
@@ -7419,16 +7489,27 @@
                 return;
             }
 
-            const resultado = crearParticipanteDesdeDatos({ nombre, apellido, login, telefono, cargo, centroId, password }, 'u-admin');
-            if (!resultado.ok) {
-                showAlert('admin-error', resultado.error === 'Usuario duplicado' ? 'Este usuario ya existe' : 'Todos los campos del participante son requeridos');
-                return;
-            }
+            showAlert('admin-error', 'Creando participante...', 'info');
 
-            cerrarCrearParticipanteModal();
-            showAlert('admin-success', 'Participante creado exitosamente');
-            updateParticipantesList();
-            updateGruposList();
+            try {
+                const { creados, errores } = await crearParticipantesEnLote([
+                    { nombre, apellido, login, telefono, cargo, centroId, password }
+                ]);
+
+                if (creados.length === 0) {
+                    const mensajeError = errores[0] ? errores[0].error : 'No se pudo crear el participante';
+                    showAlert('admin-error', mensajeError === 'Usuario ya existe' ? 'Este usuario ya existe' : mensajeError);
+                    return;
+                }
+
+                cerrarCrearParticipanteModal();
+                hideAlert('admin-error');
+                showAlert('admin-success', 'Participante creado exitosamente');
+                updateParticipantesList();
+                updateGruposList();
+            } catch (error) {
+                showAlert('admin-error', (error && error.message) ? error.message : 'No se pudo crear el participante. Intenta de nuevo.');
+            }
         }
 
         // ===== PARTICIPANTES FUNCTIONS =====
@@ -9294,6 +9375,9 @@
         // hacer con el SDK del cliente sin desloguear al admin). Hasta que esa
         // function exista, los participantes creados por acá NO persisten ni
         // pueden loguearse de verdad — solo aparecen en esta sesión.
+        // ⚠️ DEPRECADA: ya no se usa (reemplazada por crearParticipantesEnLote,
+        // que crea el login de verdad vía Cloud Function). Se deja acá sin
+        // borrar por si hace falta como referencia.
         function crearParticipanteDesdeDatos(datos, origen = 'manual') {
             const centro = appState.centrosActuales.find(c => c.id === datos.centroId);
             if (!centro) return { ok: false, error: 'Unidad de negocio inválida' };
@@ -9654,7 +9738,7 @@
             renderImportarParticipantesPreview();
         }
 
-        function confirmarImportarParticipantes() {
+        async function confirmarImportarParticipantes() {
             if (participantesImportStaging.length === 0) {
                 showAlert('admin-error', 'No hay participantes para importar');
                 return;
@@ -9677,41 +9761,40 @@
                 return;
             }
 
-            let importados = 0;
-            const errores = [];
+            showAlert('admin-error', `Creando ${participantesValidos.length} participante(s)... esto puede tardar un poco.`, 'info');
 
-            participantesValidos.forEach(p => {
-                const resultado = crearParticipanteDesdeDatos({
-                    nombre: p.nombre, apellido: p.apellido, login: p.login,
-                    telefono: p.telefono, cargo: p.cargo, centroId: p.centroId, password: p.password
-                }, 'u-import');
-                if (resultado.ok) {
-                    importados++;
-                } else {
-                    errores.push(`Línea ${p.linea}: ${resultado.error}`);
-                }
-            });
+            try {
+                const { creados, errores } = await crearParticipantesEnLote(
+                    participantesValidos.map(p => ({
+                        nombre: p.nombre, apellido: p.apellido, login: p.login,
+                        telefono: p.telefono, cargo: p.cargo, centroId: p.centroId, password: p.password
+                    }))
+                );
 
-            updateParticipantesList();
-            updateGruposList();
-            updateSelectMenus();
+                updateParticipantesList();
+                updateGruposList();
+                updateSelectMenus();
 
-            if (importados > 0) {
                 const totalIgnorados = errores.length + unidadesInvalidas.length;
-                if (totalIgnorados > 0) {
-                    showAlert('admin-error', `${importados} participante(s) importado(s). ${totalIgnorados} registro(s) ignorado(s) por errores o unidad de negocio inválida.`);
+                hideAlert('admin-error');
+                if (creados.length > 0) {
+                    if (totalIgnorados > 0) {
+                        showAlert('admin-error', `${creados.length} participante(s) importado(s). ${totalIgnorados} registro(s) ignorado(s) por errores o unidad de negocio inválida.`);
+                    } else {
+                        showAlert('admin-success', `${creados.length} participante(s) importado(s) desde Excel`);
+                    }
                 } else {
-                    showAlert('admin-success', `${importados} participante(s) importado(s) desde Excel`);
+                    showAlert('admin-error', 'No se importó ningún participante. Revisa los datos.');
                 }
-            } else {
-                showAlert('admin-error', 'No se importó ningún participante. Revisa los datos.');
-            }
 
-            if (errores.length || unidadesInvalidas.length) {
-                console.warn('Registros ignorados en la importación:', { errores, unidadesInvalidas });
-            }
+                if (errores.length || unidadesInvalidas.length) {
+                    console.warn('Registros ignorados en la importación:', { errores, unidadesInvalidas });
+                }
 
-            cerrarImportarParticipantesPreview();
+                cerrarImportarParticipantesPreview();
+            } catch (error) {
+                showAlert('admin-error', (error && error.message) ? error.message : 'No se pudo completar la importación. Intenta de nuevo.');
+            }
         }
 
         function exportarGrupoExcel() {
