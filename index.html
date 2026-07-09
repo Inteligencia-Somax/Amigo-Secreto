@@ -2446,14 +2446,6 @@
         }
 
         @media (max-width: 760px) {
-            #grupo-detalle-participantes.table-container {
-                overflow-x: auto;
-            }
-
-            .grupo-participantes-table {
-                min-width: 820px;
-            }
-
             .participantes-footer-actions,
             .participantes-footer-actions .participantes-actions-right {
                 align-items: stretch;
@@ -2655,8 +2647,7 @@
             }
         }
 
-        #participantes .table-container,
-        #grupo-detalle-participantes.table-container {
+        #participantes .table-container {
             overflow-x: auto;
         }
 
@@ -2920,9 +2911,9 @@
         .grupo-participantes-readonly-table td:nth-child(6) { width: 8%; }
 
 
-        /* Tabla de participantes del grupo: no quebrar textos; usar scroll horizontal cuando falte espacio */
+        /* Tabla de participantes del grupo: preferimos que el texto se acomode
+           (ver ajuste más abajo) en vez de forzar scroll horizontal siempre. */
         #grupo-detalle-participantes.table-container {
-            overflow-x: auto;
             overflow-y: auto;
         }
 
@@ -2953,6 +2944,44 @@
         #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(5) { min-width: 170px; }
         #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(6),
         #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(6) { min-width: 70px; width: 70px; }
+
+        /* Ajuste: preferimos que el texto se acomode (Nombre/Usuario más
+           angostos) en vez de forzar scroll horizontal siempre que sea posible. */
+        #grupo-detalle-participantes .grupo-participantes-readonly-table {
+            table-layout: fixed;
+            width: 100%;
+            min-width: 0;
+        }
+
+        #grupo-detalle-participantes .grupo-participantes-readonly-table th,
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td {
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: normal;
+        }
+
+        #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(1),
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(1) { width: 22%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(2),
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(2) { width: 12%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(3),
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(3) { width: 22%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(4),
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(4) { width: 20%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(5),
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(5) { width: 18%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(6),
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(6) { width: 6%; min-width: 42px; white-space: nowrap; }
+
+        /* En pantallas muy angostas, ahí sí permitimos scroll como último recurso */
+        @media (max-width: 480px) {
+            #grupo-detalle-participantes.table-container {
+                overflow-x: auto;
+            }
+            #grupo-detalle-participantes .grupo-participantes-readonly-table {
+                min-width: 560px;
+            }
+        }
 
         .participante-edit-input,
         .participante-edit-select {
@@ -3230,28 +3259,42 @@
 
         .alert-info {
             background: #ffffff;
-            color: var(--primary, #1a5f3f);
+            color: var(--dark, #0d3b26);
             border: 1px solid #dfe8e2;
         }
 
         .alert.active.alert-info {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            padding: 18px 22px;
-            font-weight: 600;
-            letter-spacing: 0.01em;
+            gap: 14px;
+            padding: 26px 28px;
         }
 
-        .alert-info .alert-spinner {
-            width: 20px;
-            height: 20px;
-            flex: 0 0 20px;
-            border: 3px solid rgba(26, 95, 63, 0.15);
-            border-top-color: var(--primary, #1a5f3f);
-            border-radius: 50%;
-            animation: alertSpin 0.65s linear infinite;
+        .alert-spinner-svg {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            display: block;
+            animation: alertSpin 0.9s linear infinite;
+        }
+
+        .alert-spinner-track {
+            stroke: #e3ede7;
+        }
+
+        .alert-spinner-arc {
+            stroke: var(--primary, #1a5f3f);
+            stroke-dasharray: 90;
+            stroke-dashoffset: 60;
+        }
+
+        .alert-info-text {
+            font-weight: 600;
+            font-size: 0.98rem;
+            letter-spacing: 0.01em;
+            line-height: 1.4;
         }
 
         @keyframes alertSpin {
@@ -10333,7 +10376,11 @@
             el.classList.add('alert-' + type);
 
             el.innerHTML = type === 'info'
-                ? '<span class="alert-spinner" aria-hidden="true"></span><span>' + escaparHtml(message) + '</span>'
+                ? `<svg class="alert-spinner-svg" viewBox="0 0 44 44" aria-hidden="true">
+                       <circle class="alert-spinner-track" cx="22" cy="22" r="18" fill="none" stroke-width="4"></circle>
+                       <circle class="alert-spinner-arc" cx="22" cy="22" r="18" fill="none" stroke-width="4" stroke-linecap="round"></circle>
+                   </svg>
+                   <span class="alert-info-text">${escaparHtml(message)}</span>`
                 : escaparHtml(message);
             el.style.display = 'block';
             el.classList.add('active');
