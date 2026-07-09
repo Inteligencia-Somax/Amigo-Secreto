@@ -318,7 +318,7 @@
             box-shadow: none !important;
         }
 
-        /* Campos bloqueados (não editáveis): mesmo visual em todo o site */
+        /* Campos bloqueados (no editables): mismo estilo visual en todo el sitio */
         input:disabled,
         select:disabled,
         textarea:disabled {
@@ -329,7 +329,7 @@
             opacity: 1;
         }
 
-        /* Inputs numéricos sem setas/spinner: o usuário digita o valor manualmente */
+        /* Inputs numéricos sin flechas/spinner: la persona escribe el valor manualmente */
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -1342,6 +1342,94 @@
             border-color: #d32f2f;
         }
 
+        /* ==================== MENÚ "OPCIONES" (engranaje del header) ==================== */
+        .header-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .header-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            color: var(--text);
+            font-weight: 700;
+            font-size: 0.96rem;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+
+        .header-menu-item:hover {
+            background: #f4faf7;
+        }
+
+        .header-menu-item-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 11px;
+            background: #eaf5ee;
+            color: var(--primary);
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .header-menu-item-icon svg {
+            width: 19px;
+            height: 19px;
+            stroke: currentColor;
+        }
+
+        .header-menu-item-label {
+            flex: 1 1 auto;
+        }
+
+        .header-menu-item-arrow {
+            width: 16px;
+            height: 16px;
+            color: #c3d0c9;
+            flex-shrink: 0;
+            transition: transform 0.15s ease;
+        }
+
+        .header-menu-item:hover .header-menu-item-arrow {
+            transform: translateX(2px);
+            color: var(--primary);
+        }
+
+        .header-menu-divider {
+            height: 1px;
+            background: #edf1ee;
+            margin: 8px 6px;
+        }
+
+        .header-menu-item.is-danger .header-menu-item-icon {
+            background: #fdecea;
+            color: var(--error);
+        }
+
+        .header-menu-item.is-danger .header-menu-item-label {
+            color: var(--error);
+        }
+
+        .header-menu-item.is-danger:hover {
+            background: #fdecea;
+        }
+
+        .header-menu-item.is-danger:hover .header-menu-item-icon {
+            background: var(--error);
+            color: var(--white);
+        }
+
         .grupo-vincular-card {
             margin-top: 12px;
         }
@@ -1924,7 +2012,7 @@
         }
 
 
-        /* Bordas padrão para todas as tabelas do sistema */
+        /* Bordes estándar para todas las tablas del sistema */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -1943,7 +2031,7 @@
 
 
 
-        /* Altura padrão para todas as linhas de todas as tabelas */
+        /* Altura estándar para todas las filas de todas las tablas */
         table thead th,
         table tbody td {
             height: 40px;
@@ -3406,17 +3494,15 @@
         }
 
         .grupo-participantes-readonly-table th:nth-child(1),
-        .grupo-participantes-readonly-table td:nth-child(1) { width: 24%; }
+        .grupo-participantes-readonly-table td:nth-child(1) { width: 28%; }
         .grupo-participantes-readonly-table th:nth-child(2),
-        .grupo-participantes-readonly-table td:nth-child(2) { width: 15%; }
+        .grupo-participantes-readonly-table td:nth-child(2) { width: 16%; }
         .grupo-participantes-readonly-table th:nth-child(3),
-        .grupo-participantes-readonly-table td:nth-child(3) { width: 19%; }
+        .grupo-participantes-readonly-table td:nth-child(3) { width: 24%; }
         .grupo-participantes-readonly-table th:nth-child(4),
-        .grupo-participantes-readonly-table td:nth-child(4) { width: 17%; }
+        .grupo-participantes-readonly-table td:nth-child(4) { width: 22%; }
         .grupo-participantes-readonly-table th:nth-child(5),
-        .grupo-participantes-readonly-table td:nth-child(5) { width: 17%; }
-        .grupo-participantes-readonly-table th:nth-child(6),
-        .grupo-participantes-readonly-table td:nth-child(6) { width: 8%; }
+        .grupo-participantes-readonly-table td:nth-child(5) { width: 10%; }
 
 
         /* Tabla de participantes del grupo: preferimos que el texto se acomode
@@ -3449,9 +3535,7 @@
         #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(4),
         #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(4) { min-width: 150px; }
         #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(5),
-        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(5) { min-width: 170px; }
-        #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(6),
-        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(6) { min-width: 70px; width: 70px; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(5) { min-width: 70px; width: 70px; }
 
         /* Ajuste: preferimos que el texto se acomode (Nombre/Usuario más
            angostos) en vez de forzar scroll horizontal siempre que sea posible. */
@@ -3469,17 +3553,15 @@
         }
 
         #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(1),
-        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(1) { width: 22%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(1) { width: 28%; min-width: 0; }
         #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(2),
-        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(2) { width: 12%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(2) { width: 16%; min-width: 0; }
         #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(3),
-        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(3) { width: 22%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(3) { width: 26%; min-width: 0; }
         #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(4),
-        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(4) { width: 20%; min-width: 0; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(4) { width: 24%; min-width: 0; }
         #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(5),
-        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(5) { width: 18%; min-width: 0; }
-        #grupo-detalle-participantes .grupo-participantes-readonly-table th:nth-child(6),
-        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(6) { width: 6%; min-width: 42px; white-space: nowrap; }
+        #grupo-detalle-participantes .grupo-participantes-readonly-table td:nth-child(5) { width: 6%; min-width: 42px; white-space: nowrap; }
 
         /* En pantallas muy angostas, ahí sí permitimos scroll como último recurso */
         @media (max-width: 480px) {
@@ -3538,11 +3620,7 @@
         }
 
         .participante-grupo-popover {
-            position: absolute;
-            top: 50%;
-            left: 100%;
-            margin-left: 8px;
-            transform: translateY(-50%);
+            position: fixed;
             display: inline-block;
             font-size: 0.76rem;
             font-weight: 600;
@@ -3552,14 +3630,14 @@
             border-radius: 5px;
             padding: 4px 10px;
             white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.14);
-            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+            z-index: 3500;
             animation: participanteGrupoPopoverCiclo 5s ease forwards;
         }
 
         @keyframes participanteGrupoPopoverCiclo {
-            0% { opacity: 0; transform: translateY(-50%) translateX(-4px); }
-            8% { opacity: 1; transform: translateY(-50%) translateX(0); }
+            0% { opacity: 0; }
+            8% { opacity: 1; }
             85% { opacity: 1; }
             100% { opacity: 0; }
         }
@@ -4320,8 +4398,8 @@
         }
 
 
-        /* ==================== POLIMENTO FINAL DE IDENTIDADE VISUAL ====================
-           Aplica o padrão visual do modal de resultados nas demais telas sem mudar regras. */
+        /* ==================== PULIDO FINAL DE IDENTIDAD VISUAL ====================
+           Aplica el estilo visual del modal de resultados en las demás pantallas sin cambiar reglas. */
         body {
             -webkit-font-smoothing: antialiased;
             text-rendering: geometricPrecision;
@@ -6129,47 +6207,64 @@
                 <button class="close-btn" onclick="cerrarAdminHeaderMenu()">&times;</button>
             </div>
 
-            <div class="grupo-acciones-lista">
-                <button type="button" class="grupo-accion-btn" onclick="cerrarAdminHeaderMenu(); abrirPerfilModal();">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="8" r="4"/>
-                        <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
-                    </svg>
-                    Mi Perfil
+            <div class="header-menu-list">
+                <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirPerfilModal();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Mi Perfil</span>
+                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
                 </button>
-                <button type="button" class="grupo-accion-btn" onclick="cerrarAdminHeaderMenu(); abrirUnidadNegocioModal();">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M3 9l9-7 9 7"/>
-                        <path d="M9 22V12h6v10"/>
-                        <path d="M3 9v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9"/>
-                    </svg>
-                    Unidad de Negocio
+                <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirUnidadNegocioModal();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 9l9-7 9 7"/>
+                            <path d="M9 22V12h6v10"/>
+                            <path d="M3 9v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Unidad de Negocio</span>
+                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
                 </button>
-                <button type="button" class="grupo-accion-btn" onclick="cerrarAdminHeaderMenu(); abrirLogsModal();">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                        <line x1="16" y1="13" x2="8" y2="13"/>
-                        <line x1="16" y1="17" x2="8" y2="17"/>
-                        <polyline points="10 9 9 9 8 9"/>
-                    </svg>
-                    Logs
+                <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirLogsModal();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10 9 9 9 8 9"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Logs</span>
+                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
                 </button>
-                <button type="button" class="grupo-accion-btn" onclick="cerrarAdminHeaderMenu(); abrirExportarTemplateModal();">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    Exportar Template
+                <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirExportarTemplateModal();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Exportar Template</span>
+                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
                 </button>
-                <button type="button" class="grupo-accion-btn grupo-accion-logout" onclick="cerrarAdminHeaderMenu(); handleLogout();">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    Cerrar Sesión
+
+                <div class="header-menu-divider"></div>
+
+                <button type="button" class="header-menu-item is-danger" onclick="cerrarAdminHeaderMenu(); handleLogout();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Cerrar Sesión</span>
                 </button>
             </div>
         </div>
@@ -6183,21 +6278,29 @@
                 <button class="close-btn" onclick="cerrarUsuarioHeaderMenu()">&times;</button>
             </div>
 
-            <div class="grupo-acciones-lista">
-                <button type="button" class="grupo-accion-btn" onclick="cerrarUsuarioHeaderMenu(); abrirPerfilModal();">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="8" r="4"/>
-                        <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
-                    </svg>
-                    Mi Perfil
+            <div class="header-menu-list">
+                <button type="button" class="header-menu-item" onclick="cerrarUsuarioHeaderMenu(); abrirPerfilModal();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Mi Perfil</span>
+                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
                 </button>
-                <button type="button" class="grupo-accion-btn grupo-accion-logout" onclick="cerrarUsuarioHeaderMenu(); handleLogout();">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    Cerrar Sesión
+
+                <div class="header-menu-divider"></div>
+
+                <button type="button" class="header-menu-item is-danger" onclick="cerrarUsuarioHeaderMenu(); handleLogout();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Cerrar Sesión</span>
                 </button>
             </div>
         </div>
@@ -6960,19 +7063,27 @@
 
     <!-- =============== MODAL VINCULAR PARTICIPANTES =============== -->
     <div id="vincular-participantes-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
-                <h3>Vincular Participantes de la Unidad de Negocio</h3>
+                <h3>Seleccionar Participantes</h3>
+                <button class="close-btn" onclick="cerrarVincularParticipantesModal()">&times;</button>
             </div>
 
-            <div class="grupo-vincular-list-header">
-                <label class="grupo-vincular-checkbox-label">
-                    <input type="checkbox" id="grupo-vincular-select-all" onchange="toggleSeleccionarTodosVincular(this)">
-                    Marcar todos
-                </label>
+            <div class="participantes-picker-search">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="grupo-vincular-buscar" placeholder="Buscar por nombre, usuario o cargo..." oninput="filtrarParticipantesVincular()">
             </div>
 
-            <div id="grupo-vincular-lista" class="grupo-vincular-lista"></div>
+            <label class="participantes-picker-select-all">
+                <input type="checkbox" id="grupo-vincular-select-all" onchange="toggleSeleccionarTodosVincular(this)">
+                Marcar todos
+                <span id="grupo-vincular-contador" class="participantes-picker-contador">0 seleccionados</span>
+            </label>
+
+            <div id="grupo-vincular-lista" class="participantes-picker-lista"></div>
 
             <div class="crear-grupo-actions">
                 <button class="icon-action-btn icon-save" type="button" aria-label="Vincular Seleccionados" title="Vincular Seleccionados" onclick="vincularParticipantesSeleccionados()">
@@ -7085,21 +7196,22 @@
         ).catch(() => {});
         const db = firebase.firestore();
         const functionsFirebase = firebase.app().functions('us-central1');
-        // UID travado da conta de admin (Edson). "Ser admin" nunca é decidido
-        // por um campo do banco — só por esse UID, confirmado pelo próprio
-        // Firebase Authentication.
+        // UID fijo de la cuenta admin (Edson). "Ser admin" nunca se decide
+        // por un campo de la base de datos — solo por este UID, confirmado
+        // por el propio Firebase Authentication.
         const ADMIN_UID = "W8qdexUlMxfvkjpDAjtQk7iZ4dV2";
 
-        // O Firebase Authentication (modo email/senha) exige um "email" por
-        // formato, mas aqui ninguém usa email de verdade: a pessoa só digita
-        // o usuário, e a gente completa com um domínio interno que não existe
-        // na internet (nenhum email é enviado, nenhuma caixa de entrada é usada).
+        // Firebase Authentication (modo email/contraseña) exige un "email"
+        // por formato, pero acá nadie usa un email de verdad: la persona
+        // solo escribe su usuario, y nosotros completamos con un dominio
+        // interno que no existe en internet (no se envía ningún email, no
+        // se usa ninguna casilla de correo).
         function loginParaEmailFake(login) {
             return login.toLowerCase().trim() + '@amigosecreto.local';
         }
 
-        // Traduz os códigos de erro do Firebase Auth para mensagens em español,
-        // no mesmo padrão de mensagens que o app já usava.
+        // Traduce los códigos de error de Firebase Auth a mensajes en
+        // español, con el mismo estilo de mensajes que ya usaba el app.
         function mensagemErroFirebaseAuth(error) {
             const codigo = error && error.code;
             switch (codigo) {
@@ -7124,9 +7236,9 @@
             }
         }
 
-        // Evita que a tela fique travada pra sempre em "Ingresando..." se a
-        // conexão engasgar por algum motivo — depois desse tempo, mostra um
-        // aviso claro em vez de nada.
+        // Evita que la pantalla quede trabada para siempre en "Ingresando..."
+        // si la conexión se traba por algún motivo — después de este tiempo,
+        // muestra un aviso claro en vez de nada.
         function comTimeout(promessa, ms = 15000) {
             return Promise.race([
                 promessa,
@@ -7664,7 +7776,7 @@
         // "Verificando sesión" evita que se vea la pantalla de login por un
         // instante antes de saltar al panel correcto.
         let primeraVerificacionDeSesion = true;
-        // Trava de segurança: si por algún motivo (conexión lenta, etc.) el
+        // Seguro de respaldo: si por algún motivo (conexión lenta, etc.) el
         // chequeo de sesión nunca resuelve, el overlay se quita solo después
         // de unos segundos en vez de quedar trabado para siempre.
         setTimeout(() => {
@@ -8554,20 +8666,19 @@
             if (labelEl) labelEl.textContent = total;
             if (bar) bar.classList.toggle('active', total > 0);
 
-            // La opción "Vincular a grupo abierto" solo aparece si, entre los
-            // seleccionados, hay al menos uno sin grupo Y además existe un
-            // grupo abierto de su misma unidad de negocio — si no hay ningún
-            // grupo al que en verdad pueda vincularse, no tiene sentido
-            // mostrar la opción.
+            // La opción "Vincular a grupo abierto" aparece siempre que, entre
+            // los seleccionados, haya al menos uno sin grupo. Si para su
+            // unidad no hay ningún grupo abierto todavía, el propio <select>
+            // lo explica (ver poblarSelectVincularGrupoLote) en vez de
+            // esconder la opción entera y que parezca que no existe.
             const vincularWrap = document.getElementById('participantes-vincular-grupo-wrap');
             if (vincularWrap) {
-                const sinGrupoSeleccionados = seleccionadosCheckboxes
-                    .map(cb => appState.participantesRegistrados.find(x => x.id === cb.value))
-                    .filter(p => p && (p.grupos || []).length === 0);
-                const centrosSeleccionados = new Set(sinGrupoSeleccionados.map(p => p.centroId));
-                const hayGrupoDisponible = (appState.gruposActuales || []).some(g => g.estado === 'abierto' && centrosSeleccionados.has(g.centroId));
-                vincularWrap.style.display = hayGrupoDisponible ? 'flex' : 'none';
-                if (hayGrupoDisponible) poblarSelectVincularGrupoLote();
+                const hayElegibles = seleccionadosCheckboxes.some(cb => {
+                    const p = appState.participantesRegistrados.find(x => x.id === cb.value);
+                    return p && (p.grupos || []).length === 0;
+                });
+                vincularWrap.style.display = hayElegibles ? 'flex' : 'none';
+                if (hayElegibles) poblarSelectVincularGrupoLote();
             }
 
             // El checkbox "seleccionar todos" refleja si TODAS las filas
@@ -8602,6 +8713,17 @@
             const centrosSeleccionados = new Set(seleccionadosSinGrupo.map(p => p.centroId));
             const gruposAbiertos = (appState.gruposActuales || [])
                 .filter(g => g.estado === 'abierto' && centrosSeleccionados.has(g.centroId));
+
+            if (gruposAbiertos.length === 0) {
+                // Ninguno de los seleccionados tiene todavía un grupo abierto en
+                // su propia unidad de negocio (o no existe, o ya fue sorteado) —
+                // se lo decimos en el propio select en vez de esconder la opción.
+                select.innerHTML = '<option value="" disabled selected>Sin grupo abierto para esta unidad</option>';
+                select.value = '';
+                const btnVincular = document.getElementById('participantes-vincular-grupo-btn');
+                if (btnVincular) btnVincular.disabled = true;
+                return;
+            }
 
             select.innerHTML = '<option value="">Vincular a grupo abierto...</option>' +
                 gruposAbiertos.map(g => `<option value="${g.id}">${escaparHtml(g.nombre)} (${escaparHtml(g.centroNombre || g.filial || '')})</option>`).join('');
@@ -8729,7 +8851,7 @@
                 <tr>
                     <td class="participante-checkbox-col">
                         ${grupoVinculado
-                            ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" title="Ver nombre del grupo" aria-label="Ver nombre del grupo">🔗</button>`
+                            ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" aria-label="Ver nombre del grupo">🔗</button>`
                             : `<input type="checkbox" class="participante-row-checkbox" value="${p.id}" onchange="actualizarBotonEliminarSeleccionadosParticipantes()" ${bloqueado ? `disabled title="${motivoBloqueo}"` : ''}>`
                         }
                     </td>
@@ -9685,9 +9807,6 @@
             const filas = miembros.map(p => {
                 const centroDiferente = p.centroId !== grupo.centroId;
                 const nombreCompleto = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
-                const centroHtml = centroDiferente
-                    ? '<span class="grupo-participante-centro-alerta" title="Este participante pertenece a otra unidad de negocio">⚠ ' + escaparHtml(p.centroNombre || '-') + '</span>'
-                    : escaparHtml(p.centroNombre || '-');
                 const adminChip = p.esAdmin ? '<span class="grupo-participantes-admin-chip">Admin</span>' : '';
                 const actionCell = puedeQuitar ? `
                     <td class="grupo-participante-action">
@@ -9711,7 +9830,6 @@
                     <td>${escaparHtml(p.login || '-')}</td>
                     <td><span class="grupo-participantes-cargo" title="${escaparHtml(p.cargo || '-')}">${escaparHtml(p.cargo || '-')}</span></td>
                     <td>${escaparHtml(p.telefono || '-')}</td>
-                    <td>${centroHtml}</td>
                     ${actionCell}
                 </tr>
             `;
@@ -9728,7 +9846,6 @@
                             <th>Usuario</th>
                             <th>Cargo</th>
                             <th>Teléfono</th>
-                            <th>Unidad de Negocio</th>
                             ${actionHeader}
                         </tr>
                     </thead>
@@ -9801,6 +9918,7 @@
         function renderVincularParticipantesLista() {
             const cont = document.getElementById('grupo-vincular-lista');
             const selectAll = document.getElementById('grupo-vincular-select-all');
+            const buscar = document.getElementById('grupo-vincular-buscar');
             if (!cont || !grupoDetalleActualId) return;
 
             const grupo = appState.gruposActuales.find(g => g.id === grupoDetalleActualId);
@@ -9810,30 +9928,76 @@
             const centro = appState.centrosActuales.find(c => c.id === centroId);
             const candidatos = obtenerCandidatosVincularGrupo(centroId, grupo);
 
+            if (buscar) buscar.value = '';
             if (selectAll) selectAll.checked = false;
 
             if (candidatos.length === 0) {
-                cont.innerHTML = '<div class="grupo-vincular-empty">No hay participantes de la unidad de negocio "' + (centro ? centro.nombre : '-') + '" disponibles para vincular. Todos ya están en este grupo.</div>';
-                return;
+                cont.innerHTML = '<div class="participantes-picker-empty">No hay participantes de la unidad de negocio "' + (centro ? centro.nombre : '-') + '" disponibles para vincular. Todos ya están en este grupo.</div>';
+            } else {
+                cont.innerHTML = candidatos.map(p => {
+                    const nombre = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
+                    const subtitulo = `${p.login || '-'}${p.cargo ? ' · ' + p.cargo : ''}`;
+                    const busqueda = (nombre + ' ' + (p.login || '') + ' ' + (p.cargo || '')).toLowerCase();
+                    return `
+                        <label class="participantes-picker-item" data-search="${escaparHtml(busqueda)}">
+                            <input type="checkbox" class="grupo-vincular-checkbox" value="${p.id}" onchange="onCambioParticipanteVincular(this)">
+                            <span class="participantes-picker-avatar">${escaparHtml(inicialesParticipante(nombre))}</span>
+                            <span class="participantes-picker-info">
+                                <strong>${escaparHtml(nombre)}</strong>
+                                <span>${escaparHtml(subtitulo)}</span>
+                            </span>
+                        </label>
+                    `;
+                }).join('');
             }
 
-            cont.innerHTML = candidatos.map(p => `
-                <div class="grupo-vincular-item">
-                    <label>
-                        <input type="checkbox" class="grupo-vincular-checkbox" value="${p.id}">
-                        <span class="grupo-vincular-item-info">
-                            <strong>${p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim()}</strong>
-                            <span>${p.login || '-'}${p.cargo ? ' · ' + p.cargo : ''}</span>
-                        </span>
-                    </label>
-                </div>
-            `).join('');
+            actualizarContadorParticipantesVincular();
+        }
+
+        // Se llama cada vez que se marca/desmarca un participante — actualiza
+        // el resalte de la fila y el contador de seleccionados en vivo.
+        function onCambioParticipanteVincular(checkbox) {
+            const item = checkbox.closest('.participantes-picker-item');
+            if (item) item.classList.toggle('is-checked', checkbox.checked);
+            actualizarContadorParticipantesVincular();
+
+            const selectAll = document.getElementById('grupo-vincular-select-all');
+            if (selectAll) {
+                const todas = document.querySelectorAll('.grupo-vincular-checkbox');
+                selectAll.checked = todas.length > 0 && Array.from(todas).every(cb => cb.checked);
+            }
+        }
+
+        function actualizarContadorParticipantesVincular() {
+            const contador = document.getElementById('grupo-vincular-contador');
+            if (!contador) return;
+            const n = document.querySelectorAll('.grupo-vincular-checkbox:checked').length;
+            contador.textContent = n === 1 ? '1 seleccionado' : `${n} seleccionados`;
+        }
+
+        // Filtra la lista en vivo por nombre, usuario o cargo, sin volver a pedir
+        // los datos — solo esconde las filas que no coinciden.
+        function filtrarParticipantesVincular() {
+            const buscar = document.getElementById('grupo-vincular-buscar');
+            const q = (buscar && buscar.value || '').trim().toLowerCase();
+            document.querySelectorAll('#grupo-vincular-lista .participantes-picker-item').forEach(item => {
+                const coincide = !q || (item.dataset.search || '').includes(q);
+                item.style.display = coincide ? '' : 'none';
+            });
         }
 
         function toggleSeleccionarTodosVincular(checkbox) {
-            document.querySelectorAll('.grupo-vincular-checkbox').forEach(cb => {
-                cb.checked = checkbox.checked;
+            // Solo afecta las filas visibles según el filtro de búsqueda activo —
+            // si hay una búsqueda escrita, "Marcar todos" marca solo esos resultados.
+            document.querySelectorAll('#grupo-vincular-lista .participantes-picker-item').forEach(item => {
+                if (item.style.display === 'none') return;
+                const cb = item.querySelector('.grupo-vincular-checkbox');
+                if (cb) {
+                    cb.checked = checkbox.checked;
+                    item.classList.toggle('is-checked', cb.checked);
+                }
             });
+            actualizarContadorParticipantesVincular();
         }
 
         function vincularParticipantesSeleccionados() {
@@ -12116,29 +12280,44 @@
         }
 
         // Ícono de grupo (🔗) en la tabla de participantes: solo muestra el
-        // nombre del grupo al que está vinculado. Es un toggle — un clic lo
-        // abre, y un clic de nuevo sobre el mismo ícono lo cierra al toque
-        // (además de cerrarse solo a los 5 segundos, o si se hace clic afuera).
-        // Delegado en document para que siga funcionando aunque la tabla se
-        // vuelva a dibujar.
+        // nombre del grupo al que está vinculado. Se agrega directo a <body>
+        // y se posiciona con coordenadas de pantalla (getBoundingClientRect),
+        // no como hijo de la celda de la tabla — así nunca se pierde detrás
+        // de la fila, ni queda recortado por el scroll/overflow de la tabla.
+        // Es un toggle — un clic lo abre, y un clic de nuevo sobre el mismo
+        // ícono lo cierra al toque (además de cerrarse solo a los 5
+        // segundos, o si se hace clic afuera).
         document.addEventListener('click', (event) => {
             const grupoBtn = event.target.closest('.participante-grupo-icon-btn');
             if (grupoBtn) {
                 event.preventDefault();
                 event.stopPropagation();
 
-                const existente = grupoBtn.nextElementSibling;
-                const yaAbierto = existente && existente.classList.contains('participante-grupo-popover');
-
-                document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
-
-                if (yaAbierto) return;
+                const abierto = document.querySelector('.participante-grupo-popover');
+                const mismoBoton = abierto && abierto._anclaBtn === grupoBtn;
+                if (abierto) abierto.remove();
+                if (mismoBoton) return;
 
                 const nombreGrupo = grupoBtn.getAttribute('data-grupo-nombre') || '';
                 const span = document.createElement('span');
                 span.className = 'participante-grupo-popover';
                 span.textContent = nombreGrupo;
-                grupoBtn.insertAdjacentElement('afterend', span);
+                span._anclaBtn = grupoBtn;
+                document.body.appendChild(span);
+
+                // Ubica la etiqueta pegada al ícono, centrada verticalmente con
+                // él. Si no entra a la derecha (columna muy cerca del borde de
+                // la pantalla), la muestra a la izquierda en su lugar.
+                const rectBtn = grupoBtn.getBoundingClientRect();
+                const rectPop = span.getBoundingClientRect();
+                let left = rectBtn.right + 8;
+                if (left + rectPop.width > window.innerWidth - 8) {
+                    left = rectBtn.left - rectPop.width - 8;
+                }
+                let top = rectBtn.top + (rectBtn.height / 2) - (rectPop.height / 2);
+                top = Math.min(Math.max(top, 8), window.innerHeight - rectPop.height - 8);
+                span.style.left = Math.max(8, left) + 'px';
+                span.style.top = top + 'px';
 
                 setTimeout(() => span.remove(), 5000);
                 return;
@@ -12146,6 +12325,12 @@
             if (event.target.closest('.participante-grupo-popover')) return;
             document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
         });
+
+        // Si se hace scroll en la tabla (o en la página) con la etiqueta
+        // abierta, la cerramos — quedaría desalineada del ícono si no.
+        document.addEventListener('scroll', () => {
+            document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
+        }, true);
 
         // ===== BLOQUEO DE SCROLL DE FONDO CUANDO HAY UN MODAL ABIERTO =====
         // Se aplica automáticamente a TODOS los modales (.modal) del sistema:
