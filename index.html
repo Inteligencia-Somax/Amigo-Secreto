@@ -129,6 +129,7 @@
         input[type="tel"],
         input[type="number"],
         input[type="date"],
+        input[type="datetime-local"],
         select {
             width: 100%;
             padding: 12px;
@@ -144,10 +145,40 @@
         input[type="tel"]:focus,
         input[type="number"]:focus,
         input[type="date"]:focus,
+        input[type="datetime-local"]:focus,
         select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 5px rgba(26, 95, 63, 0.3);
+        }
+
+        /* ==================== CAMPOS DE FECHA Y HORA ==================== */
+        /* El estilo por defecto del navegador es feo (ícono negro genérico,
+           mal alineado) — lo prolijamos acá para que se vea consistente en
+           toda la app. */
+        input[type="datetime-local"] {
+            min-width: 0;
+            color-scheme: light;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        input[type="datetime-local"]::-webkit-datetime-edit {
+            padding: 2px 0;
+        }
+
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 6px;
+            border-radius: 6px;
+            /* Tiñe el ícono nativo (negro) hacia el verde de la marca */
+            filter: invert(26%) sepia(23%) saturate(1900%) hue-rotate(112deg) brightness(93%) contrast(93%);
+            transition: background-color 0.2s;
+        }
+
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+            background-color: #eaf5ee;
         }
 
         /* Texto de ejemplo (placeholder) más claro, para que no parezca
@@ -1881,6 +1912,22 @@
         .btn-excel:hover {
             background: var(--primary-light);
             border-color: var(--primary-light);
+        }
+
+        .btn-eliminar-lote {
+            background: var(--error, #c0392b);
+            color: var(--white);
+            border: 1px solid var(--error, #c0392b);
+            border-radius: 8px;
+            height: 40px;
+            padding: 0 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-eliminar-lote:hover {
+            background: #a5311f;
+            border-color: #a5311f;
         }
 
         .grupo-detail-tabs {
@@ -3864,6 +3911,7 @@
         input[type="tel"],
         input[type="number"],
         input[type="date"],
+        input[type="datetime-local"],
         select {
             min-height: 44px;
             border-radius: 10px;
@@ -5104,28 +5152,19 @@
             <!-- RECUPERACIÓN DE CONTRASEÑA (Modal) -->
             <div id="recuperacion-form" style="display: none;">
                 <h2>Recuperar Contraseña</h2>
-                
+
                 <div style="background: #f0f4f8; padding: 20px; border-radius: 8px; border-left: 4px solid var(--secondary); margin-bottom: 20px;">
                     <p style="color: var(--primary); font-weight: 600; margin-bottom: 10px;">¿Olvidaste tu contraseña?</p>
-                    <p style="color: #666; margin-bottom: 10px; font-size: 0.9rem;">
-                        El administrador puede generar un código temporal para que puedas acceder y crear una nueva contraseña.
+                    <p style="color: #666; margin-bottom: 14px; font-size: 0.9rem;">
+                        Ponte en contacto con el equipo de Inteligencia Estratégica para que puedan ayudarte a recuperar el acceso a tu cuenta.
                     </p>
-                    <p style="color: #666; font-size: 0.9rem;">
-                        Contacta al equipo de Estrategias Inteligentes.
-                    </p>
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">Angélica Dávalos</p>
+                    <p style="margin-bottom: 12px;"><a href="https://wa.me/595987318985" target="_blank" rel="noopener" style="color: #666; font-size: 0.9rem; text-decoration: none;">+595 987 318985</a></p>
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">Edson Queiroz</p>
+                    <p><a href="https://wa.me/595984192122" target="_blank" rel="noopener" style="color: #666; font-size: 0.9rem; text-decoration: none;">+595 984 192122</a></p>
                 </div>
 
-                <div class="form-group">
-                    <label for="recuperacion-login">Usuario o email</label>
-                    <input type="text" id="recuperacion-login" placeholder="Usuario o email" autocapitalize="none" autocomplete="username" spellcheck="false" oninput="formatRecuperacionLogin()">
-                    <p class="text-muted" style="font-size: 0.85rem; margin-top: 8px;">
-                        (Comparte tu usuario o email con el admin para que encuentre tu cuenta)
-                    </p>
-                </div>
-
-                <button class="btn btn-primary" onclick="copiarLoginRecuperacion()">Copiar Usuario o Email</button>
-
-                <div style="margin-top: 15px; text-align: center;">
+                <div style="text-align: center;">
                     <button class="btn btn-outline btn-small" onclick="switchAuthForm('login')">Volver al Login</button>
                 </div>
             </div>
@@ -5217,7 +5256,7 @@
 
                     <button type="button" class="btn btn-outline abrir-crear-grupo-btn btn-plain-action participante-inline-action-btn" onclick="abrirImportarParticipantes()">Importar</button>
                     <button type="button" class="btn-excel participante-export-btn" onclick="exportarParticipantesFiltradosExcel()">Excel</button>
-                    <button type="button" id="participantes-eliminar-seleccionados-btn" class="btn btn-outline participante-inline-action-btn" style="display:none; color:#c0392b; border-color:#f0b8b8;" onclick="eliminarParticipantesSeleccionados()">Eliminar (<span id="participantes-seleccionados-count">0</span>)</button>
+                    <button type="button" id="participantes-eliminar-seleccionados-btn" class="btn-eliminar-lote" style="display:none;" onclick="eliminarParticipantesSeleccionados()">Eliminar (<span id="participantes-seleccionados-count">0</span>)</button>
                 </div>
 
                 <div id="participantes-list-container" class="table-container">
@@ -6350,30 +6389,6 @@
             input.type = input.type === 'password' ? 'text' : 'password';
         }
 
-        function copiarLoginRecuperacion() {
-            formatRecuperacionLogin();
-            const login = document.getElementById('recuperacion-login').value.trim();
-            
-            if (!login) {
-                showAlert('login-error', 'Ingresa tu usuario o email');
-                return;
-            }
-
-            // Copiar al clipboard
-            navigator.clipboard.writeText(login).then(() => {
-                showAlert('login-error', 'Usuario copiado al portapapeles');
-            }).catch(() => {
-                // Fallback si no funciona clipboard
-                const temp = document.createElement('input');
-                document.body.appendChild(temp);
-                temp.value = login;
-                temp.select();
-                document.execCommand('copy');
-                document.body.removeChild(temp);
-                showAlert('login-error', 'Usuario copiado al portapapeles');
-            });
-        }
-
         // ===== REGISTRO FUNCTIONS =====
         function formatNombre() {
             const nombre = document.getElementById('registro-nombre');
@@ -6542,13 +6557,6 @@
                 hint.className = 'login-hint login-hint-error';
             }
         }
-
-        function formatRecuperacionLogin() {
-            const input = document.getElementById('recuperacion-login');
-            if (!input) return;
-            input.value = input.value.trim().toLowerCase();
-        }
-
 
         function formatLoginUsuario() {
             const loginInput = document.getElementById('login-usuario');
@@ -7371,8 +7379,8 @@
                                     </svg>
                                 </button>
                                 ${bloqueadoParaEliminar ? `
-                                <button class="icon-action-btn icon-delete" type="button" disabled aria-label="${motivoBloqueoEliminacion}" title="${motivoBloqueoEliminacion}" style="opacity:0.4; cursor:not-allowed;" onclick="return false;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <button class="icon-action-btn icon-delete" type="button" disabled aria-label="${motivoBloqueoEliminacion}" title="${motivoBloqueoEliminacion}" style="cursor:not-allowed;" onclick="return false;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:0.4;">
                                         <polyline points="3 6 5 6 21 6"/>
                                         <path d="M19 6l-1 14H6L5 6"/>
                                         <path d="M10 11v6"/>
@@ -7645,20 +7653,6 @@
             updateParticipantesList();
         }
 
-        function mostrarGrupoVinculadoParticipante(event, btn, nombreGrupo) {
-            event.stopPropagation();
-            const existente = btn.nextElementSibling;
-            if (existente && existente.classList.contains('participante-grupo-popover')) {
-                existente.remove();
-                return;
-            }
-            document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
-            const span = document.createElement('span');
-            span.className = 'participante-grupo-popover';
-            span.textContent = nombreGrupo;
-            btn.insertAdjacentElement('afterend', span);
-        }
-
         function updateParticipantesList() {
             const cont = document.getElementById('participantes-list-container');
             if (!cont) return;
@@ -7694,7 +7688,7 @@
                     </td>
                     <td title="${nombreMostrar}">
                         <strong>${nombreMostrar}</strong>
-                        ${grupoVinculado ? `<button type="button" class="participante-grupo-icon-btn" onclick="mostrarGrupoVinculadoParticipante(event, this, '${escaparHtml(grupoVinculado.nombre)}')" title="Ver unidad vinculada" aria-label="Ver grupo vinculado">🔗</button>` : ''}
+                        ${grupoVinculado ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" title="Ver unidad vinculada" aria-label="Ver grupo vinculado">🔗</button>` : ''}
                     </td>
                     <td title="${p.login || ''}">${p.login || '-'}</td>
                     <td title="${p.telefono || ''}">${p.telefono || '-'}</td>
@@ -7710,8 +7704,8 @@
                                 </svg>
                             </button>
                             ${bloqueado ? `
-                            <button class="icon-action-btn icon-delete" type="button" disabled aria-label="${motivoBloqueo}" title="${motivoBloqueo}" style="opacity:0.4; cursor:not-allowed;" onclick="return false;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <button class="icon-action-btn icon-delete" type="button" disabled aria-label="${motivoBloqueo}" title="${motivoBloqueo}" style="cursor:not-allowed;" onclick="return false;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:0.4;">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6l-1 14H6L5 6"/>
                                     <path d="M10 11v6"/>
@@ -8146,8 +8140,8 @@
 
             document.getElementById('grupo-detalle-nombre-input').value = grupo.nombre || '';
             document.getElementById('grupo-detalle-presupuesto').value = grupo.presupuesto ?? '';
-            document.getElementById('grupo-detalle-fecha-revelacion').value = grupo.fecha_revelacion || '';
-            document.getElementById('grupo-detalle-fecha-evento').value = grupo.fecha_evento || '';
+            document.getElementById('grupo-detalle-fecha-revelacion').value = formatearParaDatetimeLocal(grupo.fecha_revelacion);
+            document.getElementById('grupo-detalle-fecha-evento').value = formatearParaDatetimeLocal(grupo.fecha_evento);
             const centroSelect = document.getElementById('grupo-detalle-centro-select');
             const centroHint = document.getElementById('grupo-detalle-centro-bloqueado-hint');
             const tieneParticipantes = (grupo.participantes || []).length > 0;
@@ -8370,8 +8364,8 @@
             if (grupo) {
                 document.getElementById('grupo-detalle-nombre-input').value = grupo.nombre || '';
                 document.getElementById('grupo-detalle-presupuesto').value = grupo.presupuesto ?? '';
-                document.getElementById('grupo-detalle-fecha-revelacion').value = grupo.fecha_revelacion || '';
-                document.getElementById('grupo-detalle-fecha-evento').value = grupo.fecha_evento || '';
+                document.getElementById('grupo-detalle-fecha-revelacion').value = formatearParaDatetimeLocal(grupo.fecha_revelacion);
+                document.getElementById('grupo-detalle-fecha-evento').value = formatearParaDatetimeLocal(grupo.fecha_evento);
 
                 const centroSelect = document.getElementById('grupo-detalle-centro-select');
                 const centroHint = document.getElementById('grupo-detalle-centro-bloqueado-hint');
@@ -8861,8 +8855,8 @@
                 if (grupoActualizado) {
                     document.getElementById('grupo-detalle-nombre-input').value = grupoActualizado.nombre || '';
                     document.getElementById('grupo-detalle-presupuesto').value = grupoActualizado.presupuesto ?? '';
-                    document.getElementById('grupo-detalle-fecha-revelacion').value = grupoActualizado.fecha_revelacion || '';
-                    document.getElementById('grupo-detalle-fecha-evento').value = grupoActualizado.fecha_evento || '';
+                    document.getElementById('grupo-detalle-fecha-revelacion').value = formatearParaDatetimeLocal(grupoActualizado.fecha_revelacion);
+                    document.getElementById('grupo-detalle-fecha-evento').value = formatearParaDatetimeLocal(grupoActualizado.fecha_evento);
                     const centroSelect = document.getElementById('grupo-detalle-centro-select');
                     if (centroSelect) {
                         centroSelect.innerHTML = opcionesCentrosGrupoHtml(grupoActualizado.centroId || '', grupoActualizado.id);
@@ -10753,6 +10747,33 @@
             return new Intl.DateTimeFormat('es-PY', { dateStyle: 'short', timeStyle: 'short' }).format(date);
         }
 
+        // Convierte cualquier formato guardado (solo fecha "YYYY-MM-DD" de
+        // grupos viejos, timestamp de Firestore, o ya el formato correcto) al
+        // único formato que un <input type="datetime-local"> acepta:
+        // "YYYY-MM-DDTHH:mm". Sin esto, el campo se queda vacío/mostrando el
+        // placeholder aunque el grupo sí tenga una fecha guardada.
+        function formatearParaDatetimeLocal(valor) {
+            if (!valor) return '';
+
+            let date;
+            if (typeof valor === 'object' && typeof valor.toDate === 'function') {
+                date = valor.toDate();
+            } else if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) {
+                // Solo fecha (grupos creados antes de pedir la hora) — asume 00:00.
+                return valor + 'T00:00';
+            } else if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(valor)) {
+                // Ya viene en formato datetime-local (o con segundos/zona de más) — recorta a los primeros 16 caracteres.
+                return valor.substring(0, 16);
+            } else {
+                date = new Date(valor);
+            }
+
+            if (!date || isNaN(date.getTime())) return '';
+
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        }
+
         function randomShuffle(array) {
             const arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -10918,9 +10939,29 @@
             });
         }
 
-        // Cierra el popover del ícono de grupo si se hace clic afuera de él.
+        // Un único listener delegado en document maneja el ícono de grupo (🔗):
+        // abre/cierra el popover con el nombre, y lo cierra si se hace clic afuera.
+        // Delegar en document (en vez de onclick individual en cada botón) evita
+        // que se pierda el evento cuando la tabla se vuelve a dibujar.
         document.addEventListener('click', (event) => {
-            if (event.target.closest('.participante-grupo-icon-btn') || event.target.closest('.participante-grupo-popover')) return;
+            const grupoBtn = event.target.closest('.participante-grupo-icon-btn');
+            if (grupoBtn) {
+                event.preventDefault();
+                event.stopPropagation();
+                const nombreGrupo = grupoBtn.getAttribute('data-grupo-nombre') || '';
+                const existente = grupoBtn.nextElementSibling;
+                if (existente && existente.classList.contains('participante-grupo-popover')) {
+                    existente.remove();
+                    return;
+                }
+                document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
+                const span = document.createElement('span');
+                span.className = 'participante-grupo-popover';
+                span.textContent = nombreGrupo;
+                grupoBtn.insertAdjacentElement('afterend', span);
+                return;
+            }
+            if (event.target.closest('.participante-grupo-popover')) return;
             document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
         });
 
