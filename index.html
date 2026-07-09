@@ -3579,9 +3579,8 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-height: 30vh;
-            overflow-y: auto;
             padding: 4px 2px;
+            overflow: hidden;
         }
 
         .sorteo-item-revelado {
@@ -3596,6 +3595,25 @@
             font-weight: 600;
             opacity: 0.75;
             animation: sorteoItemSettle 0.3s ease-out;
+        }
+
+        .sorteo-item-revelado:nth-child(n+3) {
+            opacity: 0.5;
+        }
+
+        .sorteo-item-revelado:nth-child(n+5) {
+            opacity: 0.28;
+        }
+
+        .sorteo-item-saliendo {
+            animation: sorteoItemSalir 0.3s ease-in forwards;
+        }
+
+        @keyframes sorteoItemSalir {
+            to {
+                opacity: 0;
+                transform: translateY(6px) scale(0.96);
+            }
         }
 
         @keyframes sorteoItemSettle {
@@ -5038,6 +5056,168 @@
         .table-container table thead tr.table-filter-row th.table-filter-empty,
         .import-preview-table-container table thead tr.table-filter-row th.table-filter-empty {
             background: #ffffff !important;
+        }
+
+
+
+        /* ==================== AJUSTE EDSON: GRUPOS EM 2 COLUNAS + BOTÕES PADRONIZADOS ==================== */
+        #grupos-admin-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            align-items: stretch;
+        }
+
+        #grupos-admin-list > p,
+        #grupos-admin-list > .text-muted,
+        #grupos-admin-list > .grupos-empty-state {
+            grid-column: 1 / -1;
+        }
+
+        #grupos-admin-list .grupo-card {
+            height: 100%;
+            min-width: 0;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #grupos-admin-list .grupo-card-header {
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            gap: 12px;
+            padding-bottom: 14px;
+        }
+
+        #grupos-admin-list .grupo-title {
+            width: 100%;
+            min-height: 24px;
+        }
+
+        #grupos-admin-list .grupo-header-actions {
+            width: 100%;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-card-header,
+        #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header {
+            width: 154px;
+            min-width: 154px;
+            height: 38px;
+            min-height: 38px;
+            padding: 0 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border-radius: 10px;
+            border-width: 1.5px;
+            border-style: solid;
+            box-shadow: none;
+            font-size: 0.84rem;
+            font-weight: 800;
+            line-height: 1;
+            text-transform: none;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-card-header svg,
+        #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header svg {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
+            color: currentColor;
+            stroke: currentColor;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-resultados-header {
+            background: #eef8f1;
+            border-color: #b9dbc5;
+            color: var(--primary);
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-resultados-header:hover {
+            background: #dff1e7;
+            border-color: #79b98b;
+            color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: none;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header {
+            background: #eef4ff;
+            border-color: #b9cff6;
+            color: #164b8f;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header:hover {
+            background: #dce9ff;
+            border-color: #7aa2e8;
+            color: #123f78;
+            transform: translateY(-1px);
+            box-shadow: none;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-participantes-header {
+            background: #fff8ec;
+            border-color: #f1d8a2;
+            color: #8a5b00;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-participantes-header:hover {
+            background: #f7e4ba;
+            border-color: var(--secondary);
+            color: #7a5200;
+            transform: translateY(-1px);
+            box-shadow: none;
+        }
+
+        #grupos-admin-list .grupo-header-actions .estado-badge {
+            min-width: 104px;
+            height: 38px;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 10px;
+            margin-top: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        #grupos-admin-list .grupo-info-admin {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: 18px;
+            row-gap: 14px;
+        }
+
+        #grupos-admin-list .grupo-info-admin .info-placeholder {
+            display: none;
+        }
+
+        @media (max-width: 980px) {
+            #grupos-admin-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 620px) {
+            #grupos-admin-list .grupo-header-actions .grupo-accion-card-header,
+            #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header,
+            #grupos-admin-list .grupo-header-actions .estado-badge {
+                width: 100%;
+                min-width: 0;
+                flex: 1 1 100%;
+            }
+
+            #grupos-admin-list .grupo-info-admin {
+                grid-template-columns: 1fr;
+            }
         }
 
     </style>
@@ -7282,6 +7462,7 @@
                 presupuesto: presupuesto,
                 estado: 'abierto',
                 fecha_sorteio: new Date().toISOString().split('T')[0],
+                fecha_creacion_ts: Date.now(),
                 fecha_revelacion: fechaRevelacion,
                 fecha_evento: fechaEvento,
                 participantes: [],
@@ -9277,7 +9458,23 @@
 
             const filtro = document.getElementById('grupo-status-filter');
             const estadoFiltro = filtro ? filtro.value : 'todos';
-            const grupos = appState.gruposActuales.filter(g => estadoFiltro === 'todos' ? true : g.estado === estadoFiltro);
+            const obtenerFechaCadastroGrupo = (grupo) => {
+                const valor = grupo.fecha_creacion_ts || grupo.createdAt || grupo.fecha_creacion || grupo.fechaCreacion || grupo.fecha_sorteio;
+                if (!valor) return 0;
+                if (typeof valor === 'number') return valor;
+                if (valor && typeof valor.toDate === 'function') return valor.toDate().getTime();
+                if (typeof valor === 'object' && typeof valor.seconds === 'number') return valor.seconds * 1000;
+                const time = new Date(valor).getTime();
+                return Number.isFinite(time) ? time : 0;
+            };
+            const grupos = appState.gruposActuales
+                .filter(g => estadoFiltro === 'todos' ? true : g.estado === estadoFiltro)
+                .slice()
+                .sort((a, b) => {
+                    const diff = obtenerFechaCadastroGrupo(a) - obtenerFechaCadastroGrupo(b);
+                    if (diff !== 0) return diff;
+                    return String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es', { numeric: true, sensitivity: 'base' });
+                });
 
             if (grupos.length === 0) {
                 container.innerHTML = '<p class="text-muted" style="padding: 10px 0;">No hay grupos para el filtro seleccionado.</p>';
@@ -9293,12 +9490,12 @@
                         <div class="grupo-title">${g.nombre}</div>
                         <div class="grupo-header-actions">
                             ${tieneResultado ? `
-                                <button type="button" class="grupo-accion-btn grupo-accion-card-header grupo-accion-resultados-header" onclick="abrirResultadosDesdeCard(event, '${g.id}')" aria-label="Ver quién sacó a quién en el grupo ${g.nombre}">
+                                <button type="button" class="grupo-accion-btn grupo-accion-card-header grupo-accion-resultados-header" onclick="abrirResultadosDesdeCard(event, '${g.id}')" aria-label="Ver resultado del sorteo del grupo ${g.nombre}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <line x1="17" y1="7" x2="7" y2="17"/>
                                         <polyline points="8 7 17 7 17 16"/>
                                     </svg>
-                                    Ver Sorteo
+                                    Ver Resultado
                                 </button>
                             ` : ''}
 
@@ -10909,6 +11106,16 @@
                             item.className = 'sorteo-item-revelado';
                             item.textContent = `${anterior.nombre1} → ${anterior.nombre2}`;
                             listaReveladosEl.prepend(item);
+
+                            // No hay scroll: solo se muestran los últimos N,
+                            // los más viejos se desvanecen y se quitan.
+                            const MAX_VISIBLES = 5;
+                            const hijos = listaReveladosEl.children;
+                            if (hijos.length > MAX_VISIBLES) {
+                                const sobrante = hijos[hijos.length - 1];
+                                sobrante.classList.add('sorteo-item-saliendo');
+                                setTimeout(() => sobrante.remove(), 300);
+                            }
                         }
 
                         const par = pares[index];
