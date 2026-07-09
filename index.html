@@ -2055,45 +2055,6 @@
             text-align: center;
         }
 
-        .admin-stats-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            margin: 14px 0;
-        }
-
-        .admin-stats-row .resultado-mini-card {
-            flex: 0 0 auto;
-            width: 112px;
-            min-width: 112px;
-            background: #f4f9f6;
-        }
-
-        .admin-stats-row .resultado-mini-card span {
-            white-space: normal;
-            overflow-wrap: break-word;
-        }
-
-        .admin-stats-row .resultado-mini-card.estado-abierto {
-            background: #fff3cd;
-            border-color: #f5e2a8;
-        }
-
-        .admin-stats-row .resultado-mini-card.estado-sorteado {
-            background: #d4edda;
-            border-color: #b7dcc0;
-        }
-
-        .admin-stats-row .resultado-mini-card.estado-revelado {
-            background: #cfe2ff;
-            border-color: #b1cdf5;
-        }
-
-        .admin-stats-row:empty {
-            display: none;
-        }
-
         .resultado-mini-card span {
             display: block;
             color: var(--primary);
@@ -2766,19 +2727,26 @@
         }
 
         .participantes-admin-table th:nth-child(1),
-        .participantes-admin-table td:nth-child(1) { width: 18%; }
+        .participantes-admin-table td:nth-child(1) { width: 4%; text-align: center; }
         .participantes-admin-table th:nth-child(2),
-        .participantes-admin-table td:nth-child(2) { width: 10%; }
+        .participantes-admin-table td:nth-child(2) { width: 17%; }
         .participantes-admin-table th:nth-child(3),
-        .participantes-admin-table td:nth-child(3) { width: 17%; }
+        .participantes-admin-table td:nth-child(3) { width: 12%; }
         .participantes-admin-table th:nth-child(4),
-        .participantes-admin-table td:nth-child(4) { width: 15%; }
+        .participantes-admin-table td:nth-child(4) { width: 14%; }
         .participantes-admin-table th:nth-child(5),
-        .participantes-admin-table td:nth-child(5) { width: 13%; }
+        .participantes-admin-table td:nth-child(5) { width: 15%; }
         .participantes-admin-table th:nth-child(6),
-        .participantes-admin-table td:nth-child(6) { width: 14%; }
+        .participantes-admin-table td:nth-child(6) { width: 13%; }
         .participantes-admin-table th:nth-child(7),
-        .participantes-admin-table td:nth-child(7) { width: 13%; text-align: center; }
+        .participantes-admin-table td:nth-child(7) { width: 14%; }
+        .participantes-admin-table th:nth-child(8),
+        .participantes-admin-table td:nth-child(8) { width: 11%; text-align: center; }
+
+        .participante-checkbox-col {
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+        }
 
         .participantes-import-preview-table-readonly {
             table-layout: auto;
@@ -3030,20 +2998,39 @@
             gap: 8px;
         }
 
-        .participante-grupo-badge {
-            display: block;
-            margin-top: 3px;
+        .participante-grupo-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            margin-left: 6px;
+            padding: 0;
+            border: 1px solid #d6e6dd;
+            border-radius: 6px;
+            background: #eaf5ee;
+            font-size: 0.72rem;
+            line-height: 1;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        .participante-grupo-icon-btn:hover {
+            background: var(--primary);
+            filter: brightness(1.1);
+        }
+
+        .participante-grupo-popover {
+            display: inline-block;
+            margin-left: 6px;
             font-size: 0.76rem;
             font-weight: 600;
             color: var(--primary);
             background: #eaf5ee;
+            border: 1px solid #d6e6dd;
             border-radius: 5px;
-            padding: 2px 6px;
-            width: fit-content;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            padding: 2px 8px;
+            animation: slideIn 0.15s ease-out;
         }
 
 
@@ -5188,8 +5175,6 @@
                 <button class="tab-btn" onclick="switchTab('ver-grupos')">Grupo</button>
             </div>
 
-            <div id="admin-stats-summary" class="admin-stats-row"></div>
-
             <div class="alert alert-error" id="admin-error" style="display: none;"></div>
             <div class="alert alert-success" id="admin-success" style="display: none;"></div>
 
@@ -5232,6 +5217,7 @@
 
                     <button type="button" class="btn btn-outline abrir-crear-grupo-btn btn-plain-action participante-inline-action-btn" onclick="abrirImportarParticipantes()">Importar</button>
                     <button type="button" class="btn-excel participante-export-btn" onclick="exportarParticipantesFiltradosExcel()">Excel</button>
+                    <button type="button" id="participantes-eliminar-seleccionados-btn" class="btn btn-outline participante-inline-action-btn" style="display:none; color:#c0392b; border-color:#f0b8b8;" onclick="eliminarParticipantesSeleccionados()">Eliminar (<span id="participantes-seleccionados-count">0</span>)</button>
                 </div>
 
                 <div id="participantes-list-container" class="table-container">
@@ -5950,7 +5936,7 @@
                         <line x1="17" y1="7" x2="7" y2="17"/>
                         <polyline points="8 7 17 7 17 16"/>
                     </svg>
-                    Quién sacó a quién
+                    Ver Sorteo
                 </button>
             </div>
         </div>
@@ -6084,7 +6070,7 @@
             <div class="modal-header">
                 <div>
                     <h3>Resultado del Sorteo</h3>
-                    <div class="resultado-sorteo-subtitle">Quién sacó a quién</div>
+                    <div class="resultado-sorteo-subtitle">Ver Sorteo</div>
                 </div>
                 <button class="close-btn" onclick="cerrarResultadosGrupoModal()" aria-label="Cerrar">&times;</button>
             </div>
@@ -7602,53 +7588,75 @@
             return participantesFiltrados;
         }
 
-        function actualizarResumenAdminParticipantes() {
-            const el = document.getElementById('admin-stats-summary');
-            if (!el) return;
-
-            if (appState.centrosActuales.length === 0) {
-                el.innerHTML = '';
-                return;
-            }
-
-            const totalGeneral = appState.participantesRegistrados.length;
-            let html = `<div class="resultado-mini-card"><span>Total de Participantes</span><strong>${totalGeneral}</strong></div>`;
-
-            const centrosOrdenados = [...appState.centrosActuales].sort((a, b) => (a.nombre || '').localeCompare(b.nombre || '', 'es'));
-            centrosOrdenados.forEach(centro => {
-                const total = appState.participantesRegistrados.filter(p => p.centroId === centro.id).length;
-                html += `<div class="resultado-mini-card"><span>${escaparHtml(centro.nombre)}</span><strong>${total}</strong></div>`;
+        function toggleTodosParticipantesCheckboxes(checkbox) {
+            document.querySelectorAll('.participante-row-checkbox:not(:disabled)').forEach(cb => {
+                cb.checked = checkbox.checked;
             });
-
-            el.innerHTML = html;
+            actualizarBotonEliminarSeleccionadosParticipantes();
         }
 
-        function actualizarResumenAdminGrupos() {
-            const el = document.getElementById('admin-stats-summary');
-            if (!el) return;
+        function actualizarBotonEliminarSeleccionadosParticipantes() {
+            const seleccionados = document.querySelectorAll('.participante-row-checkbox:checked');
+            const btn = document.getElementById('participantes-eliminar-seleccionados-btn');
+            const countEl = document.getElementById('participantes-seleccionados-count');
+            if (!btn || !countEl) return;
 
-            if (appState.gruposActuales.length === 0) {
-                el.innerHTML = '';
-                return;
+            countEl.textContent = seleccionados.length;
+            btn.style.display = seleccionados.length > 0 ? 'inline-flex' : 'none';
+
+            // El checkbox "seleccionar todos" refleja si TODOS los habilitados están marcados.
+            const selectAll = document.getElementById('participantes-select-all-checkbox');
+            const habilitados = document.querySelectorAll('.participante-row-checkbox:not(:disabled)');
+            if (selectAll) {
+                selectAll.checked = habilitados.length > 0 && Array.from(habilitados).every(cb => cb.checked);
+            }
+        }
+
+        async function eliminarParticipantesSeleccionados() {
+            const seleccionados = Array.from(document.querySelectorAll('.participante-row-checkbox:checked')).map(cb => cb.value);
+            if (seleccionados.length === 0) return;
+
+            if (!confirm(`¿Eliminar ${seleccionados.length} participante(s) seleccionado(s)? Esta acción no se puede deshacer.`)) return;
+
+            showAlert('admin-error', `Eliminando ${seleccionados.length} participante(s)...`, 'info');
+
+            let eliminados = 0;
+            let errores = 0;
+
+            for (const id of seleccionados) {
+                try {
+                    const excluir = functionsFirebase.httpsCallable('excluirParticipante');
+                    await comTimeout(excluir({ participanteUid: id }), 20000);
+                    appState.participantesRegistrados = appState.participantesRegistrados.filter(p => p.id !== id);
+                    eliminados++;
+                } catch (error) {
+                    console.error('Error al eliminar participante ' + id + ':', error);
+                    errores++;
+                }
             }
 
-            const totalGeneral = appState.gruposActuales.reduce((acc, g) => acc + (g.participantes || []).length, 0);
-            let html = `<div class="resultado-mini-card"><span>Total de Participantes</span><strong>${totalGeneral}</strong></div>`;
+            hideAlert('admin-error');
+            if (errores === 0) {
+                showAlert('admin-success', `${eliminados} participante(s) eliminado(s) exitosamente`);
+            } else {
+                showAlert('admin-error', `${eliminados} eliminado(s), ${errores} no se pudieron eliminar (verifica tu conexión e intenta de nuevo con esos).`);
+            }
 
-            const gruposOrdenados = [...appState.gruposActuales].sort((a, b) => {
-                const nombreA = a.centroNombre || a.filial || a.nombre || '';
-                const nombreB = b.centroNombre || b.filial || b.nombre || '';
-                return nombreA.localeCompare(nombreB, 'es');
-            });
+            updateParticipantesList();
+        }
 
-            html += gruposOrdenados.map(grupo => {
-                const nombreUnidad = grupo.centroNombre || grupo.filial || grupo.nombre;
-                const total = (grupo.participantes || []).length;
-                const estadoClase = 'estado-' + (grupo.estado || 'abierto');
-                return `<div class="resultado-mini-card ${estadoClase}"><span>${escaparHtml(nombreUnidad)}</span><strong>${total}</strong></div>`;
-            }).join('');
-
-            el.innerHTML = html;
+        function mostrarGrupoVinculadoParticipante(event, btn, nombreGrupo) {
+            event.stopPropagation();
+            const existente = btn.nextElementSibling;
+            if (existente && existente.classList.contains('participante-grupo-popover')) {
+                existente.remove();
+                return;
+            }
+            document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
+            const span = document.createElement('span');
+            span.className = 'participante-grupo-popover';
+            span.textContent = nombreGrupo;
+            btn.insertAdjacentElement('afterend', span);
         }
 
         function updateParticipantesList() {
@@ -7656,7 +7664,6 @@
             if (!cont) return;
 
             renderParticipanteCentroFilter();
-            actualizarResumenAdminParticipantes();
 
             if (appState.participantesRegistrados.length === 0) {
                 cont.innerHTML = '<p class="text-muted" style="padding: 10px 0;">Todavía no hay participantes registrados.</p>';
@@ -7682,9 +7689,12 @@
                 const fechaRegistro = formatDate(p.fecha_registro || p.fechaRegistro || '');
                 return `
                 <tr>
+                    <td class="participante-checkbox-col">
+                        <input type="checkbox" class="participante-row-checkbox" value="${p.id}" onchange="actualizarBotonEliminarSeleccionadosParticipantes()" ${bloqueado ? `disabled title="${motivoBloqueo}"` : ''}>
+                    </td>
                     <td title="${nombreMostrar}">
                         <strong>${nombreMostrar}</strong>
-                        ${grupoVinculado ? `<span class="participante-grupo-badge" title="Vinculado al grupo &quot;${grupoVinculado.nombre}&quot;">🔗 ${grupoVinculado.nombre}</span>` : ''}
+                        ${grupoVinculado ? `<button type="button" class="participante-grupo-icon-btn" onclick="mostrarGrupoVinculadoParticipante(event, this, '${escaparHtml(grupoVinculado.nombre)}')" title="Ver unidad vinculada" aria-label="Ver grupo vinculado">🔗</button>` : ''}
                     </td>
                     <td title="${p.login || ''}">${p.login || '-'}</td>
                     <td title="${p.telefono || ''}">${p.telefono || '-'}</td>
@@ -7730,18 +7740,21 @@
                 <table id="participantes-table" class="participantes-admin-table">
                     <thead>
                         <tr>
+                            <th class="participante-checkbox-col"><input type="checkbox" id="participantes-select-all-checkbox" onchange="toggleTodosParticipantesCheckboxes(this)" aria-label="Seleccionar todos"></th>
                             <th class="sortable-header" onclick="setParticipantesSort('nombre')"><span class="sort-header-content">Nombre <span class="sort-indicator">${getParticipantesSortIndicator('nombre')}</span></span></th>
                             <th class="sortable-header" onclick="setParticipantesSort('login')"><span class="sort-header-content">Usuario <span class="sort-indicator">${getParticipantesSortIndicator('login')}</span></span></th>
                             <th class="sortable-header" onclick="setParticipantesSort('telefono')"><span class="sort-header-content">Teléfono <span class="sort-indicator">${getParticipantesSortIndicator('telefono')}</span></span></th>
                             <th class="sortable-header" onclick="setParticipantesSort('cargo')"><span class="sort-header-content">Cargo <span class="sort-indicator">${getParticipantesSortIndicator('cargo')}</span></span></th>
                             <th class="sortable-header" onclick="setParticipantesSort('centroId')"><span class="sort-header-content">Unidad de Negocio <span class="sort-indicator">${getParticipantesSortIndicator('centroId')}</span></span></th>
                             <th class="sortable-header" onclick="setParticipantesSort('fecha_registro')"><span class="sort-header-content">Fecha Registro <span class="sort-indicator">${getParticipantesSortIndicator('fecha_registro')}</span></span></th>
-                            <th>Acciones</th>
+                            <th class="participante-acciones-col" aria-label="Acciones"></th>
                         </tr>
                     </thead>
                     <tbody id="participantes-tbody">${filas}</tbody>
                 </table>
             `;
+
+            actualizarBotonEliminarSeleccionadosParticipantes();
         }
 
         function exportarParticipantesFiltradosExcel() {
@@ -9231,7 +9244,6 @@
             if (!container) return;
 
             renderGrupoStatusFilter();
-            actualizarResumenAdminGrupos();
 
             if (appState.gruposActuales.length === 0) {
                 container.innerHTML = '<p class="text-muted" style="padding: 10px 0;">Todavía no hay grupos creados.</p>';
@@ -9261,7 +9273,7 @@
                                         <line x1="17" y1="7" x2="7" y2="17"/>
                                         <polyline points="8 7 17 7 17 16"/>
                                     </svg>
-                                    Quién sacó a quién
+                                    Ver Sorteo
                                 </button>
                             ` : ''}
 
@@ -10905,6 +10917,12 @@
                 cb.checked = isChecked;
             });
         }
+
+        // Cierra el popover del ícono de grupo si se hace clic afuera de él.
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('.participante-grupo-icon-btn') || event.target.closest('.participante-grupo-popover')) return;
+            document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
+        });
 
         // ===== BLOQUEO DE SCROLL DE FONDO CUANDO HAY UN MODAL ABIERTO =====
         // Se aplica automáticamente a TODOS los modales (.modal) del sistema:
