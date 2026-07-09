@@ -3134,11 +3134,12 @@
 
         /* ==================== ALERTS ==================== */
         .alert {
-            padding: 15px;
-            border-radius: 8px;
+            padding: 16px 20px;
+            border-radius: 12px;
             margin-bottom: 20px;
             text-align: center;
             display: none;
+            font-size: 0.96rem;
         }
 
         .alert.active {
@@ -3155,8 +3156,8 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 3000;
-            max-width: min(92vw, 520px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            max-width: min(92vw, 480px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
         }
 
         @keyframes toastPopCenter {
@@ -3178,35 +3179,41 @@
         }
 
         .alert-success {
-            background: #d4edda;
+            background: #eafaf1;
             color: #155724;
-            border: 1px solid #c3e6cb;
+            border: 1px solid #b8e6c9;
         }
 
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fdecee;
+            color: #7a1f2b;
+            border: 1px solid #f3c2c9;
         }
 
         .alert-info {
-            background: #eef4f0;
+            background: #ffffff;
             color: var(--primary, #1a5f3f);
-            border: 1px solid #d6e6dd;
+            border: 1px solid #dfe8e2;
+        }
+
+        .alert.active.alert-info {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
+            padding: 18px 22px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
         }
 
         .alert-info .alert-spinner {
-            width: 18px;
-            height: 18px;
-            flex: 0 0 18px;
-            border: 2.5px solid rgba(26, 95, 63, 0.25);
+            width: 20px;
+            height: 20px;
+            flex: 0 0 20px;
+            border: 3px solid rgba(26, 95, 63, 0.15);
             border-top-color: var(--primary, #1a5f3f);
             border-radius: 50%;
-            animation: alertSpin 0.7s linear infinite;
+            animation: alertSpin 0.65s linear infinite;
         }
 
         @keyframes alertSpin {
@@ -4609,6 +4616,9 @@
     </style>
 </head>
 <body>
+    <div id="verificando-sesion-overlay" style="position:fixed; inset:0; z-index:5000; background:var(--dark, #1a5f3f); display:flex; align-items:center; justify-content:center;">
+        <div style="width:40px; height:40px; border:3px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:alertSpin 0.7s linear infinite;"></div>
+    </div>
     <div class="container">
         <!-- HEADER -->
         <header>
@@ -5787,13 +5797,14 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        // Cuando el archivo se abre localmente (content:// o file://, en vez de
-        // http/https), el navegador no permite que el Firebase guarde la sesión
-        // de forma confiable, y eso puede hacer que el login quede "trabado" sin
-        // mostrar error. Desactivar la persistencia evita ese problema — solo
-        // significa que hay que loguearse de nuevo cada vez que se abre el
-        // archivo, lo cual no cambia nada mientras estamos probando así.
-        auth.setPersistence(firebase.auth.Auth.Persistence.NONE).catch(() => {});
+        // Mantiene la sesión guardada entre recargas de página cuando el app
+        // está hospedado de verdad (http/https) — pero evita eso cuando se
+        // abre localmente (file:// o content://), donde causaba que el login
+        // quedara "trabado" sin mostrar error (ver notas anteriores).
+        const persistenciaSoportada = /^https?:$/.test(window.location.protocol);
+        auth.setPersistence(
+            persistenciaSoportada ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.NONE
+        ).catch(() => {});
         const db = firebase.firestore();
         const functionsFirebase = firebase.app().functions('us-central1');
         // UID travado da conta de admin (Edson). "Ser admin" nunca é decidido
@@ -6280,7 +6291,7 @@
                     nuevoParticipante.grupos.push(grupoDelCentro.id);
                 }
 
-                showAlert('registro-error', mensajeRegistro);
+                showAlert('registro-error', mensajeRegistro, 'success');
 
                 setTimeout(() => {
                     // Login automático (reutiliza loginSuccess para llenar nombre/centro correctamente)
@@ -6307,6 +6318,39 @@
 
         // ===== LOGIN FUNCTIONS =====
 
+        function extraerLoginDelEmail(email) {
+            return (email || '').split('@')[0];
+        }
+
+        // Reutilizada tanto por el login manual (handleLogin) como por la
+        // restauración automática de sesión al recargar la página.
+        async function cargarPerfilUsuarioLogado(user) {
+            const uid = user.uid;
+
+            if (uid === ADMIN_UID) {
+                // La cuenta de admin no vive en la colección "participantes"
+                // (no participa de ningún amigo secreto), así que arma su
+                // perfil localmente.
+                appState.usuarioActual = {
+                    id: uid,
+                    nombre: 'Administrador',
+                    apellido: 'Sistema',
+                    nombreCompleto: 'Administrador Sistema',
+                    login: extraerLoginDelEmail(user.email),
+                    cargo: 'Administrador',
+                    centroNombre: ''
+                };
+                appState.esAdmin = true;
+                return true;
+            }
+
+            const doc = await db.collection('participantes').doc(uid).get();
+            if (!doc.exists) return false;
+            appState.usuarioActual = doc.data();
+            appState.esAdmin = false;
+            return true;
+        }
+
         async function handleLogin() {
             formatLoginUsuario();
             const login = document.getElementById('login-usuario').value.trim();
@@ -6321,37 +6365,50 @@
 
             try {
                 const credencial = await comTimeout(auth.signInWithEmailAndPassword(loginParaEmailFake(login), password));
-                const uid = credencial.user.uid;
-
-                if (uid === ADMIN_UID) {
-                    // La cuenta de admin no vive en la colección "participantes"
-                    // (no participa de ningún amigo secreto), así que arma su
-                    // perfil localmente.
-                    appState.usuarioActual = {
-                        id: uid,
-                        nombre: 'Administrador',
-                        apellido: 'Sistema',
-                        nombreCompleto: 'Administrador Sistema',
-                        login: login,
-                        cargo: 'Administrador',
-                        centroNombre: ''
-                    };
-                    appState.esAdmin = true;
-                } else {
-                    const doc = await db.collection('participantes').doc(uid).get();
-                    if (!doc.exists) {
-                        showAlert('login-error', 'No encontramos tu perfil. Contacta al administrador.');
-                        return;
-                    }
-                    appState.usuarioActual = doc.data();
-                    appState.esAdmin = false;
+                const ok = await cargarPerfilUsuarioLogado(credencial.user);
+                if (!ok) {
+                    showAlert('login-error', 'No encontramos tu perfil. Contacta al administrador.');
+                    return;
                 }
-
                 loginSuccess();
             } catch (error) {
                 showAlert('login-error', mensagemErroFirebaseAuth(error));
             }
         }
+
+        // Al abrir/recargar la página, revisa si ya hay una sesión guardada
+        // (posible gracias a la persistencia LOCAL activada arriba) — si hay,
+        // entra directo sin pedir usuario/contraseña de nuevo. El overlay
+        // "Verificando sesión" evita que se vea la pantalla de login por un
+        // instante antes de saltar al panel correcto.
+        let primeraVerificacionDeSesion = true;
+        // Trava de segurança: si por algún motivo (conexión lenta, etc.) el
+        // chequeo de sesión nunca resuelve, el overlay se quita solo después
+        // de unos segundos en vez de quedar trabado para siempre.
+        setTimeout(() => {
+            const overlay = document.getElementById('verificando-sesion-overlay');
+            if (overlay) overlay.remove();
+        }, 8000);
+        auth.onAuthStateChanged(async (user) => {
+            if (!primeraVerificacionDeSesion) return;
+            primeraVerificacionDeSesion = false;
+
+            try {
+                if (user) {
+                    const ok = await cargarPerfilUsuarioLogado(user);
+                    if (ok) {
+                        await loginSuccess();
+                    } else {
+                        // Perfil no encontrado (ej: cuenta borrada) — cierra la
+                        // sesión trabada y deja ver la pantalla de login normal.
+                        auth.signOut();
+                    }
+                }
+            } finally {
+                const overlay = document.getElementById('verificando-sesion-overlay');
+                if (overlay) overlay.remove();
+            }
+        });
 
         function switchPanel(panel) {
             document.getElementById('auth-panel').classList.remove('active');
@@ -7154,6 +7211,7 @@
 
                 appState.participantesRegistrados = appState.participantesRegistrados.filter(p => p.id !== participanteId);
 
+                hideAlert('admin-error');
                 showAlert('admin-success', nombre + ' fue eliminado');
                 updateParticipantesList();
             } catch (error) {
@@ -7285,6 +7343,7 @@
                 }
 
                 closeParticipanteModal();
+                hideAlert('admin-error');
                 showAlert('admin-success', nuevaPassword ? 'Participante actualizado y contraseña reseteada' : 'Participante actualizado exitosamente');
                 updateParticipantesList();
                 updateGruposList();
