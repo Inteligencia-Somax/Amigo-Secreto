@@ -2057,11 +2057,10 @@
 
         .admin-stats-row {
             display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 8px;
-            margin-top: 10px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            scrollbar-width: thin;
+            margin: 14px 0;
         }
 
         .admin-stats-row .resultado-mini-card {
@@ -4852,7 +4851,6 @@
                 <div class="user-info">
                     <h2>Bienvenido, <span id="admin-nombre">Admin</span></h2>
                     <p id="admin-meta" class="text-muted">Administrador</p>
-                    <div id="admin-stats-summary" class="admin-stats-row"></div>
                 </div>
                 <button class="header-gear-btn" type="button" aria-label="Opciones" title="Opciones" onclick="abrirAdminHeaderMenu()">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -4866,6 +4864,8 @@
                 <button class="tab-btn active" onclick="switchTab('participantes')">Participantes</button>
                 <button class="tab-btn" onclick="switchTab('ver-grupos')">Grupo</button>
             </div>
+
+            <div id="admin-stats-summary" class="admin-stats-row"></div>
 
             <div class="alert alert-error" id="admin-error" style="display: none;"></div>
             <div class="alert alert-success" id="admin-success" style="display: none;"></div>
@@ -5070,7 +5070,10 @@
                 </div>
                 <div class="form-group">
                     <label for="modal-perfil-telefono">Teléfono</label>
-                    <input type="text" id="modal-perfil-telefono">
+                    <div class="phone-input-group">
+                        <span class="phone-flag-prefix" title="Paraguay" aria-hidden="true">🇵🇾 <span class="phone-flag-code">+595</span></span>
+                        <input type="tel" id="modal-perfil-telefono" placeholder="Ej: 984 123456" oninput="formatTelefonoPerfil()" onblur="formatTelefonoPerfil()">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="modal-perfil-cargo">Cargo</label>
@@ -7258,9 +7261,10 @@
             }
 
             const totalGeneral = appState.participantesRegistrados.length;
-            let html = `<div class="resultado-mini-card"><span>Total</span><strong>${totalGeneral}</strong></div>`;
+            let html = `<div class="resultado-mini-card"><span>Total de Participantes</span><strong>${totalGeneral}</strong></div>`;
 
-            appState.centrosActuales.forEach(centro => {
+            const centrosOrdenados = [...appState.centrosActuales].sort((a, b) => (a.nombre || '').localeCompare(b.nombre || '', 'es'));
+            centrosOrdenados.forEach(centro => {
                 const total = appState.participantesRegistrados.filter(p => p.centroId === centro.id).length;
                 html += `<div class="resultado-mini-card"><span>${escaparHtml(centro.nombre)}</span><strong>${total}</strong></div>`;
             });
@@ -7277,11 +7281,22 @@
                 return;
             }
 
-            el.innerHTML = appState.gruposActuales.map(grupo => {
+            const totalGeneral = appState.gruposActuales.reduce((acc, g) => acc + (g.participantes || []).length, 0);
+            let html = `<div class="resultado-mini-card"><span>Total de Participantes</span><strong>${totalGeneral}</strong></div>`;
+
+            const gruposOrdenados = [...appState.gruposActuales].sort((a, b) => {
+                const nombreA = a.centroNombre || a.filial || a.nombre || '';
+                const nombreB = b.centroNombre || b.filial || b.nombre || '';
+                return nombreA.localeCompare(nombreB, 'es');
+            });
+
+            html += gruposOrdenados.map(grupo => {
                 const nombreUnidad = grupo.centroNombre || grupo.filial || grupo.nombre;
                 const total = (grupo.participantes || []).length;
                 return `<div class="resultado-mini-card"><span>${escaparHtml(nombreUnidad)}</span><strong>${total}</strong></div>`;
             }).join('');
+
+            el.innerHTML = html;
         }
 
         function updateParticipantesList() {
@@ -9129,6 +9144,27 @@
             if (modal) modal.classList.remove('active');
         }
 
+        function formatTelefonoPerfil() {
+            const tel = document.getElementById('modal-perfil-telefono');
+            let value = tel.value.replace(/\D/g, ''); // Solo números
+
+            if (value.startsWith('595')) {
+                value = value.substring(3);
+            } else if (value.startsWith('0')) {
+                value = value.substring(1);
+            }
+
+            value = value.substring(0, 9);
+
+            if (value.length > 3) {
+                tel.value = value.substring(0, 3) + ' ' + value.substring(3);
+            } else {
+                tel.value = value;
+            }
+
+            tel.value = tel.value.trim();
+        }
+
         function abrirPerfilModal() {
             const modal = document.getElementById('perfil-modal');
             const usuario = appState.usuarioActual;
@@ -9136,7 +9172,7 @@
 
             document.getElementById('modal-perfil-nombre').value = usuario.nombre || '';
             document.getElementById('modal-perfil-apellido').value = usuario.apellido || '';
-            document.getElementById('modal-perfil-telefono').value = usuario.telefono || '';
+            document.getElementById('modal-perfil-telefono').value = (usuario.telefono || '').replace(/^\+595\s*/, '');
             document.getElementById('modal-perfil-cargo').value = usuario.cargo || '';
             document.getElementById('modal-perfil-usuario').value = usuario.login || '-';
             document.getElementById('modal-perfil-centro').value = usuario.centroNombre || getCodigoCentroParticipante(usuario) || '-';
@@ -9150,7 +9186,7 @@
             if (modal) modal.classList.remove('active');
         }
 
-        function guardarPerfilModal() {
+        async function guardarPerfilModal() {
             const usuario = appState.usuarioActual;
             if (!usuario) return;
 
@@ -9158,13 +9194,21 @@
 
             const nombre = capitalize(document.getElementById('modal-perfil-nombre').value.trim());
             const apellido = capitalize(document.getElementById('modal-perfil-apellido').value.trim());
-            const telefono = document.getElementById('modal-perfil-telefono').value.trim();
+            formatTelefonoPerfil();
+            const telefonoNacional = document.getElementById('modal-perfil-telefono').value.trim();
             const cargo = capitalize(document.getElementById('modal-perfil-cargo').value.trim());
 
-            if (!nombre || !apellido || !telefono || !cargo) {
+            if (!nombre || !apellido || !telefonoNacional || !cargo) {
                 showAlert(alertId, 'Todos los campos son requeridos');
                 return;
             }
+
+            if (!/^\d{3} \d{6}$/.test(telefonoNacional)) {
+                showAlert(alertId, 'Teléfono debe estar en formato: XXX XXXXXX');
+                return;
+            }
+
+            const telefono = '+595 ' + telefonoNacional;
 
             usuario.nombre = nombre;
             usuario.apellido = apellido;
@@ -9179,6 +9223,22 @@
                 participanteEnLista.nombreCompleto = usuario.nombreCompleto;
                 participanteEnLista.telefono = telefono;
                 participanteEnLista.cargo = cargo;
+            }
+
+            // El admin no tiene documento propio en "participantes" (no participa
+            // de ningún amigo secreto), así que su perfil solo vive en esta
+            // sesión. Un participante normal sí tiene documento — hay que
+            // guardar de verdad en Firestore para que no se pierda al recargar.
+            if (!appState.esAdmin) {
+                try {
+                    await db.collection('participantes').doc(usuario.id).update({
+                        nombre, apellido, nombreCompleto: usuario.nombreCompleto, telefono, cargo
+                    });
+                } catch (error) {
+                    console.error('Error al guardar el perfil en Firestore:', error);
+                    showAlert(alertId, 'No se pudo guardar en el servidor. Verifica tu conexión e intenta de nuevo.');
+                    return;
+                }
             }
 
             if (appState.esAdmin) {
