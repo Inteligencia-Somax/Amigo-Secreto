@@ -5246,6 +5246,68 @@
             box-shadow: 0 8px 18px rgba(26, 95, 63, 0.12);
         }
 
+    
+
+        /* ==================== PADRÃO GLOBAL: BOTÕES SALVAR E CANCELAR ==================== */
+        /* Mesma estrutura em todos os modais/tabelas: quadrado 40px, borda verde,
+           fundo branco e hover verde preenchido. */
+        .icon-action-btn.icon-save,
+        .icon-action-btn.icon-cancel {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            min-height: 40px !important;
+            flex: 0 0 40px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;
+            border-radius: 10px !important;
+            background: var(--white) !important;
+            border: 2px solid var(--primary) !important;
+            color: var(--primary) !important;
+            box-shadow: none !important;
+            cursor: pointer !important;
+        }
+
+        .icon-action-btn.icon-save svg,
+        .icon-action-btn.icon-cancel svg {
+            width: 18px !important;
+            height: 18px !important;
+            stroke: currentColor !important;
+        }
+
+        .icon-action-btn.icon-save:hover,
+        .icon-action-btn.icon-cancel:hover {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: var(--white) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 8px 18px rgba(26, 95, 63, 0.20) !important;
+        }
+
+        .icon-action-btn.icon-save:focus-visible,
+        .icon-action-btn.icon-cancel:focus-visible {
+            outline: 2px solid rgba(26, 95, 63, 0.35) !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Mantém o Eliminar do modal Editar Grupo em vermelho fixo. */
+        #grupo-detalle-eliminar-btn.icon-delete {
+            background: var(--error) !important;
+            border-color: var(--error) !important;
+            color: var(--white) !important;
+            box-shadow: 0 6px 14px rgba(244, 67, 54, 0.18) !important;
+        }
+
+        #grupo-detalle-eliminar-btn.icon-delete:hover {
+            background: #d32f2f !important;
+            border-color: #d32f2f !important;
+            color: var(--white) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 8px 18px rgba(211, 47, 47, 0.24) !important;
+        }
+
     </style>
 </head>
 <body>
