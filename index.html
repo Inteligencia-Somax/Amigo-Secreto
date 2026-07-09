@@ -1696,6 +1696,17 @@
             color: var(--white);
         }
 
+        .icon-action-btn.icon-reset {
+            color: #b6862c;
+            border-color: #e6d3a3;
+        }
+
+        .icon-action-btn.icon-reset:hover {
+            background: #b6862c;
+            border-color: #b6862c;
+            color: var(--white);
+        }
+
         .centro-edit-row td {
             vertical-align: middle;
         }
@@ -5559,7 +5570,13 @@
                             <line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </button>
-                    <button id="grupo-detalle-eliminar-btn" class="icon-action-btn icon-delete" type="button" aria-label="Eliminar grupo" title="Eliminar grupo" onclick="eliminarGrupo()" style="margin-left: auto;">
+                    <button id="grupo-detalle-resetear-btn" class="icon-action-btn icon-reset" type="button" aria-label="Resetear sorteo" title="Resetear sorteo (vuelve a Abierto, mantiene los participantes)" onclick="resetearSorteo()" style="margin-left: auto; display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="1 4 1 10 7 10"/>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                        </svg>
+                    </button>
+                    <button id="grupo-detalle-eliminar-btn" class="icon-action-btn icon-delete" type="button" aria-label="Eliminar grupo" title="Eliminar grupo" onclick="eliminarGrupo()">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="3 6 5 6 21 6"/>
                             <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -7480,7 +7497,10 @@
             if (centroHint) centroHint.style.display = tieneParticipantes ? 'block' : 'none';
 
             const btnEliminar = document.getElementById('grupo-detalle-eliminar-btn');
-            if (btnEliminar) btnEliminar.style.display = (grupo.estado === 'abierto') ? 'flex' : 'none';
+            if (btnEliminar) btnEliminar.style.display = 'flex';
+
+            const btnResetear = document.getElementById('grupo-detalle-resetear-btn');
+            if (btnResetear) btnResetear.style.display = (grupo.estado === 'sorteado' || grupo.estado === 'revelado') ? 'flex' : 'none';
 
             cerrarGrupoAccionesModal();
             document.getElementById('grupo-editar-modal').classList.add('active');
@@ -7709,17 +7729,53 @@
             cerrarEditarGrupoModal();
         }
 
+        async function resetearSorteo() {
+            if (!grupoDetalleActualId) return;
+            const grupo = appState.gruposActuales.find(g => g.id === grupoDetalleActualId);
+            if (!grupo) return;
+
+            if (!confirm('⚠️ Esto borra el resultado del sorteo actual (quién le tocó a quién) y deja el grupo como "Abierto" de nuevo, listo para sortear otra vez. Los participantes vinculados se mantienen. ¿Continuar?')) return;
+
+            const estadoAnterior = grupo.estado;
+            const sorteadosAnterior = grupo.sorteados;
+            const fechaRevelacionAnterior = grupo.fecha_revelacion;
+
+            grupo.estado = 'abierto';
+            grupo.sorteados = null;
+
+            try {
+                await comTimeout(db.collection('grupos').doc(grupo.id).set(grupo), 20000);
+            } catch (error) {
+                console.error('Error al resetear el sorteo en Firestore:', error);
+                grupo.estado = estadoAnterior;
+                grupo.sorteados = sorteadosAnterior;
+                grupo.fecha_revelacion = fechaRevelacionAnterior;
+                showAlert('admin-error', 'No se pudo resetear el sorteo. Verifica tu conexión e intenta de nuevo.');
+                return;
+            }
+
+            showAlert('admin-success', 'Sorteo reseteado. El grupo volvió a estado "Abierto".');
+            cerrarTodosModalesGrupo();
+            updateGruposList();
+            updateSelectMenus();
+        }
+
         function eliminarGrupo() {
             if (!grupoDetalleActualId) return;
             const grupo = appState.gruposActuales.find(g => g.id === grupoDetalleActualId);
             if (!grupo) return;
 
-            if (grupo.estado === 'sorteado' || grupo.estado === 'revelado') {
-                showAlert('admin-error', 'No se puede eliminar un grupo que ya fue sorteado.');
-                return;
-            }
+            const yaSorteado = grupo.estado === 'sorteado' || grupo.estado === 'revelado';
 
-            if (!confirm('¿Eliminar el grupo "' + grupo.nombre + '"? Esta acción no se puede deshacer.')) return;
+            if (yaSorteado) {
+                // Confirmación reforzada (doble) porque el resultado del sorteo
+                // se pierde para siempre — pensado para poder limpiar datos de
+                // prueba antes de lanzar a producción, no para uso normal.
+                if (!confirm('⚠️ Este grupo YA fue sorteado. Si lo eliminas, el resultado de "quién le tocó a quién" se pierde para siempre. ¿Continuar?')) return;
+                if (!confirm('Última confirmación: ¿eliminar definitivamente el grupo "' + grupo.nombre + '" y su resultado del sorteo?')) return;
+            } else {
+                if (!confirm('¿Eliminar el grupo "' + grupo.nombre + '"? Esta acción no se puede deshacer.')) return;
+            }
 
             // Desvincula a los participantes de este grupo (en pantalla y en Firestore).
             (grupo.participantes || []).forEach(participanteId => {
