@@ -7022,7 +7022,7 @@
             exportarXlsx(rows, 'participantes_filtrados.xlsx', 'Participantes');
         }
 
-        function eliminarParticipante(participanteId) {
+        async function eliminarParticipante(participanteId) {
             const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
             if (!participante) return;
 
@@ -7039,10 +7039,21 @@
             const nombre = participante.nombreCompleto || 'este participante';
             if (!confirm('¿Eliminar a ' + nombre + '? Esta acción no se puede deshacer.')) return;
 
-            appState.participantesRegistrados = appState.participantesRegistrados.filter(p => p.id !== participanteId);
+            try {
+                // Apaga el perfil de verdad en el Firestore (no solo de la pantalla).
+                // ⚠️ Esto NO borra el login de la persona en Firebase Authentication
+                // todavía — eso necesita la Cloud Function (Fase 2). En la práctica,
+                // sin perfil en Firestore la persona no consigue más usar el app
+                // (el login la bloquea si no encuentra su perfil).
+                await db.collection('participantes').doc(participanteId).delete();
 
-            showAlert('admin-success', nombre + ' fue eliminado');
-            updateParticipantesList();
+                appState.participantesRegistrados = appState.participantesRegistrados.filter(p => p.id !== participanteId);
+
+                showAlert('admin-success', nombre + ' fue eliminado');
+                updateParticipantesList();
+            } catch (error) {
+                showAlert('admin-error', 'No se pudo eliminar. Intenta de nuevo.');
+            }
         }
 
         function openParticipanteModal(participanteId) {
