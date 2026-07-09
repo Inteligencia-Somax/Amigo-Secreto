@@ -6328,7 +6328,7 @@
             document.getElementById(panel + '-panel').classList.add('active');
         }
 
-        function loginSuccess() {
+        async function loginSuccess() {
             document.getElementById('login-usuario').value = '';
             const passwordInput = document.getElementById('login-password');
             if (passwordInput) {
@@ -6350,6 +6350,19 @@
                 switchPanel('usuario');
                 document.getElementById('usuario-nombre').textContent = appState.usuarioActual.nombreCompleto.toUpperCase();
                 document.getElementById('usuario-filial').textContent = 'Unidad de Negocio: ' + appState.usuarioActual.centroNombre;
+                // Carga los grupos (y participantes, para poder mostrar nombre/cargo
+                // de quién le tocó) reales del Firestore antes de renderizar.
+                await Promise.all([
+                    cargarGruposDesdeFirestore(),
+                    (async () => {
+                        try {
+                            const snap = await db.collection('participantes').get();
+                            appState.participantesRegistrados = snap.docs.map(doc => doc.data());
+                        } catch (error) {
+                            console.error('Error al cargar participantes desde Firestore:', error);
+                        }
+                    })()
+                ]);
                 loadUsuarioData();
             }
         }
@@ -6408,6 +6421,56 @@
             return appState.gruposActuales.find(g => g.centroId === centro.id && g.estado !== 'sorteado') || null;
         }
 
+        // ===== SYNC CON FIRESTORE (Centros y Grupos) =====
+        // Guarda/actualiza el documento completo (set sobrescribe todo, lo cual
+        // es seguro acá porque solo el admin escribe estas colecciones).
+        async function syncCentroFirestore(centro) {
+            try {
+                await db.collection('centros').doc(centro.id).set(centro);
+            } catch (error) {
+                console.error('Error al guardar centro en Firestore:', error);
+                showAlert('admin-error', 'Se guardó en pantalla, pero no se pudo sincronizar con el servidor. Verifica tu conexión e intenta de nuevo.');
+            }
+        }
+
+        async function eliminarCentroFirestore(centroId) {
+            try {
+                await db.collection('centros').doc(centroId).delete();
+            } catch (error) {
+                console.error('Error al eliminar centro en Firestore:', error);
+                showAlert('admin-error', 'No se pudo eliminar en el servidor. Verifica tu conexión e intenta de nuevo.');
+            }
+        }
+
+        async function syncGrupoFirestore(grupo) {
+            try {
+                await db.collection('grupos').doc(grupo.id).set(grupo);
+            } catch (error) {
+                console.error('Error al guardar grupo en Firestore:', error);
+                showAlert('admin-error', 'Se guardó en pantalla, pero no se pudo sincronizar con el servidor. Verifica tu conexión e intenta de nuevo.');
+            }
+        }
+
+        async function cargarCentrosDesdeFirestore() {
+            try {
+                const snapshot = await db.collection('centros').get();
+                if (!snapshot.empty) {
+                    appState.centrosActuales = snapshot.docs.map(doc => doc.data());
+                }
+            } catch (error) {
+                console.error('Error al cargar centros desde Firestore:', error);
+            }
+        }
+
+        async function cargarGruposDesdeFirestore() {
+            try {
+                const snapshot = await db.collection('grupos').get();
+                appState.gruposActuales = snapshot.docs.map(doc => doc.data());
+            } catch (error) {
+                console.error('Error al cargar grupos desde Firestore:', error);
+            }
+        }
+
         function agregarCentro() {
             const codigo = document.getElementById('centro-codigo').value.trim();
             const nombre = document.getElementById('centro-nombre').value.trim();
@@ -6432,6 +6495,7 @@
             };
 
             appState.centrosActuales.push(nuevoCentro);
+            syncCentroFirestore(nuevoCentro);
 
             showAlert('admin-success', 'Unidad de negocio creada exitosamente');
 
@@ -6593,6 +6657,7 @@
             };
 
             appState.gruposActuales.push(nuevoGrupo);
+            syncGrupoFirestore(nuevoGrupo);
             showAlert('admin-success', 'Grupo creado exitosamente para ' + centro.nombre);
 
             // Limpiar formulario
@@ -6625,6 +6690,7 @@
 
             if (confirm('¿Estás seguro? Esto eliminará la unidad de negocio.')) {
                 appState.centrosActuales = appState.centrosActuales.filter(c => c.id !== centroId);
+                eliminarCentroFirestore(centroId);
                 updateCentrosList();
                 cargarCentrosEnSelect();
                 poblarSelectCentroGrupo();
@@ -6765,17 +6831,20 @@
 
             centro.codigo = nuevoCodigo;
             centro.nombre = nuevoNombre;
+            syncCentroFirestore(centro);
 
             // Actualiza los datos denormalizados en los grupos y participantes vinculados a esta unidad de negocio
             appState.gruposActuales.forEach(g => {
                 if (g.centroId === centroId) {
                     g.filial = nuevoCodigo;
                     g.centroNombre = nuevoNombre;
+                    syncGrupoFirestore(g);
                 }
             });
             appState.participantesRegistrados.forEach(p => {
                 if (p.centroId === centroId) {
                     p.centroNombre = nuevoNombre;
+                    db.collection('participantes').doc(p.id).update({ centroNombre: nuevoNombre }).catch(err => console.error('Error al actualizar centroNombre del participante:', err));
                 }
             });
 
@@ -7381,6 +7450,7 @@
                     const participante = appState.participantesRegistrados.find(p => p.id === id);
                     if (participante) {
                         participante.grupos = (participante.grupos || []).filter(gid => gid !== grupo.id);
+                        db.collection('participantes').doc(id).update({ grupos: participante.grupos }).catch(err => console.error('Error al actualizar grupos del participante:', err));
                     }
                 }
             });
@@ -7391,11 +7461,13 @@
                     if (participante && !(participante.grupos || []).includes(grupo.id)) {
                         participante.grupos = participante.grupos || [];
                         participante.grupos.push(grupo.id);
+                        db.collection('participantes').doc(id).update({ grupos: participante.grupos }).catch(err => console.error('Error al actualizar grupos del participante:', err));
                     }
                 }
             });
 
             grupo.participantes = [...nuevos];
+            syncGrupoFirestore(grupo);
         }
 
         function guardarParticipantesGrupoModal() {
@@ -7600,6 +7672,7 @@
             grupo.centroNombre = centro.nombre;
             grupo.fecha_revelacion = nuevaFechaRevelacion;
             grupo.fecha_evento = nuevaFechaEvento;
+            syncGrupoFirestore(grupo);
 
             document.getElementById('grupo-detalle-creado').textContent = formatDate(grupo.fecha_sorteio);
             document.getElementById('grupo-detalle-creado-resultados').textContent = formatDate(grupo.fecha_sorteio);
@@ -8131,6 +8204,7 @@
             }
 
             usuario.deseos[grupoId].push(texto);
+            db.collection('participantes').doc(usuario.id).update({ deseos: usuario.deseos }).catch(err => console.error('Error al guardar idea de regalo:', err));
             showAlert('usuario-alert', 'Idea agregada a tu lista');
             loadUsuarioData();
         }
@@ -8147,6 +8221,7 @@
             if (!usuario.deseos || !usuario.deseos[grupoId]) return;
 
             usuario.deseos[grupoId].splice(index, 1);
+            db.collection('participantes').doc(usuario.id).update({ deseos: usuario.deseos }).catch(err => console.error('Error al guardar idea de regalo:', err));
             loadUsuarioData();
         }
 
@@ -8229,10 +8304,17 @@
 
         async function loadAdminData() {
             try {
-                const snapshot = await db.collection('participantes').get();
-                appState.participantesRegistrados = snapshot.docs.map(doc => doc.data());
+                const [participantesSnap, centrosSnap, gruposSnap] = await Promise.all([
+                    db.collection('participantes').get(),
+                    db.collection('centros').get(),
+                    db.collection('grupos').get()
+                ]);
+                appState.participantesRegistrados = participantesSnap.docs.map(doc => doc.data());
+                appState.centrosActuales = centrosSnap.docs.map(doc => doc.data());
+                appState.gruposActuales = gruposSnap.docs.map(doc => doc.data());
             } catch (error) {
-                console.error('Error al cargar participantes desde Firestore:', error);
+                console.error('Error al cargar datos desde Firestore:', error);
+                showAlert('admin-error', 'No se pudieron cargar todos los datos. Verifica tu conexión y recarga la página.');
             }
 
             updateCentrosList();
@@ -8430,6 +8512,7 @@
 
             grupo.presupuesto = valor;
             grupo.fecha_revelacion = fecha;
+            syncGrupoFirestore(grupo);
 
             showAlert('admin-success', 'Grupo actualizado exitosamente');
             updateGruposList();
@@ -8951,15 +9034,28 @@
 
             let importados = 0;
             const errores = [];
+            const centrosCreados = [];
 
             centrosImportStaging.forEach(c => {
                 const resultado = criarCentroDesdeExcel(c.codigo, c.nombre);
                 if (resultado.ok) {
                     importados++;
+                    centrosCreados.push(resultado.centro);
                 } else {
                     errores.push(`Línea ${c.linea}: ${resultado.error}`);
                 }
             });
+
+            if (centrosCreados.length > 0) {
+                const batch = db.batch();
+                centrosCreados.forEach(c => {
+                    batch.set(db.collection('centros').doc(c.id), c);
+                });
+                batch.commit().catch(err => {
+                    console.error('Error al sincronizar unidades importadas con Firestore:', err);
+                    showAlert('admin-error', 'Se importó en pantalla, pero no se pudo sincronizar todo con el servidor. Verifica tu conexión.');
+                });
+            }
 
             updateCentrosList();
             cargarCentrosEnSelect();
@@ -9562,6 +9658,7 @@
 
             grupo.estado = 'sorteado';
             grupo.fecha_revelacion = grupoParaSortear.fecha;
+            syncGrupoFirestore(grupo);
 
             showAlert('admin-success', 'Sorteo realizado exitosamente');
             closeSorteioModal();
@@ -9883,11 +9980,16 @@
 
 
         // ===== INIT =====
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             // Initialize fake data
             appState.centrosActuales = fakeCentros;
             appState.participantesRegistrados = fakeParticipantesRegistrados;
             appState.gruposActuales = fakeGrupos;
+
+            // Carga las unidades de negocio reales del Firestore (lectura
+            // pública, no necesita login — así funciona el select de la
+            // pantalla de Registro).
+            await cargarCentrosDesdeFirestore();
 
             // Cargar centros en select de registro
             cargarCentrosEnSelect();
