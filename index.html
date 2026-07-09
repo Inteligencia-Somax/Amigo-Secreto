@@ -89,6 +89,11 @@
             max-width: 1160px;
         }
 
+        #usuario-panel {
+            width: 100%;
+            max-width: 1160px;
+        }
+
         .panel.active {
             display: block;
             animation: slideIn 0.3s ease-in;
@@ -918,9 +923,10 @@
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: var(--white);
             padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
             text-align: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
         }
 
         .sorteado-box p {
@@ -3398,7 +3404,7 @@
             justify-content: center;
             width: 20px;
             height: 20px;
-            margin-left: 6px;
+            margin-right: 6px;
             padding: 0;
             border: 1px solid #d6e6dd;
             border-radius: 6px;
@@ -3412,6 +3418,27 @@
         .participante-grupo-icon-btn:hover {
             background: var(--primary);
             filter: brightness(1.1);
+        }
+
+        .participante-grupo-popover {
+            display: inline-block;
+            margin-left: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: #eaf5ee;
+            border: 1px solid #d6e6dd;
+            border-radius: 5px;
+            padding: 2px 8px;
+            vertical-align: middle;
+            animation: participanteGrupoPopoverCiclo 5s ease forwards;
+        }
+
+        @keyframes participanteGrupoPopoverCiclo {
+            0% { opacity: 0; transform: translateY(-2px); }
+            8% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; }
+            100% { opacity: 0; }
         }
 
 
@@ -5644,8 +5671,6 @@
             <div id="registro-form" style="display: none;">
                 <h2>Registrarse</h2>
                 
-                <div class="alert alert-error" id="registro-error"></div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label for="registro-nombre">Nombre *</label>
@@ -5732,8 +5757,6 @@
             <div id="login-form">
                 <h2>Iniciar Sesión</h2>
                 
-                <div class="alert alert-error" id="login-error"></div>
-
                 <div class="form-group">
                     <label for="login-usuario">Usuario</label>
                     <input type="text" id="login-usuario" placeholder="Login" autocapitalize="none" autocomplete="username" spellcheck="false" oninput="formatLoginUsuario()" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); handleLogin(); }">
@@ -5825,9 +5848,6 @@
                 <button class="tab-btn active" onclick="switchTab('participantes')">Participantes</button>
                 <button class="tab-btn" onclick="switchTab('ver-grupos')">Grupo</button>
             </div>
-
-            <div class="alert alert-error" id="admin-error" style="display: none;"></div>
-            <div class="alert alert-success" id="admin-success" style="display: none;"></div>
 
             <!-- ===== Tab: Grupo ===== -->
             <div id="ver-grupos" class="tab-content">
@@ -8418,8 +8438,8 @@
                         <input type="checkbox" class="participante-row-checkbox" value="${p.id}" onchange="actualizarBotonEliminarSeleccionadosParticipantes()" ${bloqueado ? `disabled title="${motivoBloqueo}"` : ''}>
                     </td>
                     <td title="${nombreMostrar}">
+                        ${grupoVinculado ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" title="Ver nombre del grupo" aria-label="Ver nombre del grupo">🔗</button>` : ''}
                         <strong>${nombreMostrar}</strong>
-                        ${grupoVinculado ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-id="${grupoVinculado.id}" title="Ir al grupo &quot;${escaparHtml(grupoVinculado.nombre)}&quot;" aria-label="Ver grupo vinculado">🔗</button>` : ''}
                     </td>
                     <td title="${p.login || ''}">${p.login || '-'}</td>
                     <td title="${p.telefono || ''}">${p.telefono || '-'}</td>
@@ -9711,24 +9731,24 @@
                                 <span class="info-value">${formatDateTime(grupo.fecha_evento)}</span>
                             </div>
                         </div>
-                        ${grupo.estado === 'sorteado' && sorteadoInfo ? `
-                            <div class="sorteado-box">
-                                <p>Tu regalo va para:</p>
-                                <div class="sorteado-name">${puedeVer ? sorteadoInfo.nombreCompleto : 'Oculto'}</div>
-                                ${puedeVer ? `
-                                    <p style="font-size: 0.9rem; margin-top: 10px;">${sorteadoInfo.cargo ? sorteadoInfo.cargo : ''}</p>
-                                    ${(sorteadoInfo.deseos && sorteadoInfo.deseos[grupo.id] && sorteadoInfo.deseos[grupo.id].length > 0) ? `
-                                        <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Le gustaría recibir:</p>
-                                        <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].join(' · ')}</p>
-                                    ` : `
-                                        <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Aún no sugirió ideas de regalo.</p>
-                                    `}
-                                ` : `
-                                    <p style="font-size: 0.85rem; margin-top: 10px; opacity: 0.9;">Espera la revelación para conocer a quién le darás el regalo.</p>
-                                `}
-                            </div>
-                        ` : ''}
                     </div>
+                    ${grupo.estado === 'sorteado' && sorteadoInfo ? `
+                        <div class="sorteado-box">
+                            <p>Tu regalo va para:</p>
+                            <div class="sorteado-name">${puedeVer ? sorteadoInfo.nombreCompleto : 'Oculto'}</div>
+                            ${puedeVer ? `
+                                <p style="font-size: 0.9rem; margin-top: 10px;">${sorteadoInfo.cargo ? sorteadoInfo.cargo : ''}</p>
+                                ${(sorteadoInfo.deseos && sorteadoInfo.deseos[grupo.id] && sorteadoInfo.deseos[grupo.id].length > 0) ? `
+                                    <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Le gustaría recibir:</p>
+                                    <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].join(' · ')}</p>
+                                ` : `
+                                    <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Aún no sugirió ideas de regalo.</p>
+                                `}
+                            ` : `
+                                <p style="font-size: 0.85rem; margin-top: 10px; opacity: 0.9;">Espera la revelación para conocer a quién le darás el regalo.</p>
+                            `}
+                        </div>
+                    ` : ''}
                     ${grupo.estado !== 'sorteado' ? `
                         <div class="grupo-card grupo-status-${grupo.estado} grupo-card-deseos">
                             ${renderDeseosBox(grupo)}
@@ -11792,22 +11812,29 @@
             });
         }
 
-        // Ícono de grupo (🔗) en la tabla de participantes: lleva directo a la
-        // pantalla de gestión de ese grupo (Editar / Participantes / Sorteo),
-        // la misma que se abre al hacer clic en la tarjeta del grupo en la
-        // pestaña "Grupo". Delegado en document para que siga funcionando
-        // aunque la tabla se vuelva a dibujar.
+        // Ícono de grupo (🔗) en la tabla de participantes: solo muestra el
+        // nombre del grupo al que está vinculado, en un aviso chiquito que
+        // desaparece solo a los 5 segundos. Delegado en document para que
+        // siga funcionando aunque la tabla se vuelva a dibujar.
         document.addEventListener('click', (event) => {
             const grupoBtn = event.target.closest('.participante-grupo-icon-btn');
             if (grupoBtn) {
                 event.preventDefault();
                 event.stopPropagation();
-                const grupoId = grupoBtn.getAttribute('data-grupo-id');
-                if (grupoId) {
-                    abrirGrupoAcciones(grupoId);
-                }
+
+                document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
+
+                const nombreGrupo = grupoBtn.getAttribute('data-grupo-nombre') || '';
+                const span = document.createElement('span');
+                span.className = 'participante-grupo-popover';
+                span.textContent = nombreGrupo;
+                grupoBtn.insertAdjacentElement('afterend', span);
+
+                setTimeout(() => span.remove(), 5000);
                 return;
             }
+            if (event.target.closest('.participante-grupo-popover')) return;
+            document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
         });
 
         // ===== BLOQUEO DE SCROLL DE FONDO CUANDO HAY UN MODAL ABIERTO =====
@@ -12001,5 +12028,22 @@
             tableObserver.observe(document.body, { childList: true, subtree: true });
         });
     </script>
+    <!-- Los avisos flotantes (error/éxito/cargando) viven acá, como hijos
+         directos de <body>, y NO dentro de #auth-panel / #admin-panel como
+         antes. Motivo: esos paneles tienen "animation: slideIn" en su clase
+         .active, y cualquier elemento con una animación que toque transform/
+         opacity crea su propio contexto de apilamiento — un hijo con
+         position:fixed y z-index:3000 queda "atrapado" dentro de ese
+         contexto y termina compitiendo solo contra sus hermanos, no contra
+         toda la página. Eso hacía que el aviso de "Guardando..." (y errores/
+         éxitos) apareciera TAPADO detrás de cualquier modal abierto (Editar
+         Perfil, Editar Participante, etc.) — el problema no era un lugar
+         puntual, era la ubicación de estos 4 elementos en general. Al vivir
+         directo en <body>, el z-index ya compite de verdad contra todo,
+         incluidos los modales (z-index 1000-1100).-->
+    <div class="alert alert-error" id="registro-error"></div>
+    <div class="alert alert-error" id="login-error"></div>
+    <div class="alert alert-error" id="admin-error" style="display: none;"></div>
+    <div class="alert alert-success" id="admin-success" style="display: none;"></div>
 </body>
 </html>
