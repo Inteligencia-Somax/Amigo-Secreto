@@ -1579,6 +1579,37 @@
             color: var(--primary);
         }
 
+        /* Mismo estilo visual del botón "+ Crear" (fondo crema, borde dorado,
+           texto marrón), pero ocupando el ancho completo — usado en "Crear
+           Nuevo Grupo" para el botón "+ Participante". */
+        .btn-crear-estilo-full {
+            width: 100%;
+            height: 38px;
+            min-height: 38px;
+            padding: 0 12px;
+            border-radius: 10px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #fff8ec;
+            border: 1.5px solid #f1d8a2;
+            color: #8a5b00;
+            cursor: pointer;
+            text-transform: none;
+            box-shadow: none;
+        }
+
+        .btn-crear-estilo-full:hover {
+            background: #f7e4ba;
+            border-color: var(--secondary);
+            color: #7a5200;
+            transform: translateY(-1px);
+        }
+
         .participante-filters-row .btn-plain-action:hover {
             background: #f4faf7;
             border-color: var(--primary);
@@ -5858,7 +5889,7 @@
 
             <div class="form-group" id="grupo-nuevo-participantes-wrapper" style="display: none;">
                 <label>Participantes de esta unidad</label>
-                <button type="button" id="grupo-nuevo-participantes-btn" class="btn btn-outline" style="width: 100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="abrirSeleccionarParticipantesCrearGrupo()">
+                <button type="button" id="grupo-nuevo-participantes-btn" class="btn-crear-estilo-full" onclick="abrirSeleccionarParticipantesCrearGrupo()">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                         <circle cx="9" cy="7" r="4"/>
