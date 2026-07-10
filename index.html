@@ -391,6 +391,10 @@
         }
 
         /* Botones grandes de la pantalla de bienvenida (Acceder / Inscribirse) */
+        #auth-choice h2 {
+            text-align: center;
+        }
+
         .auth-choice-buttons {
             display: flex;
             flex-direction: column;
@@ -1763,6 +1767,57 @@
             text-align: left;
         }
 
+        /* Fila "Ver Participantes" (solo ícono) + "+ Participante" del modal
+           Editar Grupo: van una al lado de la otra, en una sola línea. */
+        #grupo-editar-modal .grupo-editar-acciones-lista {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        #grupo-editar-modal .grupo-ver-participantes-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            min-width: 46px;
+            padding: 0;
+            border: 1px solid #d7e3dc;
+            border-radius: 10px;
+            background: #f7fbf8;
+            box-shadow: 0 4px 10px rgba(26, 95, 63, 0.08);
+            color: var(--primary);
+            cursor: pointer;
+            transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+            flex: 0 0 auto;
+        }
+
+        #grupo-editar-modal .grupo-ver-participantes-icon-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        #grupo-editar-modal .grupo-ver-participantes-icon-btn:hover {
+            background: #eef7f1;
+            border-color: var(--primary);
+            box-shadow: 0 6px 14px rgba(26, 95, 63, 0.12);
+            transform: translateY(-1px);
+        }
+
+        #grupo-editar-modal .grupo-agregar-participante-btn {
+            flex: 1 1 auto;
+            justify-content: center;
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: var(--dark);
+        }
+
+        #grupo-editar-modal .grupo-agregar-participante-btn:hover {
+            background: #ff9500;
+            border-color: #ff9500;
+            transform: translateY(-1px);
+        }
+
         .grupo-accion-btn:hover {
             border-color: var(--primary);
             background: #f4faf7;
@@ -2529,6 +2584,10 @@
                 height: 40px;
                 min-height: 40px;
             }
+
+            .participante-filters-row .btn-columnas-toggle {
+                align-self: center;
+            }
         }
 
         /* ==================== PARTICIPANTES TABLE ==================== */
@@ -2800,6 +2859,109 @@
         .btn-excel:hover {
             background: var(--primary-light);
             border-color: var(--primary-light);
+        }
+
+        .btn-columnas-toggle {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+
+        .btn-columnas-toggle:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-columnas-toggle svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .columnas-ordenar-lista,
+        .columnas-visibilidad-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .columna-ordenar-item,
+        .columna-visibilidad-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 14px;
+            background: #f7fbf8;
+            border: 1px solid #e5eee8;
+            border-radius: 8px;
+        }
+
+        .columna-ordenar-item-label,
+        .columna-visibilidad-item-label {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .columna-ordenar-item-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .columna-ordenar-btn {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--white);
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .columna-ordenar-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .columna-ordenar-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .columna-ordenar-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .columna-visibilidad-item label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .columna-visibilidad-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
         }
 
         .btn-eliminar-lote {
@@ -6689,6 +6851,13 @@
 
                     <button type="button" class="btn btn-outline abrir-crear-grupo-btn btn-plain-action participante-inline-action-btn" onclick="abrirImportarParticipantes()">Importar</button>
                     <button type="button" class="btn-excel participante-export-btn" onclick="exportarParticipantesFiltradosExcel()">Excel</button>
+                    <button type="button" class="btn-columnas-toggle" aria-label="Configurar columnas" title="Configurar columnas" onclick="abrirColumnasMenuParticipantes()">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <circle cx="12" cy="5" r="2"/>
+                            <circle cx="12" cy="12" r="2"/>
+                            <circle cx="12" cy="19" r="2"/>
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- Barra flotante de acciones en lote: solo aparece cuando hay 1+
@@ -6889,7 +7058,87 @@
         </div>
     </div>
 
-    <!-- =============== MODAL MENÚ DE OPCIONES DEL PARTICIPANTE =============== -->
+    <!-- =============== MODAL MENÚ DE COLUMNAS (TABLA PARTICIPANTES) =============== -->
+    <div id="participantes-columnas-menu-modal" class="modal">
+        <div class="modal-content" style="max-width: 320px;">
+            <div class="modal-header">
+                <h3>Columnas</h3>
+            </div>
+
+            <div class="header-menu-list">
+                <button type="button" class="header-menu-item" onclick="cerrarColumnasMenuParticipantes(); abrirOrdenarColumnasParticipantes();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <line x1="4" y1="6" x2="14" y2="6"/>
+                            <line x1="4" y1="12" x2="18" y2="12"/>
+                            <line x1="4" y1="18" x2="10" y2="18"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Ordenar</span>
+                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+                </button>
+                <button type="button" class="header-menu-item" onclick="cerrarColumnasMenuParticipantes(); abrirVisibilidadColumnasParticipantes();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Mostrar/Ocultar</span>
+                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+                </button>
+            </div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarColumnasMenuParticipantes()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============== MODAL ORDENAR COLUMNAS (TABLA PARTICIPANTES) =============== -->
+    <div id="participantes-columnas-ordenar-modal" class="modal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <h3>Ordenar Columnas</h3>
+            </div>
+
+            <div id="participantes-columnas-ordenar-lista" class="columnas-ordenar-lista"></div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarOrdenarColumnasParticipantes()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============== MODAL MOSTRAR/OCULTAR COLUMNAS (TABLA PARTICIPANTES) =============== -->
+    <div id="participantes-columnas-visibilidad-modal" class="modal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <h3>Mostrar/Ocultar Columnas</h3>
+            </div>
+
+            <div id="participantes-columnas-visibilidad-lista" class="columnas-visibilidad-lista"></div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarVisibilidadColumnasParticipantes()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
     <div id="usuario-header-menu-modal" class="modal">
         <div class="modal-content" style="max-width: 340px;">
             <div class="modal-header">
@@ -7520,17 +7769,16 @@
             </div>
 
             <div class="grupo-detail-form">
-                <div class="grupo-acciones-lista" style="margin-bottom: 18px;">
-                    <button type="button" class="grupo-accion-btn" onclick="abrirParticipantesDesdeEditar()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <div class="grupo-acciones-lista grupo-editar-acciones-lista" style="margin-bottom: 18px;">
+                    <button type="button" class="grupo-ver-participantes-icon-btn" onclick="abrirParticipantesDesdeEditar()" aria-label="Ver Participantes" title="Ver Participantes">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                         </svg>
-                        Ver Participantes
                     </button>
-                    <button type="button" class="grupo-accion-btn" onclick="abrirVincularDesdeEditar()">
+                    <button type="button" class="grupo-accion-btn grupo-agregar-participante-btn" onclick="abrirVincularDesdeEditar()">
                         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
@@ -7547,19 +7795,19 @@
                         <label for="grupo-detalle-nombre-input">Nombre del Grupo</label>
                         <input type="text" id="grupo-detalle-nombre-input">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="display:none;">
                         <label for="grupo-detalle-presupuesto">Presupuesto (USD)</label>
                         <input type="number" id="grupo-detalle-presupuesto" min="0" step="1" inputmode="numeric">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group participante-modal-full">
                         <label for="grupo-detalle-centro-select">Unidad de Negocio</label>
                         <select id="grupo-detalle-centro-select" onchange="renderVincularParticipantesLista()"></select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group participante-modal-full">
                         <label for="grupo-detalle-fecha-revelacion">Fecha de Revelación</label>
                         <input type="datetime-local" id="grupo-detalle-fecha-revelacion">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="display:none;">
                         <label for="grupo-detalle-fecha-evento">Fecha del Evento</label>
                         <input type="datetime-local" id="grupo-detalle-fecha-evento">
                     </div>
@@ -7975,6 +8223,64 @@
             key: 'fecha_registro',
             direction: 'desc'
         };
+
+        // ===== CONFIGURACIÓN DE COLUMNAS DE LA TABLA DE PARTICIPANTES =====
+        // (checkbox y acciones son fijas, no aparecen acá: siempre están al
+        // principio y al final de la tabla, no se pueden ocultar ni mover)
+        const PARTICIPANTES_COLUMNAS_INFO = {
+            nombre:         { label: 'Nombre' },
+            centroId:       { label: 'Unidad de Negocio' },
+            fecha_registro: { label: 'Fecha Registro' },
+            login:          { label: 'Usuario' },
+            telefono:       { label: 'Teléfono' },
+            cargo:          { label: 'Cargo' }
+        };
+
+        const PARTICIPANTES_COLUMNAS_ORDEN_DEFAULT = ['nombre', 'centroId', 'fecha_registro', 'login', 'telefono', 'cargo'];
+        const PARTICIPANTES_COLUMNAS_VISIBLES_DEFAULT = {
+            nombre: true,
+            centroId: true,
+            fecha_registro: true,
+            login: false,
+            telefono: false,
+            cargo: false
+        };
+
+        function cargarPreferenciasColumnasParticipantes() {
+            let guardado = null;
+            try {
+                guardado = JSON.parse(localStorage.getItem('somaxAmigoSecretoParticipantesColumnas') || 'null');
+            } catch (e) {
+                // Sin acceso a localStorage o dato corrupto, se queda con lo por defecto.
+            }
+
+            const ordenGuardado = Array.isArray(guardado?.orden)
+                ? guardado.orden.filter(key => PARTICIPANTES_COLUMNAS_INFO[key])
+                : [];
+            const orden = [...ordenGuardado];
+            PARTICIPANTES_COLUMNAS_ORDEN_DEFAULT.forEach(key => {
+                if (!orden.includes(key)) orden.push(key);
+            });
+
+            const visibles = { ...PARTICIPANTES_COLUMNAS_VISIBLES_DEFAULT, ...(guardado?.visibles || {}) };
+
+            return { orden, visibles };
+        }
+
+        let participantesColumnasState = cargarPreferenciasColumnasParticipantes();
+
+        function guardarPreferenciasColumnasParticipantes() {
+            try {
+                localStorage.setItem('somaxAmigoSecretoParticipantesColumnas', JSON.stringify(participantesColumnasState));
+            } catch (e) {
+                // Sin acceso a localStorage: la preferencia simplemente no persiste
+                // entre sesiones, pero la tabla sigue funcionando con normalidad.
+            }
+        }
+
+        function getColumnasParticipantesVisiblesOrdenadas() {
+            return participantesColumnasState.orden.filter(key => participantesColumnasState.visibles[key] !== false);
+        }
 
         // ===== DATOS INICIALES (vacíos - sin datos de ejemplo) =====
         const fakeCentros = [];
@@ -9672,6 +9978,16 @@
                 return;
             }
 
+            const columnasVisibles = getColumnasParticipantesVisiblesOrdenadas();
+            // Ancho fijo para check y acciones; el resto se reparte en partes
+            // iguales entre las columnas de datos que estén visibles — así la
+            // tabla siempre ocupa el 100% del ancho, tenga las columnas que tenga.
+            const anchoCheckbox = 5;
+            const anchoAcciones = 9;
+            const anchoPorColumna = columnasVisibles.length
+                ? (100 - anchoCheckbox - anchoAcciones) / columnasVisibles.length
+                : 0;
+
             const filas = participantesFiltrados.map(p => {
                 const vinculadoAGrupo = (p.grupos || []).length > 0;
                 const bloqueado = vinculadoAGrupo || p.esAdmin;
@@ -9679,24 +9995,29 @@
                 const grupoVinculado = vinculadoAGrupo ? appState.gruposActuales.find(g => g.id === p.grupos[0]) : null;
                 const nombreMostrar = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
                 const codigoCentro = getCodigoCentroParticipante(p);
-                const fechaRegistro = formatDate(p.fecha_registro || p.fechaRegistro || '');
+                // Fecha Registro se muestra con hora incluida en esta tabla.
+                const fechaRegistro = formatDateTime(p.fecha_registro || p.fechaRegistro || '');
+
+                const celdasPorColumna = {
+                    nombre: `<td title="${nombreMostrar}"><strong>${nombreMostrar}</strong></td>`,
+                    login: `<td title="${p.login || ''}">${p.login || '-'}</td>`,
+                    telefono: `<td title="${p.telefono || ''}">${p.telefono || '-'}</td>`,
+                    cargo: `<td title="${p.cargo || ''}">${p.cargo || '-'}</td>`,
+                    centroId: `<td title="${codigoCentro}">${codigoCentro}</td>`,
+                    fecha_registro: `<td title="${fechaRegistro}">${fechaRegistro}</td>`
+                };
+                const celdasHtml = columnasVisibles.map(key => celdasPorColumna[key] || '').join('');
+
                 return `
                 <tr data-vinculado="${vinculadoAGrupo ? 'si' : 'no'}">
-                    <td class="participante-checkbox-col">
+                    <td class="participante-checkbox-col" style="width:${anchoCheckbox}%">
                         ${grupoVinculado
                             ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" aria-label="Ver nombre del grupo">🔗</button>`
                             : `<input type="checkbox" class="participante-row-checkbox" value="${p.id}" onchange="actualizarBotonEliminarSeleccionadosParticipantes()" ${bloqueado ? `disabled title="${motivoBloqueo}"` : ''}>`
                         }
                     </td>
-                    <td title="${nombreMostrar}">
-                        <strong>${nombreMostrar}</strong>
-                    </td>
-                    <td title="${p.login || ''}">${p.login || '-'}</td>
-                    <td title="${p.telefono || ''}">${p.telefono || '-'}</td>
-                    <td title="${p.cargo || ''}">${p.cargo || '-'}</td>
-                    <td title="${codigoCentro}">${codigoCentro}</td>
-                    <td title="${fechaRegistro}">${fechaRegistro}</td>
-                    <td>
+                    ${celdasHtml}
+                    <td style="width:${anchoAcciones}%">
                         <div class="icon-actions">
                             <button class="icon-action-btn" type="button" aria-label="Editar" title="Editar" onclick="openParticipanteModal('${p.id}')">
                                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -9731,18 +10052,19 @@
             `;
             }).join('');
 
+            const headerColumnas = columnasVisibles.map(key => {
+                const info = PARTICIPANTES_COLUMNAS_INFO[key];
+                if (!info) return '';
+                return `<th class="sortable-header" style="width:${anchoPorColumna}%" onclick="setParticipantesSort('${key}')"><span class="sort-header-content">${info.label} <span class="sort-indicator">${getParticipantesSortIndicator(key)}</span></span></th>`;
+            }).join('');
+
             cont.innerHTML = `
                 <table id="participantes-table" class="participantes-admin-table">
                     <thead>
                         <tr>
-                            <th class="participante-checkbox-col"><input type="checkbox" id="participantes-select-all-checkbox" onchange="toggleTodosParticipantesCheckboxes(this)" aria-label="Seleccionar todos"></th>
-                            <th class="sortable-header" onclick="setParticipantesSort('nombre')"><span class="sort-header-content">Nombre <span class="sort-indicator">${getParticipantesSortIndicator('nombre')}</span></span></th>
-                            <th class="sortable-header" onclick="setParticipantesSort('login')"><span class="sort-header-content">Usuario <span class="sort-indicator">${getParticipantesSortIndicator('login')}</span></span></th>
-                            <th class="sortable-header" onclick="setParticipantesSort('telefono')"><span class="sort-header-content">Teléfono <span class="sort-indicator">${getParticipantesSortIndicator('telefono')}</span></span></th>
-                            <th class="sortable-header" onclick="setParticipantesSort('cargo')"><span class="sort-header-content">Cargo <span class="sort-indicator">${getParticipantesSortIndicator('cargo')}</span></span></th>
-                            <th class="sortable-header" onclick="setParticipantesSort('centroId')"><span class="sort-header-content">Unidad de Negocio <span class="sort-indicator">${getParticipantesSortIndicator('centroId')}</span></span></th>
-                            <th class="sortable-header" onclick="setParticipantesSort('fecha_registro')"><span class="sort-header-content">Fecha Registro <span class="sort-indicator">${getParticipantesSortIndicator('fecha_registro')}</span></span></th>
-                            <th class="participante-acciones-col" aria-label="Acciones"></th>
+                            <th class="participante-checkbox-col" style="width:${anchoCheckbox}%"><input type="checkbox" id="participantes-select-all-checkbox" onchange="toggleTodosParticipantesCheckboxes(this)" aria-label="Seleccionar todos"></th>
+                            ${headerColumnas}
+                            <th class="participante-acciones-col" style="width:${anchoAcciones}%" aria-label="Acciones"></th>
                         </tr>
                     </thead>
                     <tbody id="participantes-tbody">${filas}</tbody>
@@ -11734,6 +12056,110 @@
         function cerrarAdminHeaderMenu() {
             const modal = document.getElementById('admin-header-menu-modal');
             if (modal) modal.classList.remove('active');
+        }
+
+        // ===== CONFIGURACIÓN DE COLUMNAS (TABLA PARTICIPANTES) =====
+
+        function abrirColumnasMenuParticipantes() {
+            const modal = document.getElementById('participantes-columnas-menu-modal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function cerrarColumnasMenuParticipantes() {
+            const modal = document.getElementById('participantes-columnas-menu-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function abrirOrdenarColumnasParticipantes() {
+            renderOrdenarColumnasParticipantes();
+            const modal = document.getElementById('participantes-columnas-ordenar-modal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function cerrarOrdenarColumnasParticipantes() {
+            const modal = document.getElementById('participantes-columnas-ordenar-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function abrirVisibilidadColumnasParticipantes() {
+            renderVisibilidadColumnasParticipantes();
+            const modal = document.getElementById('participantes-columnas-visibilidad-modal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function cerrarVisibilidadColumnasParticipantes() {
+            const modal = document.getElementById('participantes-columnas-visibilidad-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function renderOrdenarColumnasParticipantes() {
+            const cont = document.getElementById('participantes-columnas-ordenar-lista');
+            if (!cont) return;
+
+            const orden = participantesColumnasState.orden;
+            cont.innerHTML = orden.map((key, index) => {
+                const info = PARTICIPANTES_COLUMNAS_INFO[key];
+                if (!info) return '';
+                return `
+                <div class="columna-ordenar-item">
+                    <span class="columna-ordenar-item-label">${info.label}</span>
+                    <div class="columna-ordenar-item-controls">
+                        <button type="button" class="columna-ordenar-btn" aria-label="Subir" title="Subir" onclick="moverColumnaParticipante('${key}', -1)" ${index === 0 ? 'disabled' : ''}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+                        </button>
+                        <button type="button" class="columna-ordenar-btn" aria-label="Bajar" title="Bajar" onclick="moverColumnaParticipante('${key}', 1)" ${index === orden.length - 1 ? 'disabled' : ''}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function moverColumnaParticipante(key, direccion) {
+            const orden = participantesColumnasState.orden;
+            const index = orden.indexOf(key);
+            const nuevoIndex = index + direccion;
+            if (index === -1 || nuevoIndex < 0 || nuevoIndex >= orden.length) return;
+
+            [orden[index], orden[nuevoIndex]] = [orden[nuevoIndex], orden[index]];
+
+            guardarPreferenciasColumnasParticipantes();
+            renderOrdenarColumnasParticipantes();
+            updateParticipantesList();
+        }
+
+        function renderVisibilidadColumnasParticipantes() {
+            const cont = document.getElementById('participantes-columnas-visibilidad-lista');
+            if (!cont) return;
+
+            cont.innerHTML = participantesColumnasState.orden.map(key => {
+                const info = PARTICIPANTES_COLUMNAS_INFO[key];
+                if (!info) return '';
+                const visible = participantesColumnasState.visibles[key] !== false;
+                return `
+                <div class="columna-visibilidad-item">
+                    <label>
+                        <input type="checkbox" ${visible ? 'checked' : ''} onchange="toggleVisibilidadColumnaParticipante('${key}', this)">
+                        <span class="columna-visibilidad-item-label">${info.label}</span>
+                    </label>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleVisibilidadColumnaParticipante(key, checkbox) {
+            const visiblesActuales = getColumnasParticipantesVisiblesOrdenadas();
+
+            // No se puede ocultar la última columna visible: la tabla siempre
+            // tiene que mostrar al menos un dato además del check y la acción.
+            if (checkbox && !checkbox.checked && visiblesActuales.length <= 1) {
+                checkbox.checked = true;
+                showAlert('admin-error', 'Debe quedar al menos una columna visible.');
+                return;
+            }
+
+            participantesColumnasState.visibles[key] = checkbox ? checkbox.checked : !participantesColumnasState.visibles[key];
+            guardarPreferenciasColumnasParticipantes();
+            updateParticipantesList();
         }
 
         function abrirUsuarioHeaderMenu() {
