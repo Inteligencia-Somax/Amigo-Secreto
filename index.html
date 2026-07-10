@@ -1848,6 +1848,50 @@
             cursor: pointer;
         }
 
+        /* Fila clicable del modal "Cambiar Contexto" — reutiliza el mismo look
+           de .participantes-picker-item, pero como <button> (sin checkbox). */
+        .participantes-picker-item-clickable {
+            width: 100%;
+            text-align: left;
+            font: inherit;
+            color: inherit;
+        }
+
+        /* Aviso fijo en el panel del participante mientras el admin está
+           "viendo como" esa persona — para que nunca se olvide de que no es
+           su propia cuenta y pueda volver fácil. */
+        .contexto-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            background: #fff4d9;
+            border: 2px solid #e8c565;
+            color: #6b5006;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .contexto-banner-btn {
+            background: #6b5006;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .contexto-banner-btn:hover {
+            opacity: 0.9;
+        }
+
         .participantes-picker-avatar {
             width: 36px;
             height: 36px;
@@ -6302,6 +6346,11 @@
                 </div>
             </div>
 
+            <div id="contexto-banner" class="contexto-banner" style="display: none;">
+                <span class="contexto-banner-texto">Viendo como: </span>
+                <button type="button" class="contexto-banner-btn" onclick="salirDeContexto()">Volver a Administrador</button>
+            </div>
+
             <div class="alert alert-success" id="usuario-alert" style="display: none;"></div>
 
             <div class="grupos-container" id="grupos-usuario">
@@ -6506,6 +6555,18 @@
                         </svg>
                     </span>
                     <span class="header-menu-item-label">Unidad de Negocio</span>
+                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+                </button>
+                <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirContextoModal();">
+                    <span class="header-menu-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17 1l4 4-4 4"/>
+                            <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                            <path d="M7 23l-4-4 4-4"/>
+                            <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                        </svg>
+                    </span>
+                    <span class="header-menu-item-label">Cambiar Contexto</span>
                     <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
                 </button>
                 <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirLogsModal();">
@@ -7381,6 +7442,30 @@
         </div>
     </div>
 
+    <!-- =============== MODAL ALTERAR CONTEXTO (ver como participante) =============== -->
+    <div id="contexto-modal" class="modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3>Cambiar Contexto</h3>
+                <button class="close-btn" onclick="cerrarContextoModal()">&times;</button>
+            </div>
+
+            <p class="text-muted" style="margin: 0 0 12px; font-size: 0.9rem;">
+                Elige un participante para ver la aplicación como si hubieras iniciado sesión con su cuenta. Vas a poder volver a tu panel de Administrador en cualquier momento.
+            </p>
+
+            <div class="participantes-picker-search">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="contexto-buscar" placeholder="Buscar por nombre, usuario o cargo..." oninput="filtrarContextoLista()">
+            </div>
+
+            <div id="contexto-lista" class="participantes-picker-lista"></div>
+        </div>
+    </div>
+
     <div id="participantes-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -8093,6 +8178,9 @@
         }
 
         async function loginSuccess() {
+            // Quita el aviso "Ingresando..." y, con él, el fondo oscuro que
+            // quedaba pegado en el body después de un login exitoso.
+            hideAlert('login-error');
             document.getElementById('login-usuario').value = '';
             const passwordInput = document.getElementById('login-password');
             if (passwordInput) {
@@ -8145,10 +8233,126 @@
             }
         }
 
+        // ===== ALTERAR CONTEXTO (admin viendo la app como un participante) =====
+        // Guarda los datos del admin real mientras está "viendo como" otro
+        // participante, para poder volver sin cerrar sesión ni loguearse de
+        // nuevo. Se queda en null cuando nadie está en modo "ver como".
+        let contextoAdminOriginal = null;
+
+        function abrirContextoModal() {
+            renderContextoLista();
+            document.getElementById('contexto-modal').classList.add('active');
+        }
+
+        function cerrarContextoModal() {
+            document.getElementById('contexto-modal').classList.remove('active');
+        }
+
+        function renderContextoLista() {
+            const cont = document.getElementById('contexto-lista');
+            const buscar = document.getElementById('contexto-buscar');
+            if (buscar) buscar.value = '';
+            if (!cont) return;
+
+            const participantes = [...appState.participantesRegistrados].sort((a, b) =>
+                (a.nombreCompleto || '').localeCompare(b.nombreCompleto || '')
+            );
+
+            if (participantes.length === 0) {
+                cont.innerHTML = '<div class="participantes-picker-empty">No hay participantes registrados todavía.</div>';
+                return;
+            }
+
+            cont.innerHTML = participantes.map(p => {
+                const nombre = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
+                const subtitulo = `${p.login || '-'}${p.cargo ? ' · ' + p.cargo : ''}`;
+                const busqueda = (nombre + ' ' + (p.login || '') + ' ' + (p.cargo || '')).toLowerCase();
+                return `
+                    <button type="button" class="participantes-picker-item participantes-picker-item-clickable" data-search="${escaparHtml(busqueda)}" onclick="entrarEnContextoParticipante('${p.id}')">
+                        <span class="participantes-picker-avatar">${escaparHtml(inicialesParticipante(nombre))}</span>
+                        <span class="participantes-picker-info">
+                            <strong>${escaparHtml(nombre)}</strong>
+                            <span>${escaparHtml(subtitulo)}</span>
+                        </span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Filtra la lista en vivo por nombre, usuario o cargo, sin volver a pedir
+        // los datos — solo esconde las filas que no coinciden.
+        function filtrarContextoLista() {
+            const buscar = document.getElementById('contexto-buscar');
+            const q = (buscar && buscar.value || '').trim().toLowerCase();
+            document.querySelectorAll('#contexto-lista .participantes-picker-item').forEach(item => {
+                const coincide = !q || (item.dataset.search || '').includes(q);
+                item.style.display = coincide ? '' : 'none';
+            });
+        }
+
+        // Cambia el appState para mostrar el panel del participante elegido,
+        // sin tocar la sesión real de Firebase Authentication — el admin
+        // sigue siendo quien inició sesión, solo cambia lo que se ve.
+        function entrarEnContextoParticipante(participanteId) {
+            const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
+            if (!participante) return;
+
+            // Si ya estaba viendo como otro participante y elige uno nuevo, no
+            // pisa el admin original guardado — solo lo guarda la primera vez.
+            if (!contextoAdminOriginal) {
+                contextoAdminOriginal = appState.usuarioActual;
+            }
+
+            appState.usuarioActual = participante;
+            appState.esAdmin = false;
+
+            cerrarContextoModal();
+            switchPanel('usuario');
+            document.getElementById('usuario-nombre').textContent = (participante.nombreCompleto || '').toUpperCase();
+            document.getElementById('usuario-filial').textContent = 'Unidad de Negocio: ' + (participante.centroNombre || '-');
+            mostrarBannerContexto(participante);
+            loadUsuarioData();
+        }
+
+        function mostrarBannerContexto(participante) {
+            const banner = document.getElementById('contexto-banner');
+            if (!banner) return;
+            const texto = banner.querySelector('.contexto-banner-texto');
+            if (texto) texto.textContent = 'Viendo como: ' + (participante.nombreCompleto || participante.login || '');
+            banner.style.display = 'flex';
+        }
+
+        // Restaura el panel de Administrador con los datos del admin real,
+        // guardados al entrar en el modo "ver como".
+        function salirDeContexto() {
+            if (!contextoAdminOriginal) return;
+            appState.usuarioActual = contextoAdminOriginal;
+            appState.esAdmin = true;
+            contextoAdminOriginal = null;
+
+            const banner = document.getElementById('contexto-banner');
+            if (banner) banner.style.display = 'none';
+
+            switchPanel('admin');
+            document.getElementById('admin-nombre').textContent = appState.usuarioActual.nombreCompleto;
+            const metaEl = document.getElementById('admin-meta');
+            if (metaEl) {
+                const cargo = appState.usuarioActual.cargo || 'Administrador';
+                const centro = appState.usuarioActual.centroNombre || 'Sin centro asignado';
+                metaEl.textContent = cargo + ' · Unidad de Negocio: ' + centro;
+            }
+        }
+
         function handleLogout() {
             auth.signOut();
             appState.usuarioActual = null;
             appState.esAdmin = false;
+
+            // Si el admin estaba "viendo como" un participante, limpia ese
+            // estado también — si no, quedaría guardado para la próxima sesión.
+            contextoAdminOriginal = null;
+            const contextoBanner = document.getElementById('contexto-banner');
+            if (contextoBanner) contextoBanner.style.display = 'none';
 
             // Cierra cualquier modal que haya quedado abierto (ej: el menú de opciones)
             document.querySelectorAll('.modal.active').forEach(modal => modal.classList.remove('active'));
