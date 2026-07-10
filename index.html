@@ -7232,6 +7232,212 @@
             height: 18px !important;
             stroke: currentColor !important;
         }
+
+
+        /* ==================== AJUSTES V16 ==================== */
+        /* Login: título e recuperação na mesma linha, com o separador completo. */
+        #login-form .login-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin: -34px -40px 28px;
+            padding: 24px 40px 18px;
+            border-bottom: 1px solid #e5eee8;
+            background: linear-gradient(135deg, #f7fbf8 0%, #ffffff 100%);
+        }
+
+        #auth-panel #login-form .login-title-row h2 {
+            flex: 1 1 auto;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            background: transparent !important;
+            color: var(--primary) !important;
+            font-size: 1.4rem !important;
+            line-height: 1.15 !important;
+            text-align: left !important;
+        }
+
+        #login-form .login-forgot-btn {
+            align-self: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            min-height: 32px;
+            margin: 0;
+            padding: 0;
+            line-height: 1.15;
+        }
+
+        /* Seleção e vínculo de participantes: busca e linhas com 40px. */
+        #grupo-nuevo-participantes-modal .participantes-picker-search,
+        #vincular-participantes-modal .participantes-picker-search {
+            height: 40px;
+            min-height: 40px;
+            padding: 0 12px;
+            border-width: 1.5px;
+        }
+
+        #grupo-nuevo-participantes-modal .participantes-picker-search input,
+        #vincular-participantes-modal .participantes-picker-search input {
+            height: 38px;
+            min-height: 38px;
+            padding: 0;
+            font-size: 0.9rem;
+        }
+
+        #grupo-nuevo-participantes-modal .participantes-picker-item,
+        #vincular-participantes-modal .participantes-picker-item {
+            height: 40px;
+            min-height: 40px;
+            padding: 3px 10px;
+            gap: 10px;
+            border-width: 1.5px;
+            box-sizing: border-box;
+        }
+
+        #grupo-nuevo-participantes-modal .participantes-picker-avatar,
+        #vincular-participantes-modal .participantes-picker-avatar {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            font-size: 0.75rem;
+        }
+
+        #grupo-nuevo-participantes-modal .participantes-picker-info,
+        #vincular-participantes-modal .participantes-picker-info {
+            flex: 1 1 auto;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        #grupo-nuevo-participantes-modal .participantes-picker-info strong,
+        #vincular-participantes-modal .participantes-picker-info strong {
+            font-size: 0.88rem;
+            line-height: 1;
+        }
+
+        /* Ações do grupo: botões sólidos, texto branco e altura de 40px. */
+        #grupo-context-modal .grupo-accion-btn.grupo-accion-reset,
+        #grupo-context-modal .grupo-accion-btn.grupo-accion-peligro {
+            height: 40px;
+            min-height: 40px;
+            padding: 0 16px;
+            border: none;
+            color: var(--white);
+            box-shadow: none;
+        }
+
+        #grupo-context-modal .grupo-accion-btn.grupo-accion-reset {
+            background: #96691c;
+        }
+
+        #grupo-context-modal .grupo-accion-btn.grupo-accion-reset:hover {
+            background: #ad7b25;
+            border: none;
+            color: var(--white);
+        }
+
+        #grupo-context-modal .grupo-accion-btn.grupo-accion-peligro {
+            background: var(--error);
+        }
+
+        #grupo-context-modal .grupo-accion-btn.grupo-accion-peligro:hover {
+            background: #d32f2f;
+            border: none;
+            color: var(--white);
+        }
+
+        @media (max-width: 768px) {
+            #login-form .login-title-row {
+                margin: -28px -24px 24px;
+                padding: 22px 24px 16px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            #login-form .login-title-row {
+                align-items: center;
+                gap: 10px;
+            }
+
+            #login-form .login-forgot-btn {
+                max-width: 155px;
+                white-space: normal;
+                text-align: right;
+                line-height: 1.2;
+            }
+        }
+
+
+
+        /* ==================== PADRÃO GLOBAL FINAL: BOTÕES 40 PX ====================
+           Mantém todos os botões da aplicação com a mesma altura, inclusive
+           ações, menus, modais, login, participantes, grupos e botões de ícone. */
+        button,
+        input[type="button"],
+        input[type="submit"],
+        input[type="reset"],
+        .btn,
+        .btn-small,
+        .btn-choice,
+        .grupo-accion-btn,
+        .grupo-action-btn,
+        .icon-action-btn,
+        .header-menu-item,
+        .participantes-picker-item-clickable,
+        .btn-excel,
+        .btn-ver-resultado-inline,
+        .btn-plain-action,
+        .participante-inline-action-btn,
+        .participante-export-btn,
+        .btn-vincular-lote,
+        .btn-eliminar-lote,
+        .btn-verificar-login,
+        .abrir-crear-grupo-btn,
+        .logout-btn {
+            height: 40px !important;
+            min-height: 40px !important;
+            max-height: 40px !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            line-height: 1 !important;
+            box-sizing: border-box !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        /* Botões somente com ícone permanecem quadrados e centralizados. */
+        .icon-action-btn,
+        .header-gear-btn,
+        .btn-columnas-toggle,
+        .grupo-participantes-resumen-btn,
+        .grupo-ver-participantes-icon-btn,
+        .password-eye-btn,
+        .resultado-sorteo-footer-icon-btn {
+            width: 40px !important;
+            min-width: 40px !important;
+            max-width: 40px !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            display: inline-flex !important;
+        }
+
+        /* Botões largos continuam ocupando o espaço previsto, mas com 40 px. */
+        .btn-choice,
+        .header-menu-item,
+        .participantes-picker-item-clickable,
+        .grupo-accion-btn,
+        .btn-crear-estilo-full {
+            display: flex !important;
+        }
+
+        /* Título da tela inicial centralizado, prevalecendo sobre o cabeçalho geral. */
+        #auth-panel #auth-choice h2 {
+            text-align: center !important;
+        }
+
 </style>
 </head>
 <body>
