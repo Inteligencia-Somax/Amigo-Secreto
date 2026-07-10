@@ -9950,6 +9950,7 @@
                         }
                     })()
                 ]);
+                await precargarSorteosDeGrupos();
                 loadUsuarioData();
             }
         }
@@ -10271,6 +10272,48 @@
             } catch (error) {
                 console.error('Error al cargar grupos desde Firestore:', error);
             }
+        }
+
+        // Cachea localmente el resultado del sorteo de cada grupo ya sorteado,
+        // leyendo desde la subcolección "sorteo" (grupos/{id}/sorteo/{participanteId}),
+        // que es donde vive el resultado real desde el rediseño de seguridad —
+        // así el documento del grupo nunca vuelve a exponer el mapa completo
+        // "quién le tocó a quién" a cualquier usuario logado.
+        //
+        // - Los grupos sorteados ANTES de este cambio pueden todavía traer el
+        //   campo legado "sorteados" escrito directo en el documento del grupo;
+        //   en ese caso se usa tal cual (no hace falta pedir nada más), pero
+        //   sigue siendo el dato viejo, potencialmente visible para cualquiera —
+        //   conviene migrarlo (ver migrarSorteosAntiguos en las Cloud Functions).
+        // - Si sos admin: se lee el mapa completo (la regla de Firestore solo
+        //   deja hacer "list" de la subcolección para el admin).
+        // - Si sos participante: solo se puede leer tu propio documento dentro
+        //   de la subcolección (la regla no deja leer el de nadie más), así que
+        //   el resultado queda armado con un solo par: el tuyo.
+        async function precargarSorteosDeGrupos() {
+            const esAdmin = !!appState.esAdmin;
+            const miUid = appState.usuarioActual ? appState.usuarioActual.id : null;
+
+            const grupos = (appState.gruposActuales || []).filter(g =>
+                g.estado === 'sorteado' && (!g.sorteados || Object.keys(g.sorteados).length === 0)
+            );
+
+            await Promise.all(grupos.map(async (grupo) => {
+                try {
+                    if (esAdmin) {
+                        const snap = await db.collection('grupos').doc(grupo.id).collection('sorteo').get();
+                        const mapa = {};
+                        snap.docs.forEach(doc => { mapa[doc.id] = doc.data().sorteadoParaId; });
+                        grupo.sorteados = mapa;
+                    } else if (miUid) {
+                        const doc = await db.collection('grupos').doc(grupo.id).collection('sorteo').doc(miUid).get();
+                        grupo.sorteados = doc.exists ? { [miUid]: doc.data().sorteadoParaId } : {};
+                    }
+                } catch (error) {
+                    console.error('Error al cargar el resultado del sorteo del grupo ' + grupo.id + ':', error);
+                    grupo.sorteados = grupo.sorteados || {};
+                }
+            }));
         }
 
         function agregarCentro() {
@@ -11590,7 +11633,7 @@
             if (btnSorteo) btnSorteo.style.display = (grupo.estado === 'abierto' && grupo.participantes.length >= 2) ? 'flex' : 'none';
 
             const btnResultados = document.getElementById('grupo-accion-resultados-btn');
-            if (btnResultados) btnResultados.style.display = (grupo.estado === 'sorteado' && grupo.sorteados) ? 'flex' : 'none';
+            if (btnResultados) btnResultados.style.display = (grupo.estado === 'sorteado') ? 'flex' : 'none';
 
             document.getElementById('grupo-acciones-modal').classList.add('active');
         }
@@ -11675,7 +11718,7 @@
             const btnGuardarParticipantes = document.getElementById('grupo-participantes-save-btn');
             if (btnGuardarParticipantes) btnGuardarParticipantes.style.display = grupo.estado === 'sorteado' ? 'none' : 'inline-flex';
 
-            const tieneResultado = grupo.sorteados && Object.keys(grupo.sorteados).length > 0;
+            const tieneResultado = grupo.estado === 'sorteado';
             const btnVerResultado = document.getElementById('grupo-participantes-ver-resultado-btn');
             if (btnVerResultado) btnVerResultado.style.display = tieneResultado ? 'inline-flex' : 'none';
 
@@ -11999,23 +12042,19 @@
 
             if (!confirm('⚠️ Esto borra el resultado del sorteo actual (quién le tocó a quién) y deja el grupo como "Abierto" de nuevo, listo para sortear otra vez. Los participantes vinculados se mantienen. ¿Continuar?')) return;
 
-            const estadoAnterior = grupo.estado;
-            const sorteadosAnterior = grupo.sorteados;
-            const fechaRevelacionAnterior = grupo.fecha_revelacion;
+            try {
+                await comTimeout(
+                    functionsFirebase.httpsCallable('resetearSorteoServer')({ grupoId: grupo.id }),
+                    30000
+                );
+            } catch (error) {
+                console.error('Error al resetear el sorteo:', error);
+                showAlert('admin-error', (error && error.message) ? error.message : 'No se pudo resetear el sorteo. Verifica tu conexión e intenta de nuevo.');
+                return;
+            }
 
             grupo.estado = 'abierto';
             grupo.sorteados = null;
-
-            try {
-                await comTimeout(db.collection('grupos').doc(grupo.id).set(grupo), 20000);
-            } catch (error) {
-                console.error('Error al resetear el sorteo en Firestore:', error);
-                grupo.estado = estadoAnterior;
-                grupo.sorteados = sorteadosAnterior;
-                grupo.fecha_revelacion = fechaRevelacionAnterior;
-                showAlert('admin-error', 'No se pudo resetear el sorteo. Verifica tu conexión e intenta de nuevo.');
-                return;
-            }
 
             showAlert('admin-success', 'Sorteo reseteado. El grupo volvió a estado "Abierto".');
             cerrarTodosModalesGrupo();
@@ -12584,10 +12623,10 @@
                                             <p class="sorteado-flip-front-sub">Toca la tarjeta para descubrir a tu amigo secreto</p>
                                         </div>
                                         <div class="sorteado-flip-face sorteado-flip-back">
-                                            <div class="sorteado-name">${sorteadoInfo.nombreCompleto}</div>
+                                            <div class="sorteado-name">${escaparHtml(sorteadoInfo.nombreCompleto)}</div>
                                             ${(sorteadoInfo.deseos && sorteadoInfo.deseos[grupo.id] && sorteadoInfo.deseos[grupo.id].length > 0) ? `
                                                 <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Le gustaría recibir:</p>
-                                                <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].join(' · ')}</p>
+                                                <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].map(escaparHtml).join(' · ')}</p>
                                             ` : ''}
                                             <p class="sorteado-flip-back-hint">Toca de nuevo para ocultarlo</p>
                                         </div>
@@ -12668,7 +12707,7 @@
             const sorteoRealizado = grupo.estado === 'sorteado';
 
             const chips = misDeseos.map((d, i) => `
-                <span class="deseo-chip">${d} ${sorteoRealizado ? '' : `<button onclick="eliminarDeseo('${grupo.id}', ${i})" title="Eliminar">&times;</button>`}</span>
+                <span class="deseo-chip">${escaparHtml(d)} ${sorteoRealizado ? '' : `<button onclick="eliminarDeseo('${grupo.id}', ${i})" title="Eliminar">&times;</button>`}</span>
             `).join('');
 
             let formulario;
@@ -12831,6 +12870,7 @@
                 appState.participantesRegistrados = participantesSnap.docs.map(doc => doc.data());
                 appState.centrosActuales = centrosSnap.docs.map(doc => doc.data());
                 appState.gruposActuales = gruposSnap.docs.map(doc => doc.data());
+                await precargarSorteosDeGrupos();
             } catch (error) {
                 console.error('Error al cargar datos desde Firestore:', error);
                 showAlert('admin-error', 'No se pudieron cargar todos los datos. Verifica tu conexión y recarga la página.');
@@ -12926,7 +12966,7 @@
             }
 
             const html = grupos.map(g => {
-                const tieneResultado = g.sorteados && Object.keys(g.sorteados).length > 0;
+                const tieneResultado = g.estado === 'sorteado';
 
                 return `
                 <div class="grupo-card grupo-admin-card grupo-status-${g.estado} grupo-card-clickable" onclick="abrirEditarGrupoDesdeCard('${g.id}')" onpointerdown="iniciarPulsacionLargaGrupo(event, '${g.id}')" onpointerup="cancelarPulsacionLargaGrupo()" onpointerleave="cancelarPulsacionLargaGrupo()" onpointercancel="cancelarPulsacionLargaGrupo()" onpointermove="moverPulsacionLargaGrupo(event)" oncontextmenu="return false;" role="button" tabindex="0" aria-label="Editar grupo ${g.nombre}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); abrirEditarGrupoDesdeCard('${g.id}');}">
@@ -13059,10 +13099,10 @@
 
                 return `
                     <tr>
-                        <td>${participante ? participante.nombreCompleto : 'Desconocido'}</td>
-                        <td>${participante ? participante.telefono : '-'}</td>
-                        <td>${sorteadoInfo ? sorteadoInfo.nombreCompleto : 'Desconocido'}</td>
-                        <td>${sorteadoInfo ? sorteadoInfo.telefono : '-'}</td>
+                        <td>${participante ? escaparHtml(participante.nombreCompleto) : 'Desconocido'}</td>
+                        <td>${participante ? escaparHtml(participante.telefono) : '-'}</td>
+                        <td>${sorteadoInfo ? escaparHtml(sorteadoInfo.nombreCompleto) : 'Desconocido'}</td>
+                        <td>${sorteadoInfo ? escaparHtml(sorteadoInfo.telefono) : '-'}</td>
                     </tr>
                 `;
             }).join('');
@@ -14407,21 +14447,27 @@
                 confirmarBtn.textContent = 'Sorteando...';
             }
 
-            // Guarda los valores anteriores por si hay que revertir (si falla el
-            // guardado en el servidor, no podemos dejar el sorteo "a medias" en
-            // pantalla — eso es justamente el tipo de error de "quién le tocó a
-            // quién" que hay que evitar a toda costa).
-            const estadoAnterior = grupo.estado;
-            const sorteadosAnterior = grupo.sorteados;
-            const fechaRevelacionAnterior = grupo.fecha_revelacion;
-
-            const ids = [...grupo.participantes]; // Ya son IDs
-
-            let sorteoGenerado;
+            // El sorteo en sí (quién le tocó a quién) ahora se genera Y se
+            // guarda del lado del servidor, dentro de la Cloud Function
+            // "realizarSorteo" — el navegador del admin nunca ve ni maneja el
+            // resultado completo antes de que quede guardado. Esto cierra el
+            // hueco por el que, antes, cualquier participante logado podía
+            // leer el documento del grupo y ver el sorteo de todo el mundo:
+            // ahora cada resultado vive en un documento aparte
+            // (grupos/{id}/sorteo/{participanteId}) que las reglas de
+            // Firestore solo dejan leer al propio dueño (o al admin).
             try {
-                sorteoGenerado = generarSorteoAmigoSecreto(ids);
+                await comTimeout(
+                    functionsFirebase.httpsCallable('realizarSorteo')({
+                        grupoId: grupo.id,
+                        fechaRevelacion: grupoParaSortear.fecha
+                    }),
+                    30000
+                );
             } catch (error) {
-                showAlert('admin-error', (error && error.message) ? error.message : 'No se pudo generar el sorteo.');
+                console.error('Error al realizar el sorteo:', error);
+                showAlert('admin-error', (error && error.message) ? error.message : 'No se pudo guardar el sorteo en el servidor. El sorteo NO se realizó — verifica tu conexión e intenta de nuevo.');
+
                 if (confirmarBtn) {
                     confirmarBtn.disabled = false;
                     confirmarBtn.textContent = 'Confirmar Sorteo';
@@ -14429,29 +14475,17 @@
                 return;
             }
 
-            grupo.sorteados = sorteoGenerado;
+            // El sorteo ya quedó guardado de verdad en el servidor — ahora
+            // trae el resultado (el admin sí tiene permiso de leer la
+            // subcolección completa) para poder mostrar la animación y la
+            // matriz sin tener que recargar toda la página.
             grupo.estado = 'sorteado';
             grupo.fecha_revelacion = grupoParaSortear.fecha;
-
+            grupo.sorteados = null;
             try {
-                // Espera de verdad la confirmación del servidor antes de avisar
-                // éxito — si la conexión falla acá, el sorteo NO queda guardado
-                // a medias, y el admin puede intentar de nuevo con seguridad.
-                await comTimeout(db.collection('grupos').doc(grupo.id).set(grupo), 20000);
+                await precargarSorteosDeGrupos();
             } catch (error) {
-                console.error('Error al guardar el sorteo en Firestore:', error);
-                // Revierte todo en pantalla — el sorteo no se realizó de verdad.
-                grupo.estado = estadoAnterior;
-                grupo.sorteados = sorteadosAnterior;
-                grupo.fecha_revelacion = fechaRevelacionAnterior;
-
-                showAlert('admin-error', 'No se pudo guardar el sorteo en el servidor. El sorteo NO se realizó — verifica tu conexión e intenta de nuevo.');
-
-                if (confirmarBtn) {
-                    confirmarBtn.disabled = false;
-                    confirmarBtn.textContent = 'Confirmar Sorteo';
-                }
-                return;
+                console.error('Error al recargar el resultado del sorteo:', error);
             }
 
             closeSorteioModal();
