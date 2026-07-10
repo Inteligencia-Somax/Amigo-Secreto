@@ -2199,6 +2199,75 @@
             color: inherit;
         }
 
+        /* Cambiar Contexto: campo de búsqueda y participantes con altura estándar de 38px. */
+        #contexto-modal .participantes-picker-search {
+            height: 38px;
+            min-height: 38px;
+            padding: 0 12px;
+            border-width: 1.5px;
+        }
+
+        #contexto-modal .participantes-picker-search input {
+            height: 36px;
+            min-height: 36px;
+            padding: 0;
+            font-size: 0.9rem;
+        }
+
+        #contexto-modal .participantes-picker-lista {
+            gap: 6px;
+        }
+
+        #contexto-modal .participantes-picker-item {
+            height: 38px;
+            min-height: 38px;
+            padding: 3px 10px;
+            gap: 10px;
+            border-width: 1.5px;
+        }
+
+        #contexto-modal .participantes-picker-avatar {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            font-size: 0.75rem;
+        }
+
+        #contexto-modal .participantes-picker-info {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        #contexto-modal .participantes-picker-info strong {
+            min-width: 0;
+            font-size: 0.88rem;
+            line-height: 1;
+        }
+
+        #contexto-modal .contexto-participante-unidad {
+            flex: 0 1 44%;
+            margin-left: auto;
+            color: #6f7f76;
+            font-size: 0.78rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (max-width: 480px) {
+            #contexto-modal .contexto-participante-unidad {
+                max-width: 38%;
+            }
+        }
+
         /* Aviso fijo en el panel del participante mientras el admin está
            "viendo como" esa persona — para que nunca se olvide de que no es
            su propia cuenta y pueda volver fácil. */
@@ -7612,37 +7681,14 @@
                 <h3>Mi Perfil</h3>
             </div>
 
-            <div class="participante-modal-grid">
-                <div class="form-group">
-                    <label for="modal-perfil-nombre">Nombre</label>
-                    <input type="text" id="modal-perfil-nombre" onblur="this.value = capitalize(this.value)">
+            <div class="participante-modal-grid perfil-modal-grid">
+                <div class="form-group participante-modal-full">
+                    <label for="modal-perfil-nombre">Nombre Completo</label>
+                    <input type="text" id="modal-perfil-nombre" placeholder="Ej: Juan García" autocomplete="name" onblur="this.value = capitalize(this.value)">
                 </div>
-                <div class="form-group">
-                    <label for="modal-perfil-apellido">Apellido</label>
-                    <input type="text" id="modal-perfil-apellido" onblur="this.value = capitalize(this.value)">
-                </div>
-                <div class="form-group">
-                    <label for="modal-perfil-usuario">Usuario</label>
-                    <input type="text" id="modal-perfil-usuario" disabled>
-                </div>
-                <div class="form-group">
-                    <label for="modal-perfil-telefono">Teléfono</label>
-                    <div class="phone-input-group">
-                        <span class="phone-flag-prefix" title="Paraguay" aria-hidden="true">🇵🇾 <span class="phone-flag-code">+595</span></span>
-                        <input type="tel" id="modal-perfil-telefono" placeholder="Ej: 984 123456" oninput="formatTelefonoPerfil()" onblur="formatTelefonoPerfil()">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="modal-perfil-cargo">Cargo</label>
-                    <input type="text" id="modal-perfil-cargo" onblur="this.value = capitalize(this.value)">
-                </div>
-                <div class="form-group">
+                <div class="form-group participante-modal-full">
                     <label for="modal-perfil-centro">Unidad de Negocio</label>
                     <input type="text" id="modal-perfil-centro" disabled>
-                </div>
-                <div class="form-group">
-                    <label for="modal-perfil-fecha">Fecha Registro</label>
-                    <input type="text" id="modal-perfil-fecha" disabled>
                 </div>
             </div>
 
@@ -9321,12 +9367,15 @@
 
             cont.innerHTML = participantes.map(p => {
                 const nombre = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
-                const busqueda = nombre.toLowerCase();
+                const centro = appState.centrosActuales.find(c => c.id === p.centroId);
+                const unidad = p.centroNombre || (centro ? centro.nombre : '') || getCodigoCentroParticipante(p) || 'Sin unidad';
+                const busqueda = (nombre + ' ' + unidad).toLowerCase();
                 return `
                     <button type="button" class="participantes-picker-item participantes-picker-item-clickable" data-search="${escaparHtml(busqueda)}" onclick="entrarEnContextoParticipante('${p.id}')">
                         <span class="participantes-picker-avatar">${escaparHtml(inicialesParticipante(nombre))}</span>
                         <span class="participantes-picker-info">
                             <strong>${escaparHtml(nombre)}</strong>
+                            <span class="contexto-participante-unidad" title="${escaparHtml(unidad)}">${escaparHtml(unidad)}</span>
                         </span>
                     </button>
                 `;
@@ -12658,13 +12707,9 @@
             const usuario = appState.usuarioActual;
             if (!modal || !usuario) return;
 
-            document.getElementById('modal-perfil-nombre').value = usuario.nombre || '';
-            document.getElementById('modal-perfil-apellido').value = usuario.apellido || '';
-            document.getElementById('modal-perfil-telefono').value = (usuario.telefono || '').replace(/^\+595\s*/, '');
-            document.getElementById('modal-perfil-cargo').value = usuario.cargo || '';
-            document.getElementById('modal-perfil-usuario').value = usuario.login || '-';
+            const nombreCompleto = usuario.nombreCompleto || ((usuario.nombre || '') + ' ' + (usuario.apellido || '')).trim();
+            document.getElementById('modal-perfil-nombre').value = nombreCompleto;
             document.getElementById('modal-perfil-centro').value = usuario.centroNombre || getCodigoCentroParticipante(usuario) || '-';
-            document.getElementById('modal-perfil-fecha').value = formatDate(usuario.fecha_registro || usuario.fechaRegistro || '');
 
             modal.classList.add('active');
         }
@@ -12679,48 +12724,34 @@
             if (!usuario) return;
 
             const alertId = appState.esAdmin ? 'admin-error' : 'usuario-alert';
+            const nombreCompletoInput = document.getElementById('modal-perfil-nombre').value.trim();
+            const partesNombre = nombreCompletoInput.split(/\s+/).filter(Boolean);
+            const nombre = capitalize(partesNombre[0] || '');
+            const apellido = capitalize(partesNombre.slice(1).join(' '));
+            const nombreCompleto = apellido ? `${nombre} ${apellido}` : nombre;
 
-            const nombre = capitalize(document.getElementById('modal-perfil-nombre').value.trim());
-            const apellido = capitalize(document.getElementById('modal-perfil-apellido').value.trim());
-            formatTelefonoPerfil();
-            const telefonoNacional = document.getElementById('modal-perfil-telefono').value.trim();
-            const cargo = capitalize(document.getElementById('modal-perfil-cargo').value.trim());
-
-            if (!nombre || !apellido || !telefonoNacional || !cargo) {
-                showAlert(alertId, 'Todos los campos son requeridos');
+            if (!nombreCompleto) {
+                showAlert(alertId, 'Nombre Completo es requerido');
                 return;
             }
-
-            if (!/^\d{3} \d{6}$/.test(telefonoNacional)) {
-                showAlert(alertId, 'Teléfono debe estar en formato: XXX XXXXXX');
-                return;
-            }
-
-            const telefono = '+595 ' + telefonoNacional;
 
             usuario.nombre = nombre;
             usuario.apellido = apellido;
-            usuario.nombreCompleto = `${nombre} ${apellido}`;
-            usuario.telefono = telefono;
-            usuario.cargo = cargo;
+            usuario.nombreCompleto = nombreCompleto;
 
             const participanteEnLista = appState.participantesRegistrados.find(p => p.id === usuario.id);
             if (participanteEnLista && participanteEnLista !== usuario) {
                 participanteEnLista.nombre = nombre;
                 participanteEnLista.apellido = apellido;
-                participanteEnLista.nombreCompleto = usuario.nombreCompleto;
-                participanteEnLista.telefono = telefono;
-                participanteEnLista.cargo = cargo;
+                participanteEnLista.nombreCompleto = nombreCompleto;
             }
 
-            // El admin no tiene documento propio en "participantes" (no participa
-            // de ningún amigo secreto), así que su perfil solo vive en esta
-            // sesión. Un participante normal sí tiene documento — hay que
-            // guardar de verdad en Firestore para que no se pierda al recargar.
             if (!appState.esAdmin) {
                 try {
                     await db.collection('participantes').doc(usuario.id).update({
-                        nombre, apellido, nombreCompleto: usuario.nombreCompleto, telefono, cargo
+                        nombre,
+                        apellido,
+                        nombreCompleto
                     });
                 } catch (error) {
                     console.error('Error al guardar el perfil en Firestore:', error);
@@ -12730,15 +12761,16 @@
             }
 
             if (appState.esAdmin) {
-                document.getElementById('admin-nombre').textContent = usuario.nombreCompleto;
+                document.getElementById('admin-nombre').textContent = nombreCompleto;
                 const metaEl = document.getElementById('admin-meta');
                 if (metaEl) {
+                    const cargo = usuario.cargo || 'Administrador';
                     const centro = usuario.centroNombre || 'Sin centro asignado';
                     metaEl.textContent = cargo + ' · Unidad de Negocio: ' + centro;
                 }
                 updateParticipantesList();
             } else {
-                document.getElementById('usuario-nombre').textContent = usuario.nombreCompleto.toUpperCase();
+                document.getElementById('usuario-nombre').textContent = nombreCompleto.toUpperCase();
             }
 
             cerrarPerfilModal();
