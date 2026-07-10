@@ -952,6 +952,117 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
+        /* ==================== TEASER PRE-REVELACIÓN ====================
+           En vez de un simple "Oculto", genera intriga: un ícono y un "???"
+           que laten suavemente, con la fecha exacta de revelación. */
+        .sorteado-teaser {
+            padding: 6px 0 2px;
+        }
+
+        .sorteado-teaser-icon {
+            font-size: 2.1rem;
+            line-height: 1;
+            margin-bottom: 6px;
+            animation: sorteadoTeaserFloat 2.6s ease-in-out infinite;
+        }
+
+        .sorteado-teaser-mystery {
+            font-size: 2.1rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            margin: 0 0 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            animation: sorteadoTeaserPulse 2.2s ease-in-out infinite;
+        }
+
+        .sorteado-teaser-sub {
+            font-size: 0.85rem !important;
+            line-height: 1.5;
+            opacity: 0.95;
+            margin: 0 !important;
+        }
+
+        @keyframes sorteadoTeaserPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+
+        @keyframes sorteadoTeaserFloat {
+            0%, 100% { transform: translateY(0) rotate(-4deg); }
+            50% { transform: translateY(-4px) rotate(4deg); }
+        }
+
+        /* ==================== TARJETA "VOLTEABLE" POST-REVELACIÓN ====================
+           En vez de mostrar el nombre directo, arranca "boca abajo" (como una
+           carta) y se da vuelta con una animación 3D al tocarla. */
+        .sorteado-flip-card {
+            perspective: 1200px;
+            cursor: pointer;
+            margin-top: 4px;
+            outline: none;
+        }
+
+        .sorteado-flip-inner {
+            position: relative;
+            width: 100%;
+            min-height: 172px;
+            transition: transform 0.65s cubic-bezier(0.34, 1.1, 0.4, 1);
+            transform-style: preserve-3d;
+        }
+
+        .sorteado-flip-card.is-flipped .sorteado-flip-inner {
+            transform: rotateY(180deg);
+        }
+
+        .sorteado-flip-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .sorteado-flip-front {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+        }
+
+        .sorteado-flip-front-icon {
+            font-size: 2.4rem;
+            margin-bottom: 8px;
+            animation: sorteadoTeaserFloat 2.6s ease-in-out infinite;
+        }
+
+        .sorteado-flip-front-title {
+            font-size: 1.05rem !important;
+            font-weight: 800 !important;
+            margin: 0 0 4px !important;
+            opacity: 1 !important;
+        }
+
+        .sorteado-flip-front-sub {
+            font-size: 0.82rem !important;
+            opacity: 0.9 !important;
+            margin: 0 !important;
+        }
+
+        .sorteado-flip-back {
+            transform: rotateY(180deg);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sorteado-flip-back-hint {
+            font-size: 0.72rem !important;
+            opacity: 0.75 !important;
+            margin-top: 14px !important;
+        }
+
         .estado-badge {
             display: inline-block;
             padding: 6px 12px;
@@ -10209,6 +10320,22 @@
         }
 
         // ===== USUARIO PANEL =====
+        // Guarda qué tarjetas de "amigo secreto" ya se voltearon en esta
+        // sesión — así, si la pantalla se vuelve a dibujar (por ejemplo al
+        // guardar una idea de regalo), la tarjeta ya revelada no vuelve a
+        // taparse sola.
+        const gruposSorteoFlipeados = new Set();
+
+        function toggleFlipSorteo(el) {
+            const grupoId = el.dataset.grupoId;
+            const flipped = el.classList.toggle('is-flipped');
+            if (flipped) {
+                gruposSorteoFlipeados.add(grupoId);
+            } else {
+                gruposSorteoFlipeados.delete(grupoId);
+            }
+        }
+
         function loadUsuarioData() {
             // Filtrar grupos donde el usuario participa
             const gruposDelUsuario = appState.gruposActuales.filter(g => 
@@ -10265,17 +10392,33 @@
                     ${grupo.estado === 'sorteado' && sorteadoInfo ? `
                         <div class="sorteado-box">
                             <p>Tu regalo va para:</p>
-                            <div class="sorteado-name">${puedeVer ? sorteadoInfo.nombreCompleto : 'Oculto'}</div>
                             ${puedeVer ? `
-                                <p style="font-size: 0.9rem; margin-top: 10px;">${sorteadoInfo.cargo ? sorteadoInfo.cargo : ''}</p>
-                                ${(sorteadoInfo.deseos && sorteadoInfo.deseos[grupo.id] && sorteadoInfo.deseos[grupo.id].length > 0) ? `
-                                    <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Le gustaría recibir:</p>
-                                    <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].join(' · ')}</p>
-                                ` : `
-                                    <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Aún no sugirió ideas de regalo.</p>
-                                `}
+                                <div class="sorteado-flip-card${gruposSorteoFlipeados.has(grupo.id) ? ' is-flipped' : ''}" data-grupo-id="${grupo.id}" onclick="toggleFlipSorteo(this)" role="button" tabindex="0" aria-label="Tocar para revelar a tu amigo secreto" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); toggleFlipSorteo(this);}">
+                                    <div class="sorteado-flip-inner">
+                                        <div class="sorteado-flip-face sorteado-flip-front">
+                                            <div class="sorteado-flip-front-icon">🎁</div>
+                                            <p class="sorteado-flip-front-title">¡Ya se reveló!</p>
+                                            <p class="sorteado-flip-front-sub">Toca la tarjeta para descubrir a tu amigo secreto</p>
+                                        </div>
+                                        <div class="sorteado-flip-face sorteado-flip-back">
+                                            <div class="sorteado-name">${sorteadoInfo.nombreCompleto}</div>
+                                            <p style="font-size: 0.9rem; margin-top: 6px;">${sorteadoInfo.cargo ? sorteadoInfo.cargo : ''}</p>
+                                            ${(sorteadoInfo.deseos && sorteadoInfo.deseos[grupo.id] && sorteadoInfo.deseos[grupo.id].length > 0) ? `
+                                                <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Le gustaría recibir:</p>
+                                                <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].join(' · ')}</p>
+                                            ` : `
+                                                <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Aún no sugirió ideas de regalo.</p>
+                                            `}
+                                            <p class="sorteado-flip-back-hint">Toca de nuevo para ocultarlo</p>
+                                        </div>
+                                    </div>
+                                </div>
                             ` : `
-                                <p style="font-size: 0.85rem; margin-top: 10px; opacity: 0.9;">Espera la revelación para conocer a quién le darás el regalo.</p>
+                                <div class="sorteado-teaser">
+                                    <div class="sorteado-teaser-icon">🎁</div>
+                                    <p class="sorteado-teaser-mystery">???</p>
+                                    <p class="sorteado-teaser-sub">Ya sabemos quién es tu amigo secreto... pero por ahora es un misterio 🤫<br>Lo vas a descubrir el <strong>${formatDateTime(grupo.fecha_revelacion)}</strong>.</p>
+                                </div>
                             `}
                         </div>
                     ` : ''}
