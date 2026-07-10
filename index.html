@@ -6936,6 +6936,41 @@
 
 
 
+        /* ==================== AJUSTE FINAL: BOTONES + BADGE DE ESTADO A 38PX (SOLO CARDS DE GRUPO, ADMIN) ==================== */
+        /* Único punto de verdad para el alto de "Ver Resultado", "Realizar
+           Sorteo", "+ Participante" y el badge de estado, dentro del
+           encabezado de la tarjeta de grupo del admin. Usa !important a
+           propósito para no depender del orden de las reglas anteriores —
+           esto es lo que manda. No toca #grupos-usuario ni la tabla de
+           participantes. */
+        #grupos-admin-list .grupo-header-actions .grupo-accion-card-header,
+        #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header,
+        #grupos-admin-list .grupo-header-actions .btn-resultado-standard,
+        #grupos-admin-list .grupo-header-actions .estado-badge {
+            height: 38px !important;
+            min-height: 38px !important;
+            max-height: 38px !important;
+            box-sizing: border-box !important;
+            padding: 0 14px !important;
+            border-radius: 10px !important;
+            line-height: 1 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: auto !important;
+            min-width: 0 !important;
+        }
+
+        @media (max-width: 620px) {
+            #grupos-admin-list .grupo-header-actions .grupo-accion-card-header,
+            #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header,
+            #grupos-admin-list .grupo-header-actions .btn-resultado-standard,
+            #grupos-admin-list .grupo-header-actions .estado-badge {
+                width: 100% !important;
+                flex: 1 1 100% !important;
+            }
+        }
+
         /* ==================== AJUSTE: BOTÃO ELIMINAR DO MODAL EDITAR GRUPO ==================== */
         #grupo-detalle-eliminar-btn.icon-delete {
             background: var(--error);
