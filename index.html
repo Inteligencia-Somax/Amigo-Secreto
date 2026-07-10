@@ -5545,8 +5545,7 @@
 
         @media (max-width: 620px) {
             #ver-grupos .admin-grupo-actions-row,
-            #ver-grupos .grupo-toolbar,
-            #ver-grupos .grupo-filter-select-group {
+            #ver-grupos .grupo-toolbar {
                 width: 100%;
             }
 
@@ -5555,8 +5554,18 @@
                 flex: 1 1 auto;
             }
 
+            /* El selector "Todos / Abierto / Sorteado / Revelado" queda del
+               ancho de su contenido en vez de estirarse a todo el ancho de
+               la pantalla — así no ocupa una fila entera para poco texto. */
+            #ver-grupos .grupo-filter-select-group {
+                flex: 0 0 auto;
+                min-width: 0;
+                width: auto;
+            }
+
             #grupo-status-filter {
-                width: 100%;
+                width: auto;
+                min-width: 0;
             }
 
             #grupos-admin-list .grupo-header-actions .grupo-accion-card-header,
@@ -6478,7 +6487,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Realizar Sorteo</h3>
-                <button class="close-btn" onclick="closeSorteioModal()">&times;</button>
             </div>
             <p style="margin-bottom: 20px;">¿Estás seguro de que deseas realizar el sorteo? Esta acción no se puede deshacer.</p>
             <p id="sorteio-modal-revelacion-info" style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; color: #856404;">Cada participante va a poder ver a quién le regala recién en la fecha y hora de Revelación configurada para este grupo.</p>
@@ -6532,7 +6540,6 @@
         <div class="modal-content" style="max-width: 340px;">
             <div class="modal-header">
                 <h3>Opciones</h3>
-                <button class="close-btn" onclick="cerrarAdminHeaderMenu()">&times;</button>
             </div>
 
             <div class="header-menu-list">
@@ -6607,6 +6614,15 @@
                     <span class="header-menu-item-label">Cerrar Sesión</span>
                 </button>
             </div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarAdminHeaderMenu()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -6615,7 +6631,6 @@
         <div class="modal-content" style="max-width: 340px;">
             <div class="modal-header">
                 <h3>Opciones</h3>
-                <button class="close-btn" onclick="cerrarUsuarioHeaderMenu()">&times;</button>
             </div>
 
             <div class="header-menu-list">
@@ -6643,6 +6658,15 @@
                     <span class="header-menu-item-label">Cerrar Sesión</span>
                 </button>
             </div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarUsuarioHeaderMenu()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -6651,7 +6675,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Mi Perfil</h3>
-                <button class="close-btn" onclick="cerrarPerfilModal()">&times;</button>
             </div>
 
             <div class="participante-modal-grid">
@@ -6747,7 +6770,6 @@
                     <h3>Revisar Importación</h3>
                     <div class="resultado-sorteo-subtitle">Unidades de negocio detectadas</div>
                 </div>
-                <button class="close-btn" type="button" onclick="cerrarImportarCentrosPreview()" aria-label="Cerrar">&times;</button>
             </div>
 
             <div class="resultado-modal-body import-preview-modal-body">
@@ -6850,7 +6872,6 @@
         <div class="modal-content" style="max-width: 420px;">
             <div class="modal-header">
                 <h3>Exportar Template</h3>
-                <button class="close-btn" onclick="cerrarExportarTemplateModal()">&times;</button>
             </div>
 
             <div class="grupo-acciones-lista">
@@ -6870,6 +6891,15 @@
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                     Participantes
+                </button>
+            </div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarExportarTemplateModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -6942,7 +6972,6 @@
                     <h3>Revisar Importación</h3>
                     <div class="resultado-sorteo-subtitle">Participantes detectados</div>
                 </div>
-                <button class="close-btn" type="button" onclick="cerrarImportarParticipantesPreview()" aria-label="Cerrar">&times;</button>
             </div>
 
             <div class="resultado-modal-body import-preview-modal-body">
@@ -7130,7 +7159,6 @@
         <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
                 <h3>Seleccionar Participantes</h3>
-                <button class="close-btn" onclick="cancelarSeleccionParticipantesCrearGrupo()">&times;</button>
             </div>
 
             <div class="participantes-picker-search">
@@ -7172,7 +7200,6 @@
                     <h3 id="grupo-acciones-nombre">Gestionar Grupo</h3>
                     <span id="grupo-detalle-estado-badge" class="estado-badge estado-sorteado grupo-header-status">Sorteado</span>
                 </div>
-                <button class="close-btn" onclick="cerrarGrupoAccionesModal()">&times;</button>
             </div>
 
             <div class="grupo-acciones-lista">
@@ -7208,6 +7235,15 @@
                         <polyline points="8 7 17 7 17 16"/>
                     </svg>
                     Ver Sorteo
+                </button>
+            </div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarGrupoAccionesModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -7283,7 +7319,6 @@
                     <h3>Participantes</h3>
                     <div class="resultado-sorteo-subtitle">Participantes vinculados al grupo</div>
                 </div>
-                <button class="close-btn" onclick="cancelarParticipantesGrupoModal()" aria-label="Cerrar">&times;</button>
             </div>
 
             <div class="resultado-modal-body participantes-modal-body">
@@ -7344,7 +7379,6 @@
                     <h3>Resultado del Sorteo</h3>
                     <div class="resultado-sorteo-subtitle">Ver Sorteo</div>
                 </div>
-                <button class="close-btn" onclick="cerrarResultadosGrupoModal()" aria-label="Cerrar">&times;</button>
             </div>
 
             <div class="resultado-modal-body">
@@ -7407,7 +7441,6 @@
         <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
                 <h3>Seleccionar Participantes</h3>
-                <button class="close-btn" onclick="cerrarVincularParticipantesModal()">&times;</button>
             </div>
 
             <div class="participantes-picker-search">
@@ -7447,7 +7480,6 @@
         <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
                 <h3>Cambiar Contexto</h3>
-                <button class="close-btn" onclick="cerrarContextoModal()">&times;</button>
             </div>
 
             <p class="text-muted" style="margin: 0 0 12px; font-size: 0.9rem;">
@@ -7463,6 +7495,15 @@
             </div>
 
             <div id="contexto-lista" class="participantes-picker-lista"></div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarContextoModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -10727,9 +10768,7 @@
                                             ${(sorteadoInfo.deseos && sorteadoInfo.deseos[grupo.id] && sorteadoInfo.deseos[grupo.id].length > 0) ? `
                                                 <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Le gustaría recibir:</p>
                                                 <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].join(' · ')}</p>
-                                            ` : `
-                                                <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Aún no sugirió ideas de regalo.</p>
-                                            `}
+                                            ` : ''}
                                             <p class="sorteado-flip-back-hint">Toca de nuevo para ocultarlo</p>
                                         </div>
                                     </div>
