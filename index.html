@@ -931,13 +931,44 @@
         }
 
         .sorteado-box {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            background:
+                radial-gradient(circle at 50% 40%, rgba(244, 163, 0, 0.18), transparent 32%),
+                linear-gradient(145deg, #073b28 0%, #0b5a3b 55%, #083d2b 100%);
             color: var(--white);
-            padding: 20px;
-            border-radius: 12px;
+            padding: 24px 20px 22px;
+            border: 1px solid rgba(244, 163, 0, 0.72);
+            border-radius: 20px;
             margin-bottom: 16px;
             text-align: center;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+            box-shadow: 0 16px 34px rgba(6, 54, 36, 0.28), inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+
+        .sorteado-box::before,
+        .sorteado-box::after {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 210, 93, 0.22) 0%, transparent 68%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .sorteado-box::before { top: -70px; right: -45px; }
+        .sorteado-box::after { bottom: -85px; left: -55px; }
+
+        .sorteado-box > p:first-child {
+            margin: 0 0 2px;
+            color: #ffe8a3;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            opacity: 0.92;
         }
 
         .sorteado-box p {
@@ -952,44 +983,130 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
-        /* ==================== TEASER PRE-REVELACIÓN ====================
-           En vez de un simple "Oculto", genera intriga: un ícono y un "???"
-           que laten suavemente, con la fecha exacta de revelación. */
+        /* ==================== TEASER PRE-REVELACIÓN ==================== */
         .sorteado-teaser {
-            padding: 6px 0 2px;
+            position: relative;
+            padding: 8px 0 0;
+        }
+
+        .sorteado-teaser-eyebrow {
+            margin: 0 0 4px !important;
+            color: #ffd978;
+            font-size: 0.8rem !important;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            opacity: 1 !important;
+        }
+
+        .sorteado-teaser-title {
+            margin: 0 0 14px !important;
+            color: #ffffff;
+            font-size: 1.18rem !important;
+            line-height: 1.25;
+            font-weight: 800;
+            opacity: 1 !important;
+        }
+
+        .sorteado-gift-stage {
+            position: relative;
+            min-height: 116px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+        }
+
+        .sorteado-gift-stage::before {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 94px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.28);
+            filter: blur(7px);
+            animation: sorteadoShadow 3s ease-in-out infinite;
         }
 
         .sorteado-teaser-icon {
-            font-size: 2.1rem;
+            position: relative;
+            z-index: 2;
+            display: inline-block;
+            font-size: 4.7rem;
             line-height: 1;
-            margin-bottom: 6px;
-            animation: sorteadoTeaserFloat 2.6s ease-in-out infinite;
+            filter: drop-shadow(0 14px 12px rgba(0,0,0,0.26)) drop-shadow(0 0 12px rgba(255,205,75,0.25));
+            transform-origin: 50% 65%;
+            animation: sorteadoGiftFloat 3s cubic-bezier(.45,.05,.55,.95) infinite;
         }
 
-        .sorteado-teaser-mystery {
-            font-size: 2.1rem;
-            font-weight: 800;
-            letter-spacing: 0.2em;
-            margin: 0 0 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-            animation: sorteadoTeaserPulse 2.2s ease-in-out infinite;
+        .sorteado-spark {
+            position: absolute;
+            z-index: 3;
+            color: #ffd76b;
+            font-size: 1rem;
+            text-shadow: 0 0 10px rgba(255, 215, 107, 0.9);
+            animation: sorteadoSpark 2.4s ease-in-out infinite;
         }
+
+        .sorteado-spark-one { top: 17px; left: calc(50% - 63px); }
+        .sorteado-spark-two { top: 7px; right: calc(50% - 61px); animation-delay: .7s; }
+        .sorteado-spark-three { bottom: 25px; right: calc(50% - 74px); animation-delay: 1.2s; }
 
         .sorteado-teaser-sub {
-            font-size: 0.85rem !important;
+            max-width: 390px;
+            margin: 0 auto 14px !important;
+            font-size: 0.88rem !important;
             line-height: 1.5;
-            opacity: 0.95;
-            margin: 0 !important;
+            opacity: 0.9;
         }
 
-        @keyframes sorteadoTeaserPulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.08); }
+        .sorteado-reveal-date {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid rgba(255, 215, 107, 0.46);
+            border-radius: 14px;
+            background: rgba(3, 36, 24, 0.34);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+            color: #fff2c2;
+            font-size: 0.87rem;
+            line-height: 1.35;
+        }
+
+        .sorteado-reveal-date svg {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            stroke: #ffd76b;
+        }
+
+        @keyframes sorteadoGiftFloat {
+            0%, 100% { transform: translateY(4px) rotate(-8deg) scale(1); }
+            50% { transform: translateY(-10px) rotate(7deg) scale(1.035); }
+        }
+
+        @keyframes sorteadoShadow {
+            0%, 100% { transform: scaleX(1); opacity: .62; }
+            50% { transform: scaleX(.72); opacity: .35; }
+        }
+
+        @keyframes sorteadoSpark {
+            0%, 100% { transform: scale(.72) rotate(0deg); opacity: .35; }
+            50% { transform: scale(1.2) rotate(22deg); opacity: 1; }
         }
 
         @keyframes sorteadoTeaserFloat {
             0%, 100% { transform: translateY(0) rotate(-4deg); }
             50% { transform: translateY(-4px) rotate(4deg); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .sorteado-teaser-icon,
+            .sorteado-gift-stage::before,
+            .sorteado-spark { animation: none !important; }
         }
 
         /* ==================== TARJETA "VOLTEABLE" POST-REVELACIÓN ====================
@@ -10415,9 +10532,19 @@
                                 </div>
                             ` : `
                                 <div class="sorteado-teaser">
-                                    <div class="sorteado-teaser-icon">🎁</div>
-                                    <p class="sorteado-teaser-mystery">???</p>
-                                    <p class="sorteado-teaser-sub">Ya sabemos quién es tu amigo secreto... pero por ahora es un misterio 🤫<br>Lo vas a descubrir el <strong>${formatDateTime(grupo.fecha_revelacion)}</strong>.</p>
+                                    <p class="sorteado-teaser-eyebrow">✨ Todo está preparado</p>
+                                    <p class="sorteado-teaser-title">Tu amigo secreto ya fue elegido</p>
+                                    <div class="sorteado-gift-stage" aria-hidden="true">
+                                        <span class="sorteado-spark sorteado-spark-one">✦</span>
+                                        <span class="sorteado-spark sorteado-spark-two">✧</span>
+                                        <span class="sorteado-spark sorteado-spark-three">✦</span>
+                                        <div class="sorteado-teaser-icon">🎁</div>
+                                    </div>
+                                    <p class="sorteado-teaser-sub">El destino ya decidió quién recibirá tu regalo. Hasta entonces, el secreto está guardado.</p>
+                                    <div class="sorteado-reveal-date">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
+                                        <span>Lo vas a descubrir el <strong>${formatDateTime(grupo.fecha_revelacion)}</strong></span>
+                                    </div>
                                 </div>
                             `}
                         </div>
