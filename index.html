@@ -794,18 +794,21 @@
         #grupos-usuario .grupo-card.grupo-status-abierto {
             border-left-color: var(--secondary);
             border-right-color: var(--secondary);
+            background: #fffaf0;
         }
 
         #grupos-admin-list .grupo-card.grupo-status-sorteado,
         #grupos-usuario .grupo-card.grupo-status-sorteado {
             border-left-color: var(--success);
             border-right-color: var(--success);
+            background: #f3faf4;
         }
 
         #grupos-admin-list .grupo-card.grupo-status-revelado,
         #grupos-usuario .grupo-card.grupo-status-revelado {
             border-left-color: #0d6efd;
             border-right-color: #0d6efd;
+            background: #f0f6ff;
         }
 
         #grupos-admin-list .grupo-card-clickable {
@@ -6791,21 +6794,28 @@
         }
 
         #grupos-admin-list .grupo-card-header {
-            flex-direction: column;
-            align-items: stretch;
-            justify-content: flex-start;
-            gap: 12px;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px 12px;
             padding-bottom: 14px;
         }
 
+        #grupos-admin-list .grupo-title-row {
+            width: auto;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
         #grupos-admin-list .grupo-title {
-            width: 100%;
-            min-height: 24px;
+            width: auto;
+            min-height: 0;
         }
 
         #grupos-admin-list .grupo-header-actions {
-            width: 100%;
-            justify-content: flex-start;
+            width: auto;
+            justify-content: flex-end;
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
@@ -6813,10 +6823,10 @@
 
         #grupos-admin-list .grupo-header-actions .grupo-accion-card-header,
         #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header {
-            width: 154px;
-            min-width: 154px;
-            height: 38px;
-            min-height: 38px;
+            width: auto;
+            min-width: 0;
+            height: 34px;
+            min-height: 34px;
             padding: 0 12px;
             display: inline-flex;
             align-items: center;
@@ -6826,7 +6836,7 @@
             border-width: 1.5px;
             border-style: solid;
             box-shadow: none;
-            font-size: 0.84rem;
+            font-size: 0.8rem;
             font-weight: 800;
             line-height: 1;
             text-transform: none;
@@ -6886,9 +6896,9 @@
         }
 
         #grupos-admin-list .grupo-header-actions .estado-badge {
-            min-width: 104px;
-            height: 38px;
-            min-height: 38px;
+            min-width: 92px;
+            height: 34px;
+            min-height: 34px;
             padding: 0 14px;
             border-radius: 10px;
             margin-top: 0;
@@ -6899,13 +6909,9 @@
         }
 
         #grupos-admin-list .grupo-info-admin {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             column-gap: 18px;
             row-gap: 14px;
-        }
-
-        #grupos-admin-list .grupo-info-admin .info-placeholder {
-            display: none;
         }
 
         @media (max-width: 980px) {
@@ -7076,8 +7082,7 @@
         .btn-resultado-standard,
         .btn.btn-resultado-standard,
         #grupo-accion-resultados-btn.btn-resultado-standard,
-        #grupo-participantes-ver-resultado-btn.btn-resultado-standard,
-        #grupos-admin-list .grupo-header-actions .btn-resultado-standard {
+        #grupo-participantes-ver-resultado-btn.btn-resultado-standard {
             width: auto;
             min-width: 154px;
             height: 38px;
@@ -7101,6 +7106,15 @@
             box-sizing: border-box;
             cursor: pointer;
             transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+        }
+
+        #grupos-admin-list .grupo-header-actions .btn-resultado-standard {
+            width: auto;
+            min-width: 0;
+            height: 34px;
+            min-height: 34px;
+            padding: 0 12px;
+            font-size: 0.8rem;
         }
 
         .btn-resultado-standard svg,
@@ -12021,18 +12035,15 @@
             if (!grupo) return;
 
             const nuevoNombre = document.getElementById('grupo-detalle-nombre-input').value.trim();
-            const nuevoPresupuesto = parseInt(document.getElementById('grupo-detalle-presupuesto').value, 10);
             const nuevoCentroId = document.getElementById('grupo-detalle-centro-select').value;
             const nuevaFechaRevelacion = document.getElementById('grupo-detalle-fecha-revelacion').value;
-            const nuevaFechaEvento = document.getElementById('grupo-detalle-fecha-evento').value;
+
+            // Presupuesto y Fecha del Evento están ocultos en este modal (ya
+            // no se piden acá), así que no se validan ni se sobrescriben —
+            // se deja lo que el grupo ya tenía guardado, sea lo que sea.
 
             if (!nuevoNombre) {
                 showAlert('admin-error', 'Ingresa un nombre para el grupo');
-                return;
-            }
-
-            if (Number.isNaN(nuevoPresupuesto) || nuevoPresupuesto < 0) {
-                showAlert('admin-error', 'Presupuesto inválido');
                 return;
             }
 
@@ -12057,22 +12068,15 @@
                 return;
             }
 
-            if (!nuevaFechaEvento) {
-                showAlert('admin-error', 'Selecciona una fecha del evento');
-                return;
-            }
-
             if (centroTieneGrupo(nuevoCentroId, grupo.id)) {
                 showAlert('admin-error', 'Esta unidad de negocio ya tiene otro grupo creado. No se permite más de 1 grupo por unidad de negocio.');
                 return;
             }
 
             grupo.nombre = nuevoNombre;
-            grupo.presupuesto = nuevoPresupuesto;
             grupo.centroId = centro.id;
             grupo.centroNombre = centro.nombre;
             grupo.fecha_revelacion = nuevaFechaRevelacion;
-            grupo.fecha_evento = nuevaFechaEvento;
             syncGrupoFirestore(grupo);
 
             const grupoDetalleCreadoEl = document.getElementById('grupo-detalle-creado');
@@ -12960,19 +12964,9 @@
                             </div>
                         </div>
 
-                        <div class="info-item info-placeholder" aria-hidden="true">
-                            <span class="info-label">&nbsp;</span>
-                            <span class="info-value">&nbsp;</span>
-                        </div>
-
                         <div class="info-item">
                             <span class="info-label">Fecha de Revelación</span>
                             <span class="info-value">${formatDateTime(g.fecha_revelacion)}</span>
-                        </div>
-
-                        <div class="info-item">
-                            <span class="info-label">Fecha del Evento</span>
-                            <span class="info-value">${formatDateTime(g.fecha_evento)}</span>
                         </div>
                     </div>
                 </div>
@@ -14387,7 +14381,20 @@
             const fechaRevelacionAnterior = grupo.fecha_revelacion;
 
             const ids = [...grupo.participantes]; // Ya son IDs
-            grupo.sorteados = generarSorteoAmigoSecreto(ids);
+
+            let sorteoGenerado;
+            try {
+                sorteoGenerado = generarSorteoAmigoSecreto(ids);
+            } catch (error) {
+                showAlert('admin-error', (error && error.message) ? error.message : 'No se pudo generar el sorteo.');
+                if (confirmarBtn) {
+                    confirmarBtn.disabled = false;
+                    confirmarBtn.textContent = 'Confirmar Sorteo';
+                }
+                return;
+            }
+
+            grupo.sorteados = sorteoGenerado;
             grupo.estado = 'sorteado';
             grupo.fecha_revelacion = grupoParaSortear.fecha;
 
@@ -14808,9 +14815,30 @@
         }
 
         function generarSorteoAmigoSecreto(ids) {
-            // Sorteo circular: evita que alguien se saque a sí mismo y mantiene
-            // exactamente un destinatario por participante.
-            const participantes = randomShuffle(ids);
+            // Sorteo circular: cada quien le regala a "el siguiente" dentro de
+            // un orden totalmente al azar.
+            //
+            // Por qué evita cualquier patrón (orden de registro, alfabético, etc.):
+            // el orden en el que llegan los "ids" acá (de la base de datos, de
+            // cómo se fueron vinculando al grupo, etc.) NO influye en el
+            // resultado — randomShuffle() es un shuffle de Fisher-Yates, que
+            // reordena todo al azar de forma pareja (cada posible orden tiene
+            // exactamente la misma probabilidad) antes de armar los pares.
+            //
+            // Por qué nadie queda repetido ni afuera: se dedupe la lista de
+            // entrada primero (por si algún id llegara duplicado), y después
+            // cada participante del círculo mezclado le regala a "el
+            // siguiente" — como es un solo círculo cerrado que pasa por
+            // TODOS una sola vez, matemáticamente da exactamente un
+            // destinatario por persona y una persona nunca se saca a sí
+            // misma (el "siguiente" nunca es uno mismo si hay 2 o más).
+            const idsUnicos = [...new Set(ids)];
+
+            if (idsUnicos.length < 2) {
+                throw new Error('Se necesitan al menos 2 participantes distintos para poder sortear.');
+            }
+
+            const participantes = randomShuffle(idsUnicos);
             const resultado = {};
 
             participantes.forEach((id, index) => {
