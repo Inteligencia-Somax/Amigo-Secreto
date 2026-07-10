@@ -1210,7 +1210,7 @@
         }
 
         .sorteado-name {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             font-weight: 700;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
@@ -1354,7 +1354,7 @@
         .sorteado-flip-inner {
             position: relative;
             width: 100%;
-            min-height: 172px;
+            min-height: 300px;
             transition: transform 0.65s cubic-bezier(0.34, 1.1, 0.4, 1);
             transform-style: preserve-3d;
         }
@@ -6632,8 +6632,13 @@
             vertical-align: middle !important;
             box-shadow: none !important;
             line-height: 1 !important;
-            position: static !important;
-            z-index: auto !important;
+            /* Antes quedaba "position: static", o sea que esta fila NO era
+               sticky y se iba scrolleando junto con las filas normales — solo
+               el encabezado quedaba fijo. Ahora también se pega, justo debajo
+               del encabezado (por eso el "top" usa la misma altura de fila). */
+            position: sticky !important;
+            top: var(--table-row-height, 40px) !important;
+            z-index: 2 !important;
         }
 
         table thead tr.table-filter-row th:first-child,
@@ -7648,7 +7653,7 @@
             
             <!-- REGISTRO FORM (oculto inicialmente; la pantalla inicial es la de bienvenida) -->
             <div id="registro-form" style="display: none;">
-                <h2>Registrarse</h2>
+                <h2>Inscripción</h2>
                 
                 <div class="form-group">
                     <label for="registro-nombre">Nombre Completo *</label>
@@ -8472,38 +8477,15 @@
 
     <!-- =============== MODAL CREAR PARTICIPANTE =============== -->
     <div id="participante-crear-modal" class="modal">
-        <div class="modal-content" style="max-width: 620px;">
+        <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
                 <h3>Crear Participante</h3>
             </div>
 
             <div class="participante-form-grid">
                 <div class="form-group">
-                    <label for="participante-nuevo-nombre">Nombre</label>
-                    <input type="text" id="participante-nuevo-nombre" placeholder="Ej: Juan" onblur="this.value = capitalize(this.value)">
-                </div>
-                <div class="form-group">
-                    <label for="participante-nuevo-apellido">Apellido</label>
-                    <input type="text" id="participante-nuevo-apellido" placeholder="Ej: García" onblur="this.value = capitalize(this.value)">
-                </div>
-                <div class="form-group">
-                    <label for="participante-nuevo-login">Usuario</label>
-                    <div class="login-check-row">
-                        <input type="text" id="participante-nuevo-login" placeholder="Ej: jgarcia" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" oninput="formatLoginParticipanteNuevo(); resetLoginHintParticipanteNuevo();">
-                        <button type="button" class="btn-verificar-login" onclick="verificarLoginParticipanteNuevoDisponible()">Verificar</button>
-                    </div>
-                    <p id="participante-nuevo-login-hint" class="login-hint"></p>
-                </div>
-                <div class="form-group">
-                    <label for="participante-nuevo-telefono">Teléfono</label>
-                    <div class="phone-input-group">
-                        <span class="phone-flag-prefix" title="Paraguay" aria-hidden="true">🇵🇾 <span class="phone-flag-code">+595</span></span>
-                        <input type="tel" id="participante-nuevo-telefono" placeholder="Ej: 984 123456" oninput="formatTelefonoParticipanteNuevo()" onblur="formatTelefonoParticipanteNuevo()">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="participante-nuevo-cargo">Cargo</label>
-                    <input type="text" id="participante-nuevo-cargo" placeholder="Ej: Analista de Ventas" onblur="this.value = capitalize(this.value)">
+                    <label for="participante-nuevo-nombre-completo">Nombre Completo</label>
+                    <input type="text" id="participante-nuevo-nombre-completo" placeholder="Ej: Juan García" onblur="this.value = capitalize(this.value)">
                 </div>
                 <div class="form-group">
                     <label for="participante-nuevo-centro">Unidad de Negocio</label>
@@ -9916,10 +9898,29 @@
             }
         }
 
-        function handleLogout() {
-            auth.signOut();
+        async function handleLogout() {
+            // Antes esto no esperaba a que signOut() terminara: la pantalla
+            // volvía al login al toque, pero el SDK de Firebase todavía
+            // estaba "cerrando" la sesión anterior por detrás. Si la próxima
+            // persona escribía sus datos rápido, el signIn nuevo podía
+            // pisarse con ese cierre en curso y quedar trabado (solo se
+            // arreglaba recargando la página). Ahora se espera a que el
+            // signOut termine antes de dejar entrar a otra cuenta.
+            try {
+                await auth.signOut();
+            } catch (e) {
+                // Si falla el signOut igual seguimos limpiando el estado local.
+            }
+
+            // Limpia TODO el estado local, no solo el usuario — así no queda
+            // ningún dato (grupos, participantes, centros) de la cuenta
+            // anterior dando vueltas mientras entra la próxima persona.
             appState.usuarioActual = null;
             appState.esAdmin = false;
+            appState.centrosActuales = [];
+            appState.gruposActuales = [];
+            appState.participantesRegistrados = [];
+            appState.logsActuales = [];
 
             // Si el admin estaba "viendo como" un participante, limpia ese
             // estado también — si no, quedaría guardado para la próxima sesión.
@@ -9982,6 +9983,68 @@
                 updateGruposList();
             }
         }
+
+        // ===== SWIPE PARA NAVEGAR ENTRE "PARTICIPANTES" Y "GRUPO" =====
+        // Deslizar el dedo hacia la izquierda o derecha en el panel de admin
+        // cambia de pestaña. Es "infinito": estando en la última, seguir
+        // deslizando en el mismo sentido vuelve a la primera (y viceversa) —
+        // con solo 2 pestañas, en la práctica alterna entre las dos.
+        (function () {
+            const ORDEN_TABS_ADMIN = ['participantes', 'ver-grupos'];
+            let inicioX = 0;
+            let inicioY = 0;
+            let touchActivo = false;
+
+            // Si el toque empieza dentro de algo que ya se desplaza para los
+            // costados por sí mismo (una tabla ancha con scroll horizontal),
+            // no lo tomamos como gesto de cambio de pestaña — si no, los dos
+            // gestos se pisarían entre sí.
+            function empiezaEnScrollHorizontal(el) {
+                let nodo = el;
+                while (nodo && nodo !== document.body) {
+                    if (nodo.classList && (nodo.classList.contains('table-container') || nodo.classList.contains('import-preview-table-container'))) {
+                        if (nodo.scrollWidth > nodo.clientWidth + 4) return true;
+                    }
+                    nodo = nodo.parentElement;
+                }
+                return false;
+            }
+
+            function onTouchStart(e) {
+                const panel = document.getElementById('admin-panel');
+                if (!panel || !panel.classList.contains('active')) return;
+                if (!e.touches || e.touches.length !== 1) return;
+                if (empiezaEnScrollHorizontal(e.target)) { touchActivo = false; return; }
+                inicioX = e.touches[0].clientX;
+                inicioY = e.touches[0].clientY;
+                touchActivo = true;
+            }
+
+            function onTouchEnd(e) {
+                if (!touchActivo) return;
+                touchActivo = false;
+                if (!e.changedTouches || !e.changedTouches[0]) return;
+
+                const deltaX = e.changedTouches[0].clientX - inicioX;
+                const deltaY = e.changedTouches[0].clientY - inicioY;
+
+                // El gesto tiene que ser mayormente horizontal y suficientemente largo.
+                if (Math.abs(deltaX) < 60 || Math.abs(deltaX) < Math.abs(deltaY) * 1.5) return;
+
+                const tabActual = document.querySelector('.admin-tabs .tab-btn.active');
+                if (!tabActual) return;
+                const indiceActual = ORDEN_TABS_ADMIN.indexOf(tabActual.dataset.tab);
+                if (indiceActual === -1) return;
+
+                const total = ORDEN_TABS_ADMIN.length;
+                const direccion = deltaX < 0 ? 1 : -1; // izquierda = siguiente, derecha = anterior
+                const siguienteIndice = (indiceActual + direccion + total) % total;
+                switchTab(ORDEN_TABS_ADMIN[siguienteIndice]);
+            }
+
+            document.addEventListener('touchstart', onTouchStart, { passive: true });
+            document.addEventListener('touchend', onTouchEnd, { passive: true });
+        })();
 
         // ===== CENTROS FUNCTIONS =====
         // Garante que cada unidad de negocio tenga su propio grupo de sorteo.
@@ -10637,7 +10700,20 @@
             }
             if (key === 'fecha_registro') {
                 const raw = participante.fecha_registro || participante.fechaRegistro || '';
-                const date = raw ? new Date(raw) : null;
+                // Cuando el registro se creó vía Cloud Function, este campo
+                // llega como un Timestamp de Firestore (objeto con .toDate()),
+                // no como texto — "new Date(objeto)" no lo interpreta y da
+                // "Invalid Date", por lo que todos terminaban con el mismo
+                // valor (0) y la ordenación no hacía nada. Acá se maneja igual
+                // que en formatDate/formatDateTime.
+                let date = null;
+                if (raw && typeof raw === 'object' && typeof raw.toDate === 'function') {
+                    date = raw.toDate();
+                } else if (raw && typeof raw === 'object' && typeof raw.seconds === 'number') {
+                    date = new Date(raw.seconds * 1000);
+                } else if (raw) {
+                    date = new Date(raw);
+                }
                 return date && !Number.isNaN(date.getTime()) ? date.getTime() : 0;
             }
             return '';
@@ -11261,55 +11337,37 @@
         }
 
         async function agregarParticipanteAdmin() {
-            const nombreInput = document.getElementById('participante-nuevo-nombre');
-            const apellidoInput = document.getElementById('participante-nuevo-apellido');
-            if (nombreInput.value) nombreInput.value = capitalize(nombreInput.value);
-            if (apellidoInput.value) apellidoInput.value = capitalize(apellidoInput.value);
-            const nombre = nombreInput.value.trim();
-            const apellido = apellidoInput.value.trim();
-
-            formatLoginParticipanteNuevo();
-            const login = document.getElementById('participante-nuevo-login').value.trim();
-
-            formatTelefonoParticipanteNuevo();
-            const telefonoNacional = document.getElementById('participante-nuevo-telefono').value.trim();
-            const telefono = telefonoNacional ? '+595 ' + telefonoNacional : '';
-
-            const cargoInput = document.getElementById('participante-nuevo-cargo');
-            if (cargoInput.value) cargoInput.value = capitalize(cargoInput.value);
-            const cargo = cargoInput.value.trim();
+            const nombreCompletoInput = document.getElementById('participante-nuevo-nombre-completo');
+            if (nombreCompletoInput.value) nombreCompletoInput.value = capitalize(nombreCompletoInput.value);
+            const nombreCompleto = nombreCompletoInput.value.trim();
 
             const centroId = document.getElementById('participante-nuevo-centro').value;
             const password = document.getElementById('participante-nuevo-password').value.trim();
 
-            if (!nombre || !apellido || !login || !telefonoNacional || !cargo || !centroId || !password) {
-                showAlert('admin-error', 'Todos los campos del participante son requeridos');
-                return;
-            }
-
-            // Validar formato del usuario (login): solo letras minúsculas, sin espacios, números ni símbolos
-            if (!/^[a-z]{4,20}$/.test(login)) {
-                showAlert('admin-error', 'Usuario debe tener 4-20 letras minúsculas, sin espacios, números ni símbolos');
-                return;
-            }
-
-            // Validar formato de teléfono (número nacional: 3 dígitos de operadora + 6 dígitos)
-            if (!/^\d{3} \d{6}$/.test(telefonoNacional)) {
-                showAlert('admin-error', 'Teléfono debe estar en formato: XXX XXXXXX');
+            if (!nombreCompleto || !centroId || !password) {
+                showAlert('admin-error', 'Nombre Completo, Unidad de Negocio y Contraseña son requeridos');
                 return;
             }
 
             // Validar contraseña: mínimo 6 caracteres, con letras y números
+            // (misma regla que usa el formulario de Inscripción).
             if (password.length < 6 || !/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
                 showAlert('admin-error', 'La contraseña debe tener mínimo 6 caracteres, con letras y números');
                 return;
             }
 
+            // El "usuario" (login interno) ya no se pide a mano — se genera
+            // solo a partir del Nombre Completo, igual que en la Inscripción.
+            const partesNombre = nombreCompleto.split(/\s+/).filter(Boolean);
+            const nombre = capitalize(partesNombre[0] || '');
+            const apellido = capitalize(partesNombre.slice(1).join(' '));
+            const login = generarLoginUnico(nombreCompleto);
+
             showAlert('admin-error', 'Creando participante...', 'info');
 
             try {
                 const { creados, errores } = await crearParticipantesEnLote([
-                    { nombre, apellido, login, telefono, cargo, centroId, password }
+                    { nombre, apellido, login, telefono: '', cargo: '', centroId, password }
                 ]);
 
                 if (creados.length === 0) {
@@ -12349,7 +12407,7 @@
                 return `
                     ${grupo.estado === 'sorteado' && sorteadoInfo ? `
                         <div class="sorteado-box">
-                            <p>Tu regalo va para:</p>
+                            <p>Tu amigo secreto es:</p>
                             ${puedeVer ? `
                                 <div class="sorteado-flip-card${gruposSorteoFlipeados.has(grupo.id) ? ' is-flipped' : ''}" data-grupo-id="${grupo.id}" onclick="toggleFlipSorteo(this)" role="button" tabindex="0" aria-label="Tocar para revelar a tu amigo secreto" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); toggleFlipSorteo(this);}">
                                     <div class="sorteado-flip-inner">
@@ -12360,7 +12418,6 @@
                                         </div>
                                         <div class="sorteado-flip-face sorteado-flip-back">
                                             <div class="sorteado-name">${sorteadoInfo.nombreCompleto}</div>
-                                            <p style="font-size: 0.9rem; margin-top: 6px;">${sorteadoInfo.cargo ? sorteadoInfo.cargo : ''}</p>
                                             ${(sorteadoInfo.deseos && sorteadoInfo.deseos[grupo.id] && sorteadoInfo.deseos[grupo.id].length > 0) ? `
                                                 <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Le gustaría recibir:</p>
                                                 <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].join(' · ')}</p>
@@ -12556,21 +12613,12 @@
             const modal = document.getElementById('participante-crear-modal');
             if (modal) modal.classList.remove('active');
 
-            const nombre = document.getElementById('participante-nuevo-nombre');
-            const apellido = document.getElementById('participante-nuevo-apellido');
-            const login = document.getElementById('participante-nuevo-login');
-            const telefono = document.getElementById('participante-nuevo-telefono');
-            const cargo = document.getElementById('participante-nuevo-cargo');
+            const nombreCompleto = document.getElementById('participante-nuevo-nombre-completo');
             const centro = document.getElementById('participante-nuevo-centro');
             const password = document.getElementById('participante-nuevo-password');
-            if (nombre) nombre.value = '';
-            if (apellido) apellido.value = '';
-            if (login) login.value = '';
-            if (telefono) telefono.value = '';
-            if (cargo) cargo.value = '';
+            if (nombreCompleto) nombreCompleto.value = '';
             if (centro) centro.value = '';
             if (password) password.value = '';
-            resetLoginHintParticipanteNuevo();
 
             const passwordHint = document.getElementById('participante-nuevo-password-hint');
             if (passwordHint) {
