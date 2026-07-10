@@ -1909,21 +1909,24 @@
         .header-menu-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .header-menu-item {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 9px;
             width: 100%;
-            padding: 10px;
+            height: 38px;
+            min-height: 38px;
+            padding: 0 8px;
             background: #eaf5ee;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             color: var(--text);
             font-weight: 700;
-            font-size: 0.96rem;
+            font-size: 0.88rem;
+            line-height: 1;
             cursor: pointer;
             transition: background 0.15s ease;
             text-align: left;
@@ -1934,21 +1937,21 @@
         }
 
         .header-menu-item-icon {
-            width: 40px;
-            height: 40px;
+            width: 28px;
+            height: 28px;
             flex-shrink: 0;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 11px;
+            border-radius: 8px;
             background: #ffffff;
             color: var(--primary);
             transition: background 0.15s ease, color 0.15s ease;
         }
 
         .header-menu-item-icon svg {
-            width: 19px;
-            height: 19px;
+            width: 16px;
+            height: 16px;
             stroke: currentColor;
         }
 
@@ -1972,7 +1975,7 @@
         .header-menu-divider {
             height: 1px;
             background: #edf1ee;
-            margin: 8px 6px;
+            margin: 6px 4px;
         }
 
         .header-menu-item.is-danger {
@@ -3010,7 +3013,7 @@
         .columnas-config-lista {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             max-height: 52vh;
             overflow-y: auto;
             padding: 2px;
@@ -3018,14 +3021,15 @@
 
         .columna-config-item {
             display: grid;
-            grid-template-columns: 34px minmax(0, 1fr) auto;
+            grid-template-columns: 28px minmax(0, 1fr) auto;
             align-items: center;
-            gap: 10px;
-            min-height: 54px;
-            padding: 8px 10px;
+            gap: 8px;
+            height: 38px;
+            min-height: 38px;
+            padding: 0 8px;
             background: #f7fbf8;
             border: 1px solid #dfeae3;
-            border-radius: 10px;
+            border-radius: 9px;
             cursor: grab;
             user-select: none;
             transition: border-color 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
@@ -3050,41 +3054,42 @@
         }
 
         .columna-config-drag {
-            width: 34px;
-            height: 34px;
+            width: 26px;
+            height: 26px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             color: #718078;
-            border-radius: 8px;
+            border-radius: 7px;
             background: var(--white);
             pointer-events: none;
         }
 
         .columna-config-drag svg {
-            width: 18px;
-            height: 18px;
+            width: 15px;
+            height: 15px;
         }
 
         .columna-config-label {
             min-width: 0;
             color: var(--dark);
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             font-weight: 700;
+            line-height: 1;
         }
 
         .columna-config-visibilidad {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             margin: 0;
             cursor: pointer;
             white-space: nowrap;
         }
 
         .columna-config-visibilidad input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             margin: 0;
             accent-color: var(--primary);
             cursor: pointer;
@@ -3092,8 +3097,9 @@
 
         .columna-config-visibilidad span {
             color: var(--primary);
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-weight: 700;
+            line-height: 1;
         }
 
         .columna-config-item.is-hidden .columna-config-label,
@@ -3103,8 +3109,8 @@
 
         @media (max-width: 480px) {
             .columna-config-item {
-                grid-template-columns: 32px minmax(0, 1fr) auto;
-                gap: 8px;
+                grid-template-columns: 28px minmax(0, 1fr) auto;
+                gap: 7px;
             }
 
             .columna-config-visibilidad span {
@@ -3585,6 +3591,48 @@
             color: #999;
             font-size: 0.92rem;
             text-align: center;
+        }
+
+        /* Resultado do sorteio compacto: busca, cabeçalho e linhas com 38px */
+        #grupo-resultados-modal .resultado-sorteo-search {
+            height: 38px;
+            min-height: 38px;
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+
+        #grupo-resultados-modal .resultado-sorteo-search input {
+            height: 100%;
+            min-height: 0;
+            padding: 0;
+        }
+
+        #grupo-resultados-modal .resultado-sorteo-list-header {
+            height: 38px;
+            min-height: 38px;
+            padding: 0 16px;
+        }
+
+        #grupo-resultados-modal .resultado-sorteo-row {
+            height: 38px;
+            min-height: 38px;
+            padding: 0 16px;
+        }
+
+        #grupo-resultados-modal .resultado-sorteo-row-avatar {
+            width: 26px;
+            height: 26px;
+            font-size: 0.66rem;
+        }
+
+        #grupo-resultados-modal .resultado-sorteo-row-index,
+        #grupo-resultados-modal .resultado-sorteo-row-arrow {
+            width: 24px;
+            height: 24px;
+        }
+
+        #grupo-resultados-modal .resultado-sorteo-row-persona-info strong {
+            line-height: 1;
         }
 
         .resultado-sorteo-footer-actions {
@@ -4534,8 +4582,13 @@
 
 
         #participantes-modal .modal-content {
-            width: min(92vw, 760px);
-            max-width: 760px !important;
+            width: min(92vw, 620px);
+            max-width: 620px !important;
+        }
+
+        #participantes-modal .participante-editar-grid {
+            grid-template-columns: 1fr;
+            gap: 18px;
         }
 
         #perfil-modal .modal-content {
@@ -6926,6 +6979,89 @@
             outline-offset: 2px;
         }
 
+
+
+        /* ==================== PADRÃO GLOBAL: TABELAS MAIS COMPACTAS ==================== */
+        /* Antes, cabeçalhos, linhas e filtros usavam 40px. O padrão passa a ser
+           36px em todas as tabelas, mantendo o filtro exatamente na mesma altura. */
+        :root {
+            --table-row-height: 36px;
+            --table-control-height: 30px;
+        }
+
+        table thead th,
+        table tbody td,
+        .table-container table thead th,
+        .table-container table tbody td,
+        .import-preview-table-container table thead th,
+        .import-preview-table-container table tbody td {
+            height: var(--table-row-height) !important;
+            min-height: var(--table-row-height) !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            vertical-align: middle !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Controles editáveis não podem aumentar a altura da linha. */
+        table input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(.table-filter-input),
+        table select:not(.table-filter-select),
+        table .participante-edit-input,
+        table .participante-edit-select,
+        table .centro-edit-input {
+            height: var(--table-control-height) !important;
+            min-height: var(--table-control-height) !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            font-size: 0.84rem !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Linha de busca/filtros com a mesma altura das demais linhas. */
+        table thead tr.table-filter-row th,
+        .table-container table thead tr.table-filter-row th,
+        .import-preview-table-container table thead tr.table-filter-row th,
+        #participantes-import-preview-lista .participantes-import-preview-table-readonly thead tr.table-filter-row th,
+        #centros-import-preview-lista .centros-import-preview-table thead tr.table-filter-row th {
+            height: var(--table-row-height) !important;
+            min-height: var(--table-row-height) !important;
+            max-height: var(--table-row-height) !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        table thead tr.table-filter-row .table-filter-input-wrap,
+        .table-container table thead tr.table-filter-row .table-filter-input-wrap,
+        .import-preview-table-container table thead tr.table-filter-row .table-filter-input-wrap {
+            height: var(--table-row-height) !important;
+            min-height: var(--table-row-height) !important;
+            max-height: var(--table-row-height) !important;
+        }
+
+        table thead tr.table-filter-row .table-filter-input,
+        table thead tr.table-filter-row .table-filter-input[type="text"],
+        .table-container table thead tr.table-filter-row .table-filter-input,
+        .table-container table thead tr.table-filter-row .table-filter-input[type="text"],
+        .import-preview-table-container table thead tr.table-filter-row .table-filter-input,
+        .import-preview-table-container table thead tr.table-filter-row .table-filter-input[type="text"] {
+            height: var(--table-row-height) !important;
+            min-height: var(--table-row-height) !important;
+            max-height: var(--table-row-height) !important;
+            line-height: var(--table-row-height) !important;
+        }
+
+        table thead tr.table-filter-row .table-filter-select,
+        .table-container table thead tr.table-filter-row .table-filter-select,
+        .import-preview-table-container table thead tr.table-filter-row .table-filter-select {
+            height: var(--table-row-height) !important;
+            min-height: var(--table-row-height) !important;
+            max-height: var(--table-row-height) !important;
+            line-height: var(--table-row-height) !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            box-sizing: border-box !important;
+        }
+
     </style>
 </head>
 <body>
@@ -7327,19 +7463,6 @@
                         </svg>
                     </span>
                     <span class="header-menu-item-label">Cambiar Contexto</span>
-                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-                </button>
-                <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirLogsModal();">
-                    <span class="header-menu-item-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
-                            <polyline points="10 9 9 9 8 9"/>
-                        </svg>
-                    </span>
-                    <span class="header-menu-item-label">Logs</span>
                     <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
                 </button>
                 <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirExportarTemplateModal();">
@@ -8256,7 +8379,7 @@
                         <circle cx="11" cy="11" r="8"/>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
-                    <input type="text" id="resultado-sorteo-buscar" placeholder="Buscar por nombre o cargo..." oninput="filtrarResultadoSorteo()">
+                    <input type="text" id="resultado-sorteo-buscar" placeholder="Buscar por nombre..." oninput="filtrarResultadoSorteo()">
                 </div>
 
                 <div class="resultado-sorteo-container">
@@ -8270,7 +8393,6 @@
                 </div>
 
                 <div class="resultado-sorteo-footer-actions">
-                    <div class="grupo-detail-created">Fecha de Creación: <span id="grupo-detalle-creado-resultados">-</span></div>
                     <div class="resultado-actions-right">
                         <button type="button" class="btn-excel" onclick="exportarResultadosGrupoExcel()">Excel</button>
                         <button type="button" class="icon-action-btn icon-cancel resultado-sorteo-footer-icon-btn" onclick="cerrarResultadosGrupoModal()" aria-label="Cerrar" title="Cerrar">
@@ -8362,36 +8484,22 @@
                 <h3>Editar Participante</h3>
             </div>
 
-            <div class="participante-modal-grid">
-                <div class="form-group">
-                    <label for="modal-participante-nombre">Nombre</label>
-                    <input type="text" id="modal-participante-nombre" onblur="this.value = capitalize(this.value)">
+            <div class="participante-modal-grid participante-editar-grid">
+                <div class="form-group participante-modal-full">
+                    <label for="modal-participante-nombre">Nombre Completo</label>
+                    <input type="text" id="modal-participante-nombre" placeholder="Ej: Juan García" autocomplete="name" onblur="this.value = capitalize(this.value)">
                 </div>
-                <div class="form-group">
-                    <label for="modal-participante-apellido">Apellido</label>
-                    <input type="text" id="modal-participante-apellido" onblur="this.value = capitalize(this.value)">
-                </div>
-                <div class="form-group">
-                    <label for="modal-participante-login">Usuario</label>
-                    <input type="text" id="modal-participante-login" disabled title="El usuario no se puede cambiar después del registro">
-                </div>
-                <div class="form-group">
-                    <label for="modal-participante-telefono">Teléfono</label>
-                    <input type="text" id="modal-participante-telefono">
-                </div>
-                <div class="form-group">
-                    <label for="modal-participante-cargo">Cargo</label>
-                    <input type="text" id="modal-participante-cargo" onblur="this.value = capitalize(this.value)">
-                </div>
-                <div class="form-group">
+
+                <div class="form-group participante-modal-full">
                     <label for="modal-participante-centro">Unidad de Negocio</label>
                     <select id="modal-participante-centro"></select>
                     <div id="modal-participante-centro-lock-hint" class="grupo-centro-alerta-banner" style="display:none; margin-top:8px; margin-bottom:0;">
                         Este participante ya está vinculado a un grupo y no se puede cambiar su Unidad de Negocio.
                     </div>
                 </div>
+
                 <div class="form-group participante-modal-full">
-                    <label for="modal-participante-password">Nueva contraseña (opcional)</label>
+                    <label for="modal-participante-password">Nueva Contraseña (opcional)</label>
                     <div class="login-password-row">
                         <input type="password" id="modal-participante-password" autocomplete="new-password" placeholder="Dejar en blanco para no cambiar" oninput="validarPasswordEditarParticipanteEnVivo()">
                         <button type="button" class="btn btn-outline btn-small password-eye-btn" onclick="togglePasswordVisibility('modal-participante-password')" aria-label="Ver contraseña" title="Ver contraseña">
@@ -10413,11 +10521,7 @@
             if (!participante) return;
 
             participanteEnEdicionId = participanteId;
-            document.getElementById('modal-participante-nombre').value = participante.nombre || '';
-            document.getElementById('modal-participante-apellido').value = participante.apellido || '';
-            document.getElementById('modal-participante-login').value = participante.login || '';
-            document.getElementById('modal-participante-telefono').value = participante.telefono || '';
-            document.getElementById('modal-participante-cargo').value = participante.cargo || '';
+            document.getElementById('modal-participante-nombre').value = participante.nombreCompleto || ((participante.nombre || '') + ' ' + (participante.apellido || '')).trim();
             const inputPassword = document.getElementById('modal-participante-password');
             if (inputPassword) {
                 inputPassword.type = 'password';
@@ -10488,19 +10592,18 @@
             const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
             if (!participante) return;
 
-            const nombre = capitalize(document.getElementById('modal-participante-nombre').value.trim());
-            const apellido = capitalize(document.getElementById('modal-participante-apellido').value.trim());
-            const telefono = document.getElementById('modal-participante-telefono').value.trim();
-            const cargo = capitalize(document.getElementById('modal-participante-cargo').value.trim());
+            const nombreCompletoInput = document.getElementById('modal-participante-nombre').value.trim();
+            const partesNombre = nombreCompletoInput.split(/\s+/).filter(Boolean);
+            const nombre = capitalize(partesNombre[0] || '');
+            const apellido = capitalize(partesNombre.slice(1).join(' '));
+            const nombreCompleto = apellido ? `${nombre} ${apellido}` : nombre;
             const centroId = document.getElementById('modal-participante-centro').value;
-            // La contraseña es OPCIONAL acá: si se llena, dispara un reset de
-            // verdad vía Cloud Function. Si se deja vacía, no se toca la
-            // contraseña actual de la persona (ya no vive en este formulario,
-            // vive únicamente en Firebase Authentication).
+            // La contraseña es opcional: si se completa, se actualiza mediante
+            // la Cloud Function; si queda vacía, se conserva la contraseña actual.
             const nuevaPassword = document.getElementById('modal-participante-password').value.trim();
 
-            if (!nombre || !apellido || !telefono || !cargo || !centroId) {
-                showAlert('admin-error', 'Todos los campos del participante son requeridos');
+            if (!nombreCompleto || !centroId) {
+                showAlert('admin-error', 'Nombre Completo y Unidad de Negocio son requeridos');
                 return;
             }
 
@@ -10522,9 +10625,7 @@
                 await db.collection('participantes').doc(participanteId).update({
                     nombre: nombre,
                     apellido: apellido,
-                    nombreCompleto: `${nombre} ${apellido}`,
-                    telefono: telefono,
-                    cargo: cargo,
+                    nombreCompleto: nombreCompleto,
                     centroId: centroId,
                     centroNombre: centroDatos ? centroDatos.nombre : participante.centroNombre
                 });
@@ -10536,9 +10637,7 @@
 
                 participante.nombre = nombre;
                 participante.apellido = apellido;
-                participante.nombreCompleto = `${nombre} ${apellido}`;
-                participante.telefono = telefono;
-                participante.cargo = cargo;
+                participante.nombreCompleto = nombreCompleto;
                 actualizarCentroDeParticipante(participante, centroId);
 
                 if (appState.usuarioActual && appState.usuarioActual.id === participanteId) {
@@ -11241,7 +11340,8 @@
 
             const grupoDetalleCreadoEl = document.getElementById('grupo-detalle-creado');
             if (grupoDetalleCreadoEl) grupoDetalleCreadoEl.textContent = formatDate(grupo.fecha_sorteio);
-            document.getElementById('grupo-detalle-creado-resultados').textContent = formatDate(grupo.fecha_sorteio);
+            const grupoDetalleCreadoResultadosEl = document.getElementById('grupo-detalle-creado-resultados');
+            if (grupoDetalleCreadoResultadosEl) grupoDetalleCreadoResultadosEl.textContent = formatDate(grupo.fecha_sorteio);
             showAlert('admin-success', 'Grupo actualizado');
             updateGruposList();
             updateSelectMenus();
@@ -11267,9 +11367,7 @@
                 const sorteadoPara = appState.participantesRegistrados.find(p => p.id === sorteadoParaId);
                 const participanteNombre = escaparHtml(participante ? participante.nombreCompleto : '-');
                 const sorteadoNombre = escaparHtml(sorteadoPara ? sorteadoPara.nombreCompleto : '-');
-                const participanteCargo = escaparHtml(participante && participante.cargo ? participante.cargo : 'Sin cargo');
-                const sorteadoCargo = escaparHtml(sorteadoPara && sorteadoPara.cargo ? sorteadoPara.cargo : 'Sin cargo');
-                const busqueda = (participanteNombre + ' ' + participanteCargo + ' ' + sorteadoNombre + ' ' + sorteadoCargo).toLowerCase();
+                const busqueda = (participanteNombre + ' ' + sorteadoNombre).toLowerCase();
 
                 return `
                     <div class="resultado-sorteo-row" data-search="${busqueda}">
@@ -11278,7 +11376,6 @@
                             <span class="resultado-sorteo-row-avatar">${escaparHtml(inicialesParticipante(participante ? participante.nombreCompleto : ''))}</span>
                             <div class="resultado-sorteo-row-persona-info">
                                 <strong title="${participanteNombre}">${participanteNombre}</strong>
-                                <span title="${participanteCargo}">${participanteCargo}</span>
                             </div>
                         </div>
                         <div class="resultado-sorteo-row-arrow">→</div>
@@ -11286,7 +11383,6 @@
                             <span class="resultado-sorteo-row-avatar">${escaparHtml(inicialesParticipante(sorteadoPara ? sorteadoPara.nombreCompleto : ''))}</span>
                             <div class="resultado-sorteo-row-persona-info">
                                 <strong title="${sorteadoNombre}">${sorteadoNombre}</strong>
-                                <span title="${sorteadoCargo}">${sorteadoCargo}</span>
                             </div>
                         </div>
                     </div>
@@ -11296,7 +11392,7 @@
             cont.innerHTML = filas;
         }
 
-        // Filtra en vivo la lista de resultados del sorteo por nombre o cargo
+        // Filtra en vivo la lista de resultados del sorteo por nombre
         // (de cualquiera de los dos lados: quien sortea o a quien le regala).
         function filtrarResultadoSorteo() {
             const buscar = document.getElementById('resultado-sorteo-buscar');
@@ -11645,7 +11741,8 @@
                     document.getElementById('grupo-detalle-total-participantes-resultados').textContent = (grupoActualizado.participantes || []).length + ' personas';
                     const grupoDetalleCreadoEl = document.getElementById('grupo-detalle-creado');
                     if (grupoDetalleCreadoEl) grupoDetalleCreadoEl.textContent = formatDate(grupoActualizado.fecha_sorteio);
-                    document.getElementById('grupo-detalle-creado-resultados').textContent = formatDate(grupoActualizado.fecha_sorteio);
+                    const grupoDetalleCreadoResultadosEl = document.getElementById('grupo-detalle-creado-resultados');
+                    if (grupoDetalleCreadoResultadosEl) grupoDetalleCreadoResultadosEl.textContent = formatDate(grupoActualizado.fecha_sorteio);
                     renderParticipantesDeGrupo(grupoActualizado);
                     renderResultadoSorteoGrupo(grupoActualizado);
                 }
