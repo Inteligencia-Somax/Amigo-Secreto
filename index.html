@@ -4202,6 +4202,10 @@
             margin-bottom: 0;
         }
 
+        #participante-crear-modal .participante-form-grid {
+            grid-template-columns: 1fr;
+        }
+
         .participante-form-actions {
             display: flex;
             gap: 8px;
@@ -4306,6 +4310,43 @@
             padding-right: 6px !important;
             text-align: center;
             position: relative;
+        }
+
+        /* Fila entera resaltada cuando su checkbox está marcado, no solo el checkbox. */
+        #participantes-table tbody tr.fila-seleccionada {
+            background-color: #fff6e0 !important;
+        }
+        #participantes-table tbody tr.fila-seleccionada:hover {
+            background-color: #ffefc7 !important;
+        }
+        #participantes-table tbody tr.fila-seleccionada td {
+            background-color: transparent;
+        }
+
+        /* Badge "Nuevo" junto al nombre + efecto de destaque rápido en la fila,
+           para participantes creados desde la última vez que se visitó esta
+           pantalla. */
+        .badge-participante-nuevo {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: var(--secondary);
+            color: #402c00;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        #participantes-table tbody tr.fila-participante-nueva {
+            animation: filaParticipanteNuevaFlash 1.6s ease-out;
+        }
+
+        @keyframes filaParticipanteNuevaFlash {
+            0% { background-color: #fff0c2; }
+            100% { background-color: transparent; }
         }
 
         /* Coluna fixa de ações: sempre visível, última e centralizada.
@@ -9124,6 +9165,64 @@
             direction: 'desc'
         };
 
+        // ===== PARTICIPANTES "NUEVOS" DESDE LA ÚLTIMA VISITA =====
+        // Cada vez que se entra de verdad a la pestaña "Participantes" (clic,
+        // swipe, o al aterrizar acá después del login), se compara la fecha
+        // de registro de cada uno contra la última vez que se visitó esta
+        // pantalla (guardada en localStorage). Los que se crearon después
+        // quedan marcados con el badge "Nuevo" + un destaque rápido en la
+        // fila. El cálculo se hace UNA sola vez por visita (no en cada
+        // repintado, por ejemplo al escribir en el buscador), así el badge
+        // no aparece y desaparece solo mientras se está filtrando la lista.
+        let participantesNuevosIds = new Set();
+
+        function obtenerFechaComoDate(raw) {
+            if (!raw) return null;
+            let date = null;
+            if (typeof raw === 'object' && typeof raw.toDate === 'function') {
+                date = raw.toDate();
+            } else if (typeof raw === 'object' && typeof raw.seconds === 'number') {
+                date = new Date(raw.seconds * 1000);
+            } else {
+                date = new Date(raw);
+            }
+            return date && !Number.isNaN(date.getTime()) ? date : null;
+        }
+
+        function calcularParticipantesNuevos() {
+            const CLAVE = 'somaxAmigoSecretoUltimaVisitaParticipantes';
+            let ultimaVisitaTexto = null;
+            try {
+                ultimaVisitaTexto = localStorage.getItem(CLAVE);
+            } catch (e) {
+                // Sin acceso a localStorage, no se puede recordar la última
+                // visita — no pasa nada grave, simplemente no habrá badges.
+            }
+
+            participantesNuevosIds = new Set();
+
+            if (ultimaVisitaTexto) {
+                const ultimaVisita = new Date(ultimaVisitaTexto);
+                if (!Number.isNaN(ultimaVisita.getTime())) {
+                    appState.participantesRegistrados.forEach(p => {
+                        const fecha = obtenerFechaComoDate(p.fecha_registro || p.fechaRegistro);
+                        if (fecha && fecha.getTime() > ultimaVisita.getTime()) {
+                            participantesNuevosIds.add(p.id);
+                        }
+                    });
+                }
+            }
+            // Si no había una visita anterior guardada (primera vez que se usa
+            // esta función, ej: recién desplegada), no se marca a nadie como
+            // "nuevo" — solo se establece la base para la próxima visita.
+
+            try {
+                localStorage.setItem(CLAVE, new Date().toISOString());
+            } catch (e) {
+                // Ídem: si no se puede guardar, simplemente no habrá badges la próxima vez.
+            }
+        }
+
         // ===== CONFIGURACIÓN DE COLUMNAS DE LA TABLA DE PARTICIPANTES =====
         // (checkbox y acciones son fijas, no aparecen acá: siempre están al
         // principio y al final de la tabla, no se pueden ocultar ni mover)
@@ -9440,6 +9539,15 @@
             // "analista de credito" → "Analista de Credito"
             const palavrasMinusculas = ['de', 'da', 'do', 'das', 'dos', 'del', 'la', 'las', 'los', 'y', 'e', 'en', 'por', 'para'];
             return text
+                // Algunos teclados/sistemas (sobre todo Mac) generan letras
+                // acentuadas como dos caracteres Unicode separados (la letra +
+                // el acento combinado) en vez de uno solo — visualmente son
+                // idénticas ("á" y "á"), pero como texto NO son la misma
+                // cadena, así que una búsqueda exacta en Firestore fallaba
+                // (por eso el login de "Angélica Dávalos" daba "Usuario
+                // inválido" aunque estuviera bien escrito). Normalizar acá
+                // deja siempre la misma forma, sin importar de dónde vino.
+                .normalize('NFC')
                 .toLowerCase()
                 .trim()
                 .replace(/\s+/g, ' ')
@@ -9766,6 +9874,12 @@
                 }
                 if (ultimaTab === 'ver-grupos') {
                     switchTab('ver-grupos');
+                } else {
+                    // Se queda en "Participantes" (pestaña por defecto) — acá
+                    // hay que calcular los "nuevos" a mano, porque este
+                    // aterrizaje inicial no pasa por switchTab().
+                    calcularParticipantesNuevos();
+                    updateParticipantesList();
                 }
             } else {
                 switchPanel('usuario');
@@ -9976,6 +10090,7 @@
             if (alertTimeouts['admin-success']) { clearTimeout(alertTimeouts['admin-success']); alertTimeouts['admin-success'] = null; }
 
             if (tabName === 'participantes') {
+                calcularParticipantesNuevos();
                 cargarCentrosEnSelectParticipante();
                 updateParticipantesList();
             }
@@ -10774,6 +10889,14 @@
             const seleccionadosCheckboxes = Array.from(document.querySelectorAll('.participante-row-checkbox:checked'));
             const total = seleccionadosCheckboxes.length;
 
+            // Marca visualmente la fila entera (no solo el checkbox) cuando
+            // está seleccionada, para que sea más fácil ver de un vistazo
+            // cuáles participantes están marcados.
+            document.querySelectorAll('.participante-row-checkbox').forEach(cb => {
+                const fila = cb.closest('tr');
+                if (fila) fila.classList.toggle('fila-seleccionada', cb.checked);
+            });
+
             const bar = document.getElementById('participantes-seleccion-bar');
             const countEl = document.getElementById('participantes-seleccionados-count');
             const labelEl = document.getElementById('participantes-seleccion-total-label');
@@ -10986,9 +11109,11 @@
                 const codigoCentro = getCodigoCentroParticipante(p);
                 // Fecha Registro se muestra con hora incluida en esta tabla.
                 const fechaRegistro = formatDateTime(p.fecha_registro || p.fechaRegistro || '');
+                const esNuevo = participantesNuevosIds.has(p.id);
+                const badgeNuevo = esNuevo ? '<span class="badge-participante-nuevo">Nuevo</span>' : '';
 
                 const celdasPorColumna = {
-                    nombre: `<td title="${nombreMostrar}"><strong>${nombreMostrar}</strong></td>`,
+                    nombre: `<td title="${nombreMostrar}"><strong>${nombreMostrar}</strong>${badgeNuevo}</td>`,
                     login: `<td title="${p.login || ''}">${p.login || '-'}</td>`,
                     telefono: `<td title="${p.telefono || ''}">${p.telefono || '-'}</td>`,
                     cargo: `<td title="${p.cargo || ''}">${p.cargo || '-'}</td>`,
@@ -10998,7 +11123,7 @@
                 const celdasHtml = columnasVisibles.map(key => celdasPorColumna[key] || '').join('');
 
                 return `
-                <tr data-vinculado="${vinculadoAGrupo ? 'si' : 'no'}">
+                <tr data-vinculado="${vinculadoAGrupo ? 'si' : 'no'}"${esNuevo ? ' class="fila-participante-nueva"' : ''}>
                     <td class="participante-checkbox-col" style="width:${anchoCheckbox}%">
                         ${grupoVinculado
                             ? `<button type="button" class="participante-grupo-icon-btn" data-grupo-nombre="${escaparHtml(grupoVinculado.nombre)}" aria-label="Ver nombre del grupo">🔗</button>`
