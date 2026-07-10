@@ -273,6 +273,269 @@
             border-color: var(--primary);
         }
 
+        /* ==================== SELECTOR ESTILO "APP DE CALENDARIO" ====================
+           Banner grande arriba (año + día de la semana) igual al selector nativo
+           de fecha/hora de Android, pero con la paleta verde/dorada del sitio en
+           vez del violeta del sistema. Se inyecta con JS arriba del calendario
+           de flatpickr; el resto de las reglas de abajo prolijan el grid de días
+           y agregan el reloj circular para elegir la hora. */
+        .reloj-fecha-banner {
+            padding: 18px 20px 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: var(--white);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .reloj-fecha-banner-anio {
+            margin: 0 0 2px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.75);
+            letter-spacing: 0.02em;
+        }
+
+        .reloj-fecha-banner-dia {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            text-transform: capitalize;
+        }
+
+        /* Prolijar el grid de días: tamaño fijo y parejo para que los números
+           no queden pegados ni desalineados entre sí. */
+        .flatpickr-days,
+        .dayContainer {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .flatpickr-day {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            height: 38px;
+            line-height: 38px;
+            font-weight: 600;
+            border-radius: 50%;
+            max-width: none;
+        }
+
+        span.flatpickr-weekday {
+            font-weight: 700;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+        }
+
+        /* Oculta el spinner de hora por defecto de flatpickr: lo reemplazamos
+           por una "píldora" clickeable que abre el reloj circular. */
+        .flatpickr-time {
+            display: none !important;
+        }
+
+        .reloj-hora-pildora-row {
+            display: flex;
+            justify-content: center;
+            padding: 4px 12px 14px;
+            border-top: 1px solid #eef3f0;
+            margin-top: 4px;
+        }
+
+        .reloj-hora-pildora {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: #eaf5ee;
+            border: 1px solid #cfe6d8;
+            border-radius: 999px;
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+        }
+
+        .reloj-hora-pildora:hover {
+            background: #dcefe3;
+        }
+
+        .reloj-hora-pildora svg {
+            width: 17px;
+            height: 17px;
+            stroke: var(--primary);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .reloj-picker-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 18px;
+            padding: 6px 18px 16px;
+        }
+
+        .reloj-picker-footer button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 6px 4px;
+        }
+
+        .reloj-picker-footer button:hover {
+            text-decoration: underline;
+        }
+
+        /* ---- Reloj circular para elegir la hora (overlay propio) ---- */
+        .reloj-clock-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 59, 38, 0.55);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .reloj-clock-overlay.active {
+            display: flex;
+        }
+
+        .reloj-clock-dialog {
+            width: 100%;
+            max-width: 330px;
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+        }
+
+        .reloj-clock-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 22px 20px 18px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: rgba(255,255,255,0.55);
+        }
+
+        .reloj-clock-banner span {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+
+        .reloj-clock-banner span.activo {
+            color: var(--white);
+            background: rgba(255,255,255,0.12);
+        }
+
+        .reloj-clock-banner .reloj-clock-colon {
+            cursor: default;
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.55);
+            padding: 0;
+        }
+
+        .reloj-clock-face-wrap {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 22px auto 10px;
+            border-radius: 50%;
+            background: #eef3f0;
+        }
+
+        .reloj-clock-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            margin: -4px 0 0 -4px;
+            border-radius: 50%;
+            background: var(--primary);
+            z-index: 3;
+        }
+
+        .reloj-clock-hand {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            margin-left: -1px;
+            background: var(--primary);
+            transform-origin: top center;
+            z-index: 1;
+        }
+
+        .reloj-clock-num {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            margin: -18px 0 0 -18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            z-index: 2;
+            user-select: none;
+        }
+
+        .reloj-clock-num.reloj-clock-num-interior {
+            width: 30px;
+            height: 30px;
+            margin: -15px 0 0 -15px;
+            font-size: 0.8rem;
+            color: #6b7c73;
+        }
+
+        .reloj-clock-num.seleccionado {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .reloj-clock-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            padding: 8px 22px 20px;
+        }
+
+        .reloj-clock-actions button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 6px 4px;
+        }
+
+        .reloj-clock-actions button:hover {
+            text-decoration: underline;
+        }
+
+
+
         /* Texto de ejemplo (placeholder) más claro, para que no parezca
            un valor ya escrito por el usuario */
         input::placeholder,
@@ -499,6 +762,161 @@
             max-width: 380px;
             margin: 0 auto;
             line-height: 1.5;
+        }
+
+        /* Estado vacío del participante: mantiene el mismo lenguaje premium
+           del card de revelación, con regalo flotante y detalles dorados. */
+        #grupos-usuario > .grupos-empty-state {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            margin-top: 18px;
+            padding: 34px 24px 30px;
+            border: 1px solid rgba(244, 163, 0, 0.68);
+            border-radius: 22px;
+            background:
+                radial-gradient(circle at 50% 33%, rgba(244, 163, 0, 0.2), transparent 31%),
+                linear-gradient(145deg, #073b28 0%, #0b5a3b 56%, #083d2b 100%);
+            box-shadow: 0 18px 38px rgba(6, 54, 36, 0.25), inset 0 1px 0 rgba(255,255,255,0.11);
+            color: #fff;
+        }
+
+        #grupos-usuario > .grupos-empty-state::before,
+        #grupos-usuario > .grupos-empty-state::after {
+            content: '';
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 210, 93, 0.18) 0%, transparent 68%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        #grupos-usuario > .grupos-empty-state::before { top: -95px; right: -60px; }
+        #grupos-usuario > .grupos-empty-state::after { bottom: -110px; left: -70px; }
+
+        .grupos-empty-eyebrow {
+            margin: 0 0 5px;
+            color: #ffd978;
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        #grupos-usuario > .grupos-empty-state h3 {
+            max-width: 390px;
+            margin: 0 auto 8px;
+            color: #fff;
+            font-size: 1.32rem;
+            line-height: 1.25;
+            font-weight: 800;
+        }
+
+        #grupos-usuario > .grupos-empty-state p {
+            max-width: 410px;
+            margin: 0 auto;
+            color: rgba(255,255,255,0.84);
+            font-size: 0.91rem;
+            line-height: 1.55;
+        }
+
+        .grupos-empty-gift-stage {
+            position: relative;
+            min-height: 148px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px auto 10px;
+        }
+
+        .grupos-empty-gift-stage::after {
+            content: '';
+            position: absolute;
+            bottom: 15px;
+            width: 102px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            filter: blur(7px);
+            animation: gruposEmptyShadow 3.1s ease-in-out infinite;
+        }
+
+        #grupos-usuario > .grupos-empty-state .grupos-empty-icon {
+            position: relative;
+            z-index: 2;
+            width: 112px;
+            height: 112px;
+            margin: 0;
+            border: 1px solid rgba(255, 215, 107, 0.4);
+            border-radius: 28px;
+            background: linear-gradient(145deg, rgba(255,221,130,0.18), rgba(244,163,0,0.08));
+            box-shadow: 0 14px 30px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.16);
+            transform-origin: 50% 65%;
+            animation: gruposEmptyGiftFloat 3.1s cubic-bezier(.45,.05,.55,.95) infinite;
+        }
+
+        #grupos-usuario > .grupos-empty-state .grupos-empty-icon svg {
+            width: 58px;
+            height: 58px;
+            stroke: #ffd76b;
+            filter: drop-shadow(0 0 10px rgba(255,215,107,0.35));
+        }
+
+        .grupos-empty-spark {
+            position: absolute;
+            z-index: 3;
+            color: #ffd76b;
+            font-size: 1rem;
+            text-shadow: 0 0 10px rgba(255,215,107,0.9);
+            animation: gruposEmptySpark 2.4s ease-in-out infinite;
+        }
+
+        .grupos-empty-spark-one { top: 23px; left: calc(50% - 75px); }
+        .grupos-empty-spark-two { top: 10px; right: calc(50% - 70px); animation-delay: .75s; }
+        .grupos-empty-spark-three { bottom: 31px; right: calc(50% - 82px); animation-delay: 1.3s; }
+
+        .grupos-empty-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 18px;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 215, 107, 0.42);
+            border-radius: 999px;
+            background: rgba(3, 36, 24, 0.34);
+            color: #fff2c2;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .grupos-empty-status svg {
+            width: 17px;
+            height: 17px;
+            stroke: #ffd76b;
+        }
+
+        @keyframes gruposEmptyGiftFloat {
+            0%, 100% { transform: translateY(5px) rotate(-8deg) scale(1); }
+            50% { transform: translateY(-11px) rotate(7deg) scale(1.035); }
+        }
+
+        @keyframes gruposEmptyShadow {
+            0%, 100% { transform: scaleX(1); opacity: .62; }
+            50% { transform: scaleX(.72); opacity: .34; }
+        }
+
+        @keyframes gruposEmptySpark {
+            0%, 100% { transform: scale(.72) rotate(0deg); opacity: .32; }
+            50% { transform: scale(1.22) rotate(24deg); opacity: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #grupos-usuario > .grupos-empty-state .grupos-empty-icon,
+            .grupos-empty-gift-stage::after,
+            .grupos-empty-spark { animation: none !important; }
         }
 
         .grupo-card {
@@ -5798,6 +6216,18 @@
             border-color: #8eb4a0;
         }
 
+        /* Filtro "Vinculado/No vinculado" de la columna de checkbox: sin
+           texto ni línea visibles en reposo — solo funciona al tocarlo,
+           que es cuando el select nativo muestra las opciones. */
+        .table-filter-select-icon-only {
+            border-bottom: none;
+            text-align: center;
+        }
+
+        .table-filter-select-icon-only:focus {
+            border-bottom: 1px solid #8eb4a0;
+        }
+
     
         /* Filtros de tabla refinados: línea normal, sin campo dentro del campo */
         .table-filter-row th {
@@ -9216,7 +9646,17 @@
             }
             if (key === 'fecha_registro') {
                 const raw = participante.fecha_registro || participante.fechaRegistro || '';
-                const date = raw ? new Date(raw) : null;
+                if (!raw) return 0;
+                // El registro real casi siempre llega como Timestamp de
+                // Firestore (tiene .toDate()), no como string — "new
+                // Date(raw)" sobre ese objeto da Invalid Date y todos
+                // terminaban empatados en 0, por eso no se notaba la hora.
+                let date;
+                if (typeof raw === 'object' && typeof raw.toDate === 'function') {
+                    date = raw.toDate();
+                } else {
+                    date = new Date(raw);
+                }
                 return date && !Number.isNaN(date.getTime()) ? date.getTime() : 0;
             }
             return '';
@@ -9464,7 +9904,7 @@
                 const grupoVinculado = vinculadoAGrupo ? appState.gruposActuales.find(g => g.id === p.grupos[0]) : null;
                 const nombreMostrar = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
                 const codigoCentro = getCodigoCentroParticipante(p);
-                const fechaRegistro = formatDate(p.fecha_registro || p.fechaRegistro || '');
+                const fechaRegistro = formatDateTime(p.fecha_registro || p.fechaRegistro || '');
                 return `
                 <tr data-vinculado="${vinculadoAGrupo ? 'si' : 'no'}">
                     <td class="participante-checkbox-col">
@@ -9553,7 +9993,7 @@
                     p.telefono || '',
                     p.cargo || '',
                     getCodigoCentroParticipante(p),
-                    formatDate(p.fecha_registro || p.fechaRegistro || '')
+                    formatDateTime(p.fecha_registro || p.fechaRegistro || '')
                 ]);
             });
 
@@ -10983,17 +11423,27 @@
 
             document.getElementById('grupos-usuario').innerHTML = html || `
                 <div class="grupos-empty-state">
-                    <div class="grupos-empty-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <polyline points="20 12 20 22 4 22 4 12"/>
-                            <rect x="2" y="7" width="20" height="5"/>
-                            <line x1="12" y1="22" x2="12" y2="7"/>
-                            <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
-                            <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-                        </svg>
-                    </div>
+                    <div class="grupos-empty-eyebrow">Algo especial está por comenzar</div>
                     <h3>Tu sorpresa todavía se está preparando</h3>
-                    <p>Aún no fuiste agregado a ningún grupo de Amigo Secreto. En cuanto el administrador te asigne a uno, va a aparecer justo acá. ¡Prepárate! 🎁</p>
+                    <div class="grupos-empty-gift-stage" aria-hidden="true">
+                        <span class="grupos-empty-spark grupos-empty-spark-one">✦</span>
+                        <span class="grupos-empty-spark grupos-empty-spark-two">✦</span>
+                        <span class="grupos-empty-spark grupos-empty-spark-three">✦</span>
+                        <div class="grupos-empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 12 20 22 4 22 4 12"/>
+                                <rect x="2" y="7" width="20" height="5" rx="1"/>
+                                <line x1="12" y1="22" x2="12" y2="7"/>
+                                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+                                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p>Cuando el administrador te agregue a un grupo, todos los detalles van a aparecer acá. La sorpresa ya está en camino.</p>
+                    <div class="grupos-empty-status">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"></path><path d="M12 6v6l4 2"></path></svg>
+                        <span>Esperando asignación del administrador</span>
+                    </div>
                 </div>
             `;
         }
@@ -12842,9 +13292,105 @@
                     minuteIncrement: 5,
                     disableMobile: true, // fuerza el mismo selector táctil también en el celular
                     allowInput: false,
-                    static: true // ancla el calendario justo debajo del campo (en vez de flotar suelto por la pantalla), clave para que se vea bien dentro de un modal
+                    static: true, // ancla el calendario justo debajo del campo (en vez de flotar suelto por la pantalla), clave para que se vea bien dentro de un modal
+                    onReady: (selectedDates, dateStr, instance) => {
+                        montarCabeceraYPildoraFecha(instance);
+                    },
+                    onChange: (selectedDates, dateStr, instance) => {
+                        actualizarCabeceraYPildoraFecha(instance);
+                    },
+                    onMonthChange: (selectedDates, dateStr, instance) => {
+                        actualizarCabeceraYPildoraFecha(instance);
+                    },
+                    onOpen: (selectedDates, dateStr, instance) => {
+                        instance._valorAlAbrir = selectedDates[0] ? new Date(selectedDates[0]) : null;
+                    }
                 });
             });
+        }
+
+        // ===== BANNER "AÑO + DÍA DE LA SEMANA" Y PÍLDORA DE HORA =====
+        // Le da al calendario de flatpickr el mismo lenguaje visual que el
+        // selector de fecha/hora nativo de Android (banner grande arriba,
+        // hora en una píldora aparte que abre un reloj circular), pero con
+        // los colores de la marca en vez del violeta del sistema.
+        const RELOJ_DIAS_SEMANA = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+        const RELOJ_MESES = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sep.', 'oct.', 'nov.', 'dic.'];
+
+        function formatearBannerFecha(date) {
+            if (!date) date = new Date();
+            const dia = RELOJ_DIAS_SEMANA[date.getDay()];
+            const diaCorto = dia.slice(0, 3);
+            return `${diaCorto}., ${date.getDate()} de ${RELOJ_MESES[date.getMonth()]}`;
+        }
+
+        function montarCabeceraYPildoraFecha(instance) {
+            const calendar = instance.calendarContainer;
+            if (!calendar || calendar.querySelector('.reloj-fecha-banner')) return;
+
+            const fechaActual = instance.selectedDates[0] || new Date();
+
+            const banner = document.createElement('div');
+            banner.className = 'reloj-fecha-banner';
+            banner.innerHTML = `
+                <p class="reloj-fecha-banner-anio">${fechaActual.getFullYear()}</p>
+                <p class="reloj-fecha-banner-dia">${formatearBannerFecha(fechaActual)}</p>
+            `;
+            calendar.insertBefore(banner, calendar.firstChild);
+
+            const pildoraRow = document.createElement('div');
+            pildoraRow.className = 'reloj-hora-pildora-row';
+            pildoraRow.innerHTML = `
+                <button type="button" class="reloj-hora-pildora">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9"/>
+                        <polyline points="12 7 12 12 15.5 14"/>
+                    </svg>
+                    <span class="reloj-hora-pildora-texto">${formatearHoraCorta(fechaActual)}</span>
+                </button>
+            `;
+            pildoraRow.querySelector('.reloj-hora-pildora').addEventListener('click', () => {
+                abrirRelojClock(instance);
+            });
+            calendar.appendChild(pildoraRow);
+
+            const footer = document.createElement('div');
+            footer.className = 'reloj-picker-footer';
+            footer.innerHTML = `
+                <button type="button" data-accion="cancelar">Cancelar</button>
+                <button type="button" data-accion="ok">OK</button>
+            `;
+            footer.querySelector('[data-accion="cancelar"]').addEventListener('click', () => {
+                if (instance._valorAlAbrir) {
+                    instance.setDate(instance._valorAlAbrir, false);
+                } else {
+                    instance.clear();
+                }
+                instance.close();
+            });
+            footer.querySelector('[data-accion="ok"]').addEventListener('click', () => {
+                instance.close();
+            });
+            calendar.appendChild(footer);
+        }
+
+        function actualizarCabeceraYPildoraFecha(instance) {
+            const calendar = instance.calendarContainer;
+            if (!calendar) return;
+            const fechaActual = instance.selectedDates[0] || new Date();
+
+            const anioEl = calendar.querySelector('.reloj-fecha-banner-anio');
+            const diaEl = calendar.querySelector('.reloj-fecha-banner-dia');
+            if (anioEl) anioEl.textContent = fechaActual.getFullYear();
+            if (diaEl) diaEl.textContent = formatearBannerFecha(fechaActual);
+
+            const pildoraTexto = calendar.querySelector('.reloj-hora-pildora-texto');
+            if (pildoraTexto) pildoraTexto.textContent = formatearHoraCorta(fechaActual);
+        }
+
+        function formatearHoraCorta(date) {
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
         }
 
         // Cambia el valor de un campo de fecha/hora y mantiene sincronizado
@@ -12860,6 +13406,172 @@
                     el._flatpickr.setDate(value, false);
                 } else {
                     el._flatpickr.clear();
+                }
+            }
+        }
+
+        // ===== RELOJ CIRCULAR PARA ELEGIR LA HORA =====
+        // Reemplaza el spinner de hora de flatpickr por un reloj circular
+        // como el selector nativo de Android, en dos anillos (1-12 afuera,
+        // 13-00 adentro) porque la app usa formato 24 horas.
+        let relojClockState = null;
+
+        function getRelojClockOverlay() {
+            let overlay = document.getElementById('reloj-clock-overlay');
+            if (overlay) return overlay;
+
+            overlay = document.createElement('div');
+            overlay.id = 'reloj-clock-overlay';
+            overlay.className = 'reloj-clock-overlay';
+            overlay.innerHTML = `
+                <div class="reloj-clock-dialog" role="dialog" aria-label="Elegir hora">
+                    <div class="reloj-clock-banner">
+                        <span id="reloj-clock-hora-display" data-modo="hour">00</span>
+                        <span class="reloj-clock-colon">:</span>
+                        <span id="reloj-clock-minuto-display" data-modo="minute">00</span>
+                    </div>
+                    <div class="reloj-clock-face-wrap" id="reloj-clock-face"></div>
+                    <div class="reloj-clock-actions">
+                        <button type="button" data-accion="cancelar">Cancelar</button>
+                        <button type="button" data-accion="ok">OK</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            overlay.querySelector('#reloj-clock-hora-display').addEventListener('click', () => cambiarModoReloj('hour'));
+            overlay.querySelector('#reloj-clock-minuto-display').addEventListener('click', () => cambiarModoReloj('minute'));
+            overlay.querySelector('[data-accion="cancelar"]').addEventListener('click', cerrarRelojClock);
+            overlay.querySelector('[data-accion="ok"]').addEventListener('click', confirmarRelojClock);
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) cerrarRelojClock();
+            });
+
+            return overlay;
+        }
+
+        function abrirRelojClock(flatpickrInstance) {
+            const base = flatpickrInstance.selectedDates[0] || new Date();
+            relojClockState = {
+                instance: flatpickrInstance,
+                hour: base.getHours(),
+                minute: base.getMinutes() - (base.getMinutes() % 5),
+                modo: 'hour'
+            };
+            const overlay = getRelojClockOverlay();
+            overlay.classList.add('active');
+            renderRelojClock();
+        }
+
+        function cerrarRelojClock() {
+            const overlay = document.getElementById('reloj-clock-overlay');
+            if (overlay) overlay.classList.remove('active');
+            relojClockState = null;
+        }
+
+        function confirmarRelojClock() {
+            if (!relojClockState) return;
+            const { instance, hour, minute } = relojClockState;
+            const base = instance.selectedDates[0] ? new Date(instance.selectedDates[0]) : new Date();
+            base.setHours(hour, minute, 0, 0);
+            instance.setDate(base, true);
+            cerrarRelojClock();
+        }
+
+        function cambiarModoReloj(modo) {
+            if (!relojClockState) return;
+            relojClockState.modo = modo;
+            renderRelojClock();
+        }
+
+        function seleccionarValorReloj(valor) {
+            if (!relojClockState) return;
+            if (relojClockState.modo === 'hour') {
+                relojClockState.hour = valor;
+                renderRelojClock();
+                // Igual que en Android: al elegir la hora, pasa solo a minutos.
+                setTimeout(() => cambiarModoReloj('minute'), 150);
+            } else {
+                relojClockState.minute = valor;
+                renderRelojClock();
+            }
+        }
+
+        function renderRelojClock() {
+            if (!relojClockState) return;
+            const { hour, minute, modo } = relojClockState;
+            const pad = (n) => String(n).padStart(2, '0');
+
+            const horaEl = document.getElementById('reloj-clock-hora-display');
+            const minutoEl = document.getElementById('reloj-clock-minuto-display');
+            if (horaEl) {
+                horaEl.textContent = pad(hour);
+                horaEl.classList.toggle('activo', modo === 'hour');
+            }
+            if (minutoEl) {
+                minutoEl.textContent = pad(minute);
+                minutoEl.classList.toggle('activo', modo === 'minute');
+            }
+
+            const face = document.getElementById('reloj-clock-face');
+            if (!face) return;
+            face.innerHTML = '';
+
+            const radioExterior = 100;
+            const radioInterior = 65;
+            const centro = 125;
+
+            const agregarMano = (valorSeleccionado, radio) => {
+                const angulo = (valorSeleccionado % 12) * 30 - 90;
+                const rad = (angulo * Math.PI) / 180;
+                const largo = radio;
+                const hand = document.createElement('div');
+                hand.className = 'reloj-clock-hand';
+                hand.style.height = `${largo}px`;
+                hand.style.transform = `rotate(${angulo + 90}deg)`;
+                face.appendChild(hand);
+            };
+
+            const agregarNumero = (texto, valor, angGrados, radio, interior) => {
+                const rad = (angGrados * Math.PI) / 180;
+                const x = centro + radio * Math.cos(rad);
+                const y = centro + radio * Math.sin(rad);
+                const num = document.createElement('div');
+                num.className = 'reloj-clock-num' + (interior ? ' reloj-clock-num-interior' : '');
+                num.style.left = `${x}px`;
+                num.style.top = `${y}px`;
+                num.textContent = texto;
+                const esSeleccionado = modo === 'hour' ? (valor === hour) : (valor === minute);
+                if (esSeleccionado) num.classList.add('seleccionado');
+                num.addEventListener('click', () => seleccionarValorReloj(valor));
+                face.appendChild(num);
+            };
+
+            const centroPunto = document.createElement('div');
+            centroPunto.className = 'reloj-clock-center';
+            face.appendChild(centroPunto);
+
+            if (modo === 'hour') {
+                agregarMano(hour, hour >= 1 && hour <= 12 && hour !== 0 ? radioExterior - 18 : radioInterior - 15);
+                // Anillo exterior: 1 a 12 (el 12 representa también el 0/24 del mediodía visual)
+                for (let i = 1; i <= 12; i++) {
+                    const ang = i * 30 - 90;
+                    const valor = i === 12 ? 12 : i;
+                    agregarNumero(String(i), valor, ang, radioExterior, false);
+                }
+                // Anillo interior: 13 a 23, más 00
+                for (let i = 0; i < 12; i++) {
+                    const valor = i === 0 ? 0 : i + 12;
+                    const texto = i === 0 ? '00' : String(valor);
+                    const ang = i * 30 - 90;
+                    agregarNumero(texto, valor, ang, radioInterior, true);
+                }
+            } else {
+                agregarMano(minute / 5, radioExterior - 18);
+                for (let i = 0; i < 12; i++) {
+                    const valorMin = i * 5;
+                    const ang = i * 30 - 90;
+                    agregarNumero(pad(valorMin), valorMin, ang, radioExterior, false);
                 }
             }
         }
@@ -13199,9 +13911,9 @@
                     // no) — le ponemos un selector en vez de dejarla vacía.
                     if (columnIndex === 0 && table.id === 'participantes-table' && th.querySelector('input[type="checkbox"]')) {
                         const select = document.createElement('select');
-                        select.className = 'table-filter-select';
+                        select.className = 'table-filter-select table-filter-select-icon-only';
                         select.innerHTML = `
-                            <option value="">Todos</option>
+                            <option value=""></option>
                             <option value="si">Vinculado</option>
                             <option value="no">No vinculado</option>
                         `;
