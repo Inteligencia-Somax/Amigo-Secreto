@@ -5364,24 +5364,63 @@
             stroke: currentColor;
         }
 
-        .login-link-actions {
+        .login-title-row {
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 15px;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 30px;
         }
 
-        .login-link-actions .btn {
+        #login-panel .login-title-row h2 {
+            margin: 0;
+            text-align: left;
+            flex: 1 1 auto;
+        }
+
+        .login-forgot-btn {
             width: auto;
+            min-width: 0;
             min-height: 34px;
-            padding: 0 14px;
-            border-radius: 8px;
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            color: var(--primary);
             font-size: 0.82rem;
+            font-weight: 600;
             line-height: 1;
-            text-decoration: none;
             text-transform: none;
+            white-space: nowrap;
+            cursor: pointer;
+            box-shadow: none;
+        }
+
+        .login-forgot-btn:hover {
+            background: transparent;
+            color: var(--primary-light);
+            transform: none;
+            box-shadow: none;
+            text-decoration: underline;
+        }
+
+        .login-forgot-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 520px) {
+            .login-title-row {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .login-forgot-btn {
+                max-width: 155px;
+                white-space: normal;
+                text-align: right;
+                line-height: 1.25;
+            }
         }
 
         /* ==================== HELPER CLASSES ==================== */
@@ -7230,7 +7269,10 @@
 
             <!-- LOGIN FORM (oculto inicialmente; se abre desde la pantalla de bienvenida) -->
             <div id="login-form" style="display: none;">
-                <h2>Iniciar Sesión</h2>
+                <div class="login-title-row">
+                    <h2>Iniciar Sesión</h2>
+                    <button type="button" class="login-forgot-btn" onclick="mostrarRecuperacion()">¿Olvidaste tu contraseña?</button>
+                </div>
                 
                 <div class="form-group">
                     <label for="login-usuario">Nombre Completo</label>
@@ -7251,10 +7293,6 @@
                 </div>
 
                 <button class="btn btn-primary" onclick="handleLogin()">Ingresar</button>
-
-                <div class="login-link-actions">
-                    <button class="btn btn-outline btn-small" onclick="mostrarRecuperacion()">¿Olvidaste tu contraseña?</button>
-                </div>
 
                 <div style="margin-top: 12px; text-align: center;">
                     <button class="btn btn-outline btn-small" onclick="switchAuthForm('inicio')">← Volver</button>
