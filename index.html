@@ -1943,10 +1943,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            background: #ffffff;
+            border-radius: 0;
+            background: transparent;
             color: var(--primary);
-            transition: background 0.15s ease, color 0.15s ease;
+            transition: color 0.15s ease;
         }
 
         .header-menu-item-icon svg {
@@ -1983,7 +1983,7 @@
         }
 
         .header-menu-item.is-danger .header-menu-item-icon {
-            background: #ffffff;
+            background: transparent;
             color: var(--error);
         }
 
@@ -1996,8 +1996,8 @@
         }
 
         .header-menu-item.is-danger:hover .header-menu-item-icon {
-            background: var(--error);
-            color: var(--white);
+            background: transparent;
+            color: var(--error);
         }
 
         .grupo-vincular-card {
@@ -3090,7 +3090,7 @@
 
         .columna-config-item {
             display: grid;
-            grid-template-columns: 28px minmax(0, 1fr) auto;
+            grid-template-columns: 28px minmax(0, 1fr) 18px;
             align-items: center;
             gap: 8px;
             height: 38px;
@@ -3150,10 +3150,12 @@
         .columna-config-visibilidad {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            justify-content: flex-end;
+            gap: 0;
             margin: 0;
             cursor: pointer;
             white-space: nowrap;
+            justify-self: end;
         }
 
         .columna-config-visibilidad input[type="checkbox"] {
@@ -3165,10 +3167,7 @@
         }
 
         .columna-config-visibilidad span {
-            color: var(--primary);
-            font-size: 0.78rem;
-            font-weight: 700;
-            line-height: 1;
+            display: none;
         }
 
         .columna-config-item.is-hidden .columna-config-label,
@@ -3592,7 +3591,7 @@
         .resultado-sorteo-row-persona {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0;
             min-width: 0;
         }
 
@@ -7750,7 +7749,7 @@
                 </div>
 
                 <div style="text-align: center;">
-                    <button class="btn btn-outline btn-small" onclick="switchAuthForm('login')">Volver al Login</button>
+                    <button class="btn btn-outline btn-small" onclick="switchAuthForm('inicio')">← Volver</button>
                 </div>
             </div>
         </div>
@@ -9844,7 +9843,6 @@
                 const busqueda = (nombre + ' ' + unidad).toLowerCase();
                 return `
                     <button type="button" class="participantes-picker-item participantes-picker-item-clickable" data-search="${escaparHtml(busqueda)}" onclick="entrarEnContextoParticipante('${p.id}')">
-                        <span class="participantes-picker-avatar">${escaparHtml(inicialesParticipante(nombre))}</span>
                         <span class="participantes-picker-info">
                             <strong>${escaparHtml(nombre)}</strong>
                             <span class="contexto-participante-unidad" title="${escaparHtml(unidad)}">${escaparHtml(unidad)}</span>
@@ -9941,7 +9939,7 @@
             }
 
             switchPanel('auth');
-            switchAuthForm('login');
+            switchAuthForm('inicio');
         }
 
         function switchTab(tabName) {
@@ -10215,7 +10213,6 @@
                     return `
                         <label class="participantes-picker-item${checked ? ' is-checked' : ''}" data-search="${escaparHtml(busqueda)}">
                             <input type="checkbox" class="grupo-nuevo-vincular-checkbox" value="${p.id}" ${checked ? 'checked' : ''} onchange="onCambioParticipanteCrearGrupo(this)">
-                            <span class="participantes-picker-avatar">${escaparHtml(inicialesParticipante(nombre))}</span>
                             <span class="participantes-picker-info">
                                 <strong>${escaparHtml(nombre)}</strong>
                             </span>
@@ -10743,6 +10740,19 @@
         // pertenecen los participantes seleccionados (sin grupo) — no tiene
         // sentido ofrecer un grupo al que ninguno de los marcados podría
         // vincularse igual.
+        function limpiarSeleccionParticipantes() {
+            let huboCambios = false;
+            document.querySelectorAll('.participante-row-checkbox:checked').forEach(cb => {
+                cb.checked = false;
+                huboCambios = true;
+            });
+
+            const selectAll = document.getElementById('participantes-select-all-checkbox');
+            if (selectAll) selectAll.checked = false;
+
+            if (huboCambios) actualizarBotonEliminarSeleccionadosParticipantes();
+        }
+
         function poblarSelectVincularGrupoLote() {
             const select = document.getElementById('participantes-vincular-grupo-select');
             if (!select) return;
@@ -11914,14 +11924,12 @@
                     <div class="resultado-sorteo-row" data-search="${busqueda}">
                         <div class="resultado-sorteo-row-index">${index + 1}</div>
                         <div class="resultado-sorteo-row-persona es-origen">
-                            <span class="resultado-sorteo-row-avatar">${escaparHtml(inicialesParticipante(participante ? participante.nombreCompleto : ''))}</span>
                             <div class="resultado-sorteo-row-persona-info">
                                 <strong title="${participanteNombre}">${participanteNombre}</strong>
                             </div>
                         </div>
                         <div class="resultado-sorteo-row-arrow">→</div>
                         <div class="resultado-sorteo-row-persona es-destino">
-                            <span class="resultado-sorteo-row-avatar">${escaparHtml(inicialesParticipante(sorteadoPara ? sorteadoPara.nombreCompleto : ''))}</span>
                             <div class="resultado-sorteo-row-persona-info">
                                 <strong title="${sorteadoNombre}">${sorteadoNombre}</strong>
                             </div>
@@ -12103,7 +12111,6 @@
                     return `
                         <label class="participantes-picker-item" data-search="${escaparHtml(busqueda)}">
                             <input type="checkbox" class="grupo-vincular-checkbox" value="${p.id}" onchange="onCambioParticipanteVincular(this)">
-                            <span class="participantes-picker-avatar">${escaparHtml(inicialesParticipante(nombre))}</span>
                             <span class="participantes-picker-info">
                                 <strong>${escaparHtml(nombre)}</strong>
                             </span>
@@ -13026,8 +13033,7 @@
                         </span>
                         <span class="columna-config-label">${info.label}</span>
                         <label class="columna-config-visibilidad" onclick="event.stopPropagation()" ondragstart="event.preventDefault()">
-                            <input type="checkbox" ${visible ? 'checked' : ''} onchange="toggleVisibilidadColumnaParticipante('${key}', this); renderConfiguracionColumnasParticipantes();">
-                            <span>Mostrar</span>
+                            <input type="checkbox" ${visible ? 'checked' : ''} onchange="toggleVisibilidadColumnaParticipante('${key}', this); renderConfiguracionColumnasParticipantes();" aria-label="Mostrar u ocultar ${info.label}">
                         </label>
                     </div>`;
             }).join('');
@@ -14729,6 +14735,26 @@
         document.addEventListener('scroll', () => {
             document.querySelectorAll('.participante-grupo-popover').forEach(el => el.remove());
         }, true);
+
+        // Si hay participantes seleccionados en la tabla y el usuario hace
+        // clic fuera de las casillas de selección o de la barra de acciones,
+        // se cancela la selección en lote automáticamente.
+        document.addEventListener('click', (event) => {
+            const haySeleccion = document.querySelector('.participante-row-checkbox:checked');
+            if (!haySeleccion) return;
+
+            if (event.target.closest('.participante-row-checkbox') ||
+                event.target.closest('#participantes-select-all-checkbox') ||
+                event.target.closest('.participantes-seleccion-bar') ||
+                event.target.closest('.participante-acciones-col') ||
+                event.target.closest('.icon-actions') ||
+                event.target.closest('.participante-grupo-icon-btn') ||
+                event.target.closest('.btn-columnas-toggle')) {
+                return;
+            }
+
+            limpiarSeleccionParticipantes();
+        });
 
         // ===== BLOQUEO DE SCROLL DE FONDO CUANDO HAY UN MODAL ABIERTO =====
         // Se aplica automáticamente a TODOS los modales (.modal) del sistema:
