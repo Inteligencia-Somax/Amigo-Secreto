@@ -273,269 +273,6 @@
             border-color: var(--primary);
         }
 
-        /* ==================== SELECTOR ESTILO "APP DE CALENDARIO" ====================
-           Banner grande arriba (año + día de la semana) igual al selector nativo
-           de fecha/hora de Android, pero con la paleta verde/dorada del sitio en
-           vez del violeta del sistema. Se inyecta con JS arriba del calendario
-           de flatpickr; el resto de las reglas de abajo prolijan el grid de días
-           y agregan el reloj circular para elegir la hora. */
-        .reloj-fecha-banner {
-            padding: 18px 20px 16px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
-            color: var(--white);
-            border-radius: 12px 12px 0 0;
-        }
-
-        .reloj-fecha-banner-anio {
-            margin: 0 0 2px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: rgba(255,255,255,0.75);
-            letter-spacing: 0.02em;
-        }
-
-        .reloj-fecha-banner-dia {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 800;
-            line-height: 1.2;
-            text-transform: capitalize;
-        }
-
-        /* Prolijar el grid de días: tamaño fijo y parejo para que los números
-           no queden pegados ni desalineados entre sí. */
-        .flatpickr-days,
-        .dayContainer {
-            width: 100% !important;
-            min-width: 100% !important;
-            max-width: 100% !important;
-        }
-
-        .flatpickr-day {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            height: 38px;
-            line-height: 38px;
-            font-weight: 600;
-            border-radius: 50%;
-            max-width: none;
-        }
-
-        span.flatpickr-weekday {
-            font-weight: 700;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-        }
-
-        /* Oculta el spinner de hora por defecto de flatpickr: lo reemplazamos
-           por una "píldora" clickeable que abre el reloj circular. */
-        .flatpickr-time {
-            display: none !important;
-        }
-
-        .reloj-hora-pildora-row {
-            display: flex;
-            justify-content: center;
-            padding: 4px 12px 14px;
-            border-top: 1px solid #eef3f0;
-            margin-top: 4px;
-        }
-
-        .reloj-hora-pildora {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 18px;
-            background: #eaf5ee;
-            border: 1px solid #cfe6d8;
-            border-radius: 999px;
-            color: var(--primary);
-            font-size: 1rem;
-            font-weight: 800;
-            letter-spacing: 0.03em;
-            cursor: pointer;
-        }
-
-        .reloj-hora-pildora:hover {
-            background: #dcefe3;
-        }
-
-        .reloj-hora-pildora svg {
-            width: 17px;
-            height: 17px;
-            stroke: var(--primary);
-            fill: none;
-            stroke-width: 2;
-        }
-
-        .reloj-picker-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 18px;
-            padding: 6px 18px 16px;
-        }
-
-        .reloj-picker-footer button {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 0.9rem;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            cursor: pointer;
-            padding: 6px 4px;
-        }
-
-        .reloj-picker-footer button:hover {
-            text-decoration: underline;
-        }
-
-        /* ---- Reloj circular para elegir la hora (overlay propio) ---- */
-        .reloj-clock-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(13, 59, 38, 0.55);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .reloj-clock-overlay.active {
-            display: flex;
-        }
-
-        .reloj-clock-dialog {
-            width: 100%;
-            max-width: 330px;
-            background: var(--white);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-        }
-
-        .reloj-clock-banner {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 22px 20px 18px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
-            color: rgba(255,255,255,0.55);
-        }
-
-        .reloj-clock-banner span {
-            font-size: 2.6rem;
-            font-weight: 800;
-            line-height: 1;
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 8px;
-        }
-
-        .reloj-clock-banner span.activo {
-            color: var(--white);
-            background: rgba(255,255,255,0.12);
-        }
-
-        .reloj-clock-banner .reloj-clock-colon {
-            cursor: default;
-            font-size: 2.6rem;
-            font-weight: 800;
-            color: rgba(255,255,255,0.55);
-            padding: 0;
-        }
-
-        .reloj-clock-face-wrap {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            margin: 22px auto 10px;
-            border-radius: 50%;
-            background: #eef3f0;
-        }
-
-        .reloj-clock-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 8px;
-            height: 8px;
-            margin: -4px 0 0 -4px;
-            border-radius: 50%;
-            background: var(--primary);
-            z-index: 3;
-        }
-
-        .reloj-clock-hand {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 2px;
-            margin-left: -1px;
-            background: var(--primary);
-            transform-origin: top center;
-            z-index: 1;
-        }
-
-        .reloj-clock-num {
-            position: absolute;
-            width: 36px;
-            height: 36px;
-            margin: -18px 0 0 -18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: var(--text);
-            cursor: pointer;
-            z-index: 2;
-            user-select: none;
-        }
-
-        .reloj-clock-num.reloj-clock-num-interior {
-            width: 30px;
-            height: 30px;
-            margin: -15px 0 0 -15px;
-            font-size: 0.8rem;
-            color: #6b7c73;
-        }
-
-        .reloj-clock-num.seleccionado {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .reloj-clock-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 20px;
-            padding: 8px 22px 20px;
-        }
-
-        .reloj-clock-actions button {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 0.9rem;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            cursor: pointer;
-            padding: 6px 4px;
-        }
-
-        .reloj-clock-actions button:hover {
-            text-decoration: underline;
-        }
-
-
-
         /* Texto de ejemplo (placeholder) más claro, para que no parezca
            un valor ya escrito por el usuario */
         input::placeholder,
@@ -764,161 +501,6 @@
             line-height: 1.5;
         }
 
-        /* Estado vacío del participante: mantiene el mismo lenguaje premium
-           del card de revelación, con regalo flotante y detalles dorados. */
-        #grupos-usuario > .grupos-empty-state {
-            position: relative;
-            overflow: hidden;
-            isolation: isolate;
-            margin-top: 18px;
-            padding: 34px 24px 30px;
-            border: 1px solid rgba(244, 163, 0, 0.68);
-            border-radius: 22px;
-            background:
-                radial-gradient(circle at 50% 33%, rgba(244, 163, 0, 0.2), transparent 31%),
-                linear-gradient(145deg, #073b28 0%, #0b5a3b 56%, #083d2b 100%);
-            box-shadow: 0 18px 38px rgba(6, 54, 36, 0.25), inset 0 1px 0 rgba(255,255,255,0.11);
-            color: #fff;
-        }
-
-        #grupos-usuario > .grupos-empty-state::before,
-        #grupos-usuario > .grupos-empty-state::after {
-            content: '';
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 210, 93, 0.18) 0%, transparent 68%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        #grupos-usuario > .grupos-empty-state::before { top: -95px; right: -60px; }
-        #grupos-usuario > .grupos-empty-state::after { bottom: -110px; left: -70px; }
-
-        .grupos-empty-eyebrow {
-            margin: 0 0 5px;
-            color: #ffd978;
-            font-size: 0.76rem;
-            font-weight: 800;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-
-        #grupos-usuario > .grupos-empty-state h3 {
-            max-width: 390px;
-            margin: 0 auto 8px;
-            color: #fff;
-            font-size: 1.32rem;
-            line-height: 1.25;
-            font-weight: 800;
-        }
-
-        #grupos-usuario > .grupos-empty-state p {
-            max-width: 410px;
-            margin: 0 auto;
-            color: rgba(255,255,255,0.84);
-            font-size: 0.91rem;
-            line-height: 1.55;
-        }
-
-        .grupos-empty-gift-stage {
-            position: relative;
-            min-height: 148px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 8px auto 10px;
-        }
-
-        .grupos-empty-gift-stage::after {
-            content: '';
-            position: absolute;
-            bottom: 15px;
-            width: 102px;
-            height: 18px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.3);
-            filter: blur(7px);
-            animation: gruposEmptyShadow 3.1s ease-in-out infinite;
-        }
-
-        #grupos-usuario > .grupos-empty-state .grupos-empty-icon {
-            position: relative;
-            z-index: 2;
-            width: 112px;
-            height: 112px;
-            margin: 0;
-            border: 1px solid rgba(255, 215, 107, 0.4);
-            border-radius: 28px;
-            background: linear-gradient(145deg, rgba(255,221,130,0.18), rgba(244,163,0,0.08));
-            box-shadow: 0 14px 30px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.16);
-            transform-origin: 50% 65%;
-            animation: gruposEmptyGiftFloat 3.1s cubic-bezier(.45,.05,.55,.95) infinite;
-        }
-
-        #grupos-usuario > .grupos-empty-state .grupos-empty-icon svg {
-            width: 58px;
-            height: 58px;
-            stroke: #ffd76b;
-            filter: drop-shadow(0 0 10px rgba(255,215,107,0.35));
-        }
-
-        .grupos-empty-spark {
-            position: absolute;
-            z-index: 3;
-            color: #ffd76b;
-            font-size: 1rem;
-            text-shadow: 0 0 10px rgba(255,215,107,0.9);
-            animation: gruposEmptySpark 2.4s ease-in-out infinite;
-        }
-
-        .grupos-empty-spark-one { top: 23px; left: calc(50% - 75px); }
-        .grupos-empty-spark-two { top: 10px; right: calc(50% - 70px); animation-delay: .75s; }
-        .grupos-empty-spark-three { bottom: 31px; right: calc(50% - 82px); animation-delay: 1.3s; }
-
-        .grupos-empty-status {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 18px;
-            padding: 10px 14px;
-            border: 1px solid rgba(255, 215, 107, 0.42);
-            border-radius: 999px;
-            background: rgba(3, 36, 24, 0.34);
-            color: #fff2c2;
-            font-size: 0.82rem;
-            font-weight: 700;
-        }
-
-        .grupos-empty-status svg {
-            width: 17px;
-            height: 17px;
-            stroke: #ffd76b;
-        }
-
-        @keyframes gruposEmptyGiftFloat {
-            0%, 100% { transform: translateY(5px) rotate(-8deg) scale(1); }
-            50% { transform: translateY(-11px) rotate(7deg) scale(1.035); }
-        }
-
-        @keyframes gruposEmptyShadow {
-            0%, 100% { transform: scaleX(1); opacity: .62; }
-            50% { transform: scaleX(.72); opacity: .34; }
-        }
-
-        @keyframes gruposEmptySpark {
-            0%, 100% { transform: scale(.72) rotate(0deg); opacity: .32; }
-            50% { transform: scale(1.22) rotate(24deg); opacity: 1; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            #grupos-usuario > .grupos-empty-state .grupos-empty-icon,
-            .grupos-empty-gift-stage::after,
-            .grupos-empty-spark { animation: none !important; }
-        }
-
         .grupo-card {
             background: linear-gradient(135deg, var(--light) 0%, #f9f9f9 100%);
             border-left: 5px solid var(--primary);
@@ -933,26 +515,6 @@
             font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 10px;
-        }
-
-        /* Envuelve el botón de participantes junto con el nombre del grupo,
-           para que el ícono quede pegado a la izquierda del título en vez
-           de aparecer suelto entre los demás botones de acción. */
-        .grupo-title-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .grupo-title-row .grupo-title {
-            margin-bottom: 0;
-            min-width: 0;
-            flex: 1 1 auto;
-        }
-
-        .grupo-title-row .grupo-participantes-resumen-btn {
-            flex: 0 0 auto;
         }
 
         .grupo-info {
@@ -1369,44 +931,13 @@
         }
 
         .sorteado-box {
-            position: relative;
-            overflow: hidden;
-            isolation: isolate;
-            background:
-                radial-gradient(circle at 50% 40%, rgba(244, 163, 0, 0.18), transparent 32%),
-                linear-gradient(145deg, #073b28 0%, #0b5a3b 55%, #083d2b 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: var(--white);
-            padding: 24px 20px 22px;
-            border: 1px solid rgba(244, 163, 0, 0.72);
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 12px;
             margin-bottom: 16px;
             text-align: center;
-            box-shadow: 0 16px 34px rgba(6, 54, 36, 0.28), inset 0 1px 0 rgba(255,255,255,0.12);
-        }
-
-        .sorteado-box::before,
-        .sorteado-box::after {
-            content: '';
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 210, 93, 0.22) 0%, transparent 68%);
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .sorteado-box::before { top: -70px; right: -45px; }
-        .sorteado-box::after { bottom: -85px; left: -55px; }
-
-        .sorteado-box > p:first-child {
-            margin: 0 0 2px;
-            color: #ffe8a3;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            opacity: 0.92;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
         }
 
         .sorteado-box p {
@@ -1421,130 +952,44 @@
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
-        /* ==================== TEASER PRE-REVELACIÓN ==================== */
+        /* ==================== TEASER PRE-REVELACIÓN ====================
+           En vez de un simple "Oculto", genera intriga: un ícono y un "???"
+           que laten suavemente, con la fecha exacta de revelación. */
         .sorteado-teaser {
-            position: relative;
-            padding: 8px 0 0;
-        }
-
-        .sorteado-teaser-eyebrow {
-            margin: 0 0 4px !important;
-            color: #ffd978;
-            font-size: 0.8rem !important;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            opacity: 1 !important;
-        }
-
-        .sorteado-teaser-title {
-            margin: 0 0 14px !important;
-            color: #ffffff;
-            font-size: 1.18rem !important;
-            line-height: 1.25;
-            font-weight: 800;
-            opacity: 1 !important;
-        }
-
-        .sorteado-gift-stage {
-            position: relative;
-            min-height: 116px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px;
-        }
-
-        .sorteado-gift-stage::before {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            width: 94px;
-            height: 18px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.28);
-            filter: blur(7px);
-            animation: sorteadoShadow 3s ease-in-out infinite;
+            padding: 6px 0 2px;
         }
 
         .sorteado-teaser-icon {
-            position: relative;
-            z-index: 2;
-            display: inline-block;
-            font-size: 4.7rem;
+            font-size: 2.1rem;
             line-height: 1;
-            filter: drop-shadow(0 14px 12px rgba(0,0,0,0.26)) drop-shadow(0 0 12px rgba(255,205,75,0.25));
-            transform-origin: 50% 65%;
-            animation: sorteadoGiftFloat 3s cubic-bezier(.45,.05,.55,.95) infinite;
+            margin-bottom: 6px;
+            animation: sorteadoTeaserFloat 2.6s ease-in-out infinite;
         }
 
-        .sorteado-spark {
-            position: absolute;
-            z-index: 3;
-            color: #ffd76b;
-            font-size: 1rem;
-            text-shadow: 0 0 10px rgba(255, 215, 107, 0.9);
-            animation: sorteadoSpark 2.4s ease-in-out infinite;
+        .sorteado-teaser-mystery {
+            font-size: 2.1rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            margin: 0 0 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            animation: sorteadoTeaserPulse 2.2s ease-in-out infinite;
         }
-
-        .sorteado-spark-one { top: 17px; left: calc(50% - 63px); }
-        .sorteado-spark-two { top: 7px; right: calc(50% - 61px); animation-delay: .7s; }
-        .sorteado-spark-three { bottom: 25px; right: calc(50% - 74px); animation-delay: 1.2s; }
 
         .sorteado-teaser-sub {
-            max-width: 390px;
-            margin: 0 auto 14px !important;
-            font-size: 0.88rem !important;
+            font-size: 0.85rem !important;
             line-height: 1.5;
-            opacity: 0.9;
+            opacity: 0.95;
+            margin: 0 !important;
         }
 
-        .sorteado-reveal-date {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 9px;
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid rgba(255, 215, 107, 0.46);
-            border-radius: 14px;
-            background: rgba(3, 36, 24, 0.34);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
-            color: #fff2c2;
-            font-size: 0.87rem;
-            line-height: 1.35;
-        }
-
-        .sorteado-reveal-date svg {
-            width: 18px;
-            height: 18px;
-            flex: 0 0 18px;
-            stroke: #ffd76b;
-        }
-
-        @keyframes sorteadoGiftFloat {
-            0%, 100% { transform: translateY(4px) rotate(-8deg) scale(1); }
-            50% { transform: translateY(-10px) rotate(7deg) scale(1.035); }
-        }
-
-        @keyframes sorteadoShadow {
-            0%, 100% { transform: scaleX(1); opacity: .62; }
-            50% { transform: scaleX(.72); opacity: .35; }
-        }
-
-        @keyframes sorteadoSpark {
-            0%, 100% { transform: scale(.72) rotate(0deg); opacity: .35; }
-            50% { transform: scale(1.2) rotate(22deg); opacity: 1; }
+        @keyframes sorteadoTeaserPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
         }
 
         @keyframes sorteadoTeaserFloat {
             0%, 100% { transform: translateY(0) rotate(-4deg); }
             50% { transform: translateY(-4px) rotate(4deg); }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .sorteado-teaser-icon,
-            .sorteado-gift-stage::before,
-            .sorteado-spark { animation: none !important; }
         }
 
         /* ==================== TARJETA "VOLTEABLE" POST-REVELACIÓN ====================
@@ -2008,35 +1453,11 @@
             border-color: #d32f2f;
         }
 
-        /* Variante de peligro (contorno rojo) usada en el menú de opciones
-           que se abre al mantener presionada una tarjeta de grupo. */
-        .grupo-accion-btn.grupo-accion-peligro {
-            border-color: var(--error);
-            color: var(--error);
-        }
-
-        .grupo-accion-btn.grupo-accion-peligro:hover {
-            background: var(--error);
-            border-color: var(--error);
-            color: var(--white);
-        }
-
-        .grupo-accion-btn.grupo-accion-reset {
-            border-color: #96691c;
-            color: #96691c;
-        }
-
-        .grupo-accion-btn.grupo-accion-reset:hover {
-            background: #96691c;
-            border-color: #96691c;
-            color: var(--white);
-        }
-
         /* ==================== MENÚ "OPCIONES" (engranaje del header) ==================== */
         .header-menu-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 2px;
         }
 
         .header-menu-item {
@@ -2045,7 +1466,7 @@
             gap: 14px;
             width: 100%;
             padding: 10px;
-            background: #eaf5ee;
+            background: transparent;
             border: none;
             border-radius: 12px;
             color: var(--text);
@@ -2057,7 +1478,7 @@
         }
 
         .header-menu-item:hover {
-            background: #dcefe3;
+            background: #f4faf7;
         }
 
         .header-menu-item-icon {
@@ -2068,7 +1489,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 11px;
-            background: #ffffff;
+            background: #eaf5ee;
             color: var(--primary);
             transition: background 0.15s ease, color 0.15s ease;
         }
@@ -2102,12 +1523,8 @@
             margin: 8px 6px;
         }
 
-        .header-menu-item.is-danger {
-            background: #fdecea;
-        }
-
         .header-menu-item.is-danger .header-menu-item-icon {
-            background: #ffffff;
+            background: #fdecea;
             color: var(--error);
         }
 
@@ -2116,7 +1533,7 @@
         }
 
         .header-menu-item.is-danger:hover {
-            background: #fbdedb;
+            background: #fdecea;
         }
 
         .header-menu-item.is-danger:hover .header-menu-item-icon {
@@ -2312,50 +1729,6 @@
             flex-shrink: 0;
             accent-color: var(--primary);
             cursor: pointer;
-        }
-
-        /* Fila clicable del modal "Cambiar Contexto" — reutiliza el mismo look
-           de .participantes-picker-item, pero como <button> (sin checkbox). */
-        .participantes-picker-item-clickable {
-            width: 100%;
-            text-align: left;
-            font: inherit;
-            color: inherit;
-        }
-
-        /* Aviso fijo en el panel del participante mientras el admin está
-           "viendo como" esa persona — para que nunca se olvide de que no es
-           su propia cuenta y pueda volver fácil. */
-        .contexto-banner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
-            background: #fff4d9;
-            border: 2px solid #e8c565;
-            color: #6b5006;
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 14px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .contexto-banner-btn {
-            background: #6b5006;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 7px 14px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .contexto-banner-btn:hover {
-            opacity: 0.9;
         }
 
         .participantes-picker-avatar {
@@ -6011,7 +5384,8 @@
 
         @media (max-width: 620px) {
             #ver-grupos .admin-grupo-actions-row,
-            #ver-grupos .grupo-toolbar {
+            #ver-grupos .grupo-toolbar,
+            #ver-grupos .grupo-filter-select-group {
                 width: 100%;
             }
 
@@ -6020,18 +5394,8 @@
                 flex: 1 1 auto;
             }
 
-            /* El selector "Todos / Abierto / Sorteado / Revelado" aprovecha
-               todo el ancho de la pantalla en el celular, igual que el
-               botón "+ Crear" arriba de él. */
-            #ver-grupos .grupo-filter-select-group {
-                flex: 1 1 100%;
-                min-width: 0;
-                width: 100%;
-            }
-
             #grupo-status-filter {
                 width: 100%;
-                min-width: 0;
             }
 
             #grupos-admin-list .grupo-header-actions .grupo-accion-card-header,
@@ -6214,18 +5578,6 @@
 
         .table-filter-select:focus {
             border-color: #8eb4a0;
-        }
-
-        /* Filtro "Vinculado/No vinculado" de la columna de checkbox: sin
-           texto ni línea visibles en reposo — solo funciona al tocarlo,
-           que es cuando el select nativo muestra las opciones. */
-        .table-filter-select-icon-only {
-            border-bottom: none;
-            text-align: center;
-        }
-
-        .table-filter-select-icon-only:focus {
-            border-bottom: 1px solid #8eb4a0;
         }
 
     
@@ -6833,11 +6185,6 @@
                 </div>
             </div>
 
-            <div id="contexto-banner" class="contexto-banner" style="display: none;">
-                <span class="contexto-banner-texto">Viendo como: </span>
-                <button type="button" class="contexto-banner-btn" onclick="salirDeContexto()">Volver a Administrador</button>
-            </div>
-
             <div class="alert alert-success" id="usuario-alert" style="display: none;"></div>
 
             <div class="grupos-container" id="grupos-usuario">
@@ -6965,6 +6312,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Realizar Sorteo</h3>
+                <button class="close-btn" onclick="closeSorteioModal()">&times;</button>
             </div>
             <p style="margin-bottom: 20px;">¿Estás seguro de que deseas realizar el sorteo? Esta acción no se puede deshacer.</p>
             <p id="sorteio-modal-revelacion-info" style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; color: #856404;">Cada participante va a poder ver a quién le regala recién en la fecha y hora de Revelación configurada para este grupo.</p>
@@ -7018,6 +6366,7 @@
         <div class="modal-content" style="max-width: 340px;">
             <div class="modal-header">
                 <h3>Opciones</h3>
+                <button class="close-btn" onclick="cerrarAdminHeaderMenu()">&times;</button>
             </div>
 
             <div class="header-menu-list">
@@ -7040,18 +6389,6 @@
                         </svg>
                     </span>
                     <span class="header-menu-item-label">Unidad de Negocio</span>
-                    <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-                </button>
-                <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirContextoModal();">
-                    <span class="header-menu-item-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M17 1l4 4-4 4"/>
-                            <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
-                            <path d="M7 23l-4-4 4-4"/>
-                            <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-                        </svg>
-                    </span>
-                    <span class="header-menu-item-label">Cambiar Contexto</span>
                     <svg class="header-menu-item-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
                 </button>
                 <button type="button" class="header-menu-item" onclick="cerrarAdminHeaderMenu(); abrirLogsModal();">
@@ -7092,15 +6429,6 @@
                     <span class="header-menu-item-label">Cerrar Sesión</span>
                 </button>
             </div>
-
-            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
-                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarAdminHeaderMenu()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
         </div>
     </div>
 
@@ -7109,6 +6437,7 @@
         <div class="modal-content" style="max-width: 340px;">
             <div class="modal-header">
                 <h3>Opciones</h3>
+                <button class="close-btn" onclick="cerrarUsuarioHeaderMenu()">&times;</button>
             </div>
 
             <div class="header-menu-list">
@@ -7136,15 +6465,6 @@
                     <span class="header-menu-item-label">Cerrar Sesión</span>
                 </button>
             </div>
-
-            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
-                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarUsuarioHeaderMenu()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
         </div>
     </div>
 
@@ -7153,6 +6473,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Mi Perfil</h3>
+                <button class="close-btn" onclick="cerrarPerfilModal()">&times;</button>
             </div>
 
             <div class="participante-modal-grid">
@@ -7248,6 +6569,7 @@
                     <h3>Revisar Importación</h3>
                     <div class="resultado-sorteo-subtitle">Unidades de negocio detectadas</div>
                 </div>
+                <button class="close-btn" type="button" onclick="cerrarImportarCentrosPreview()" aria-label="Cerrar">&times;</button>
             </div>
 
             <div class="resultado-modal-body import-preview-modal-body">
@@ -7350,6 +6672,7 @@
         <div class="modal-content" style="max-width: 420px;">
             <div class="modal-header">
                 <h3>Exportar Template</h3>
+                <button class="close-btn" onclick="cerrarExportarTemplateModal()">&times;</button>
             </div>
 
             <div class="grupo-acciones-lista">
@@ -7369,15 +6692,6 @@
                         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                     </svg>
                     Participantes
-                </button>
-            </div>
-
-            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
-                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarExportarTemplateModal()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
                 </button>
             </div>
         </div>
@@ -7450,6 +6764,7 @@
                     <h3>Revisar Importación</h3>
                     <div class="resultado-sorteo-subtitle">Participantes detectados</div>
                 </div>
+                <button class="close-btn" type="button" onclick="cerrarImportarParticipantesPreview()" aria-label="Cerrar">&times;</button>
             </div>
 
             <div class="resultado-modal-body import-preview-modal-body">
@@ -7637,6 +6952,7 @@
         <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
                 <h3>Seleccionar Participantes</h3>
+                <button class="close-btn" onclick="cancelarSeleccionParticipantesCrearGrupo()">&times;</button>
             </div>
 
             <div class="participantes-picker-search">
@@ -7678,6 +6994,7 @@
                     <h3 id="grupo-acciones-nombre">Gestionar Grupo</h3>
                     <span id="grupo-detalle-estado-badge" class="estado-badge estado-sorteado grupo-header-status">Sorteado</span>
                 </div>
+                <button class="close-btn" onclick="cerrarGrupoAccionesModal()">&times;</button>
             </div>
 
             <div class="grupo-acciones-lista">
@@ -7715,15 +7032,6 @@
                     Ver Sorteo
                 </button>
             </div>
-
-            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
-                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarGrupoAccionesModal()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
         </div>
     </div>
 
@@ -7735,28 +7043,6 @@
             </div>
 
             <div class="grupo-detail-form">
-                <div class="grupo-acciones-lista" style="margin-bottom: 18px;">
-                    <button type="button" class="grupo-accion-btn" onclick="abrirParticipantesDesdeEditar()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        </svg>
-                        Ver Participantes
-                    </button>
-                    <button type="button" class="grupo-accion-btn" onclick="abrirVincularDesdeEditar()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            <line x1="19" y1="8" x2="19" y2="14"/>
-                            <line x1="16" y1="11" x2="22" y2="11"/>
-                        </svg>
-                        + Participante
-                    </button>
-                </div>
                 <div class="grupo-detail-fields">
                     <div class="form-group participante-modal-full">
                         <label for="grupo-detalle-nombre-input">Nombre del Grupo</label>
@@ -7791,45 +7077,22 @@
                             <line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </button>
+                    <button id="grupo-detalle-resetear-btn" class="icon-action-btn icon-reset" type="button" aria-label="Resetear sorteo" title="Resetear sorteo (vuelve a Abierto, mantiene los participantes)" onclick="resetearSorteo()" style="margin-left: auto; display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="1 4 1 10 7 10"/>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                        </svg>
+                    </button>
+                    <button id="grupo-detalle-eliminar-btn" class="icon-action-btn icon-delete" type="button" aria-label="Eliminar grupo" title="Eliminar grupo" onclick="eliminarGrupo()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                            <path d="M10 11v6"/>
+                            <path d="M14 11v6"/>
+                            <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- =============== MODAL OPCIONES DEL GRUPO (pulsación larga en la tarjeta) =============== -->
-    <div id="grupo-context-modal" class="modal">
-        <div class="modal-content" style="max-width: 420px;">
-            <div class="modal-header">
-                <h3 id="grupo-context-nombre">Grupo</h3>
-            </div>
-
-            <div class="grupo-acciones-lista">
-                <button type="button" id="grupo-context-resetear-btn" class="grupo-accion-btn grupo-accion-reset" style="display:none;" onclick="resetearSorteoDesdeContexto()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <polyline points="1 4 1 10 7 10"/>
-                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-                    </svg>
-                    Rehacer Sorteo
-                </button>
-                <button type="button" id="grupo-context-eliminar-btn" class="grupo-accion-btn grupo-accion-peligro" onclick="eliminarGrupoDesdeContexto()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                        <path d="M10 11v6"/>
-                        <path d="M14 11v6"/>
-                        <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
-                    </svg>
-                    Eliminar Grupo
-                </button>
-            </div>
-
-            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
-                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarGrupoContextModal()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
             </div>
         </div>
     </div>
@@ -7842,6 +7105,7 @@
                     <h3>Participantes</h3>
                     <div class="resultado-sorteo-subtitle">Participantes vinculados al grupo</div>
                 </div>
+                <button class="close-btn" onclick="cancelarParticipantesGrupoModal()" aria-label="Cerrar">&times;</button>
             </div>
 
             <div class="resultado-modal-body participantes-modal-body">
@@ -7902,6 +7166,7 @@
                     <h3>Resultado del Sorteo</h3>
                     <div class="resultado-sorteo-subtitle">Ver Sorteo</div>
                 </div>
+                <button class="close-btn" onclick="cerrarResultadosGrupoModal()" aria-label="Cerrar">&times;</button>
             </div>
 
             <div class="resultado-modal-body">
@@ -7964,6 +7229,7 @@
         <div class="modal-content" style="max-width: 480px;">
             <div class="modal-header">
                 <h3>Seleccionar Participantes</h3>
+                <button class="close-btn" onclick="cerrarVincularParticipantesModal()">&times;</button>
             </div>
 
             <div class="participantes-picker-search">
@@ -7989,38 +7255,6 @@
                     </svg>
                 </button>
                 <button class="icon-action-btn icon-cancel" type="button" aria-label="Cancelar" title="Cancelar" onclick="cerrarVincularParticipantesModal()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- =============== MODAL ALTERAR CONTEXTO (ver como participante) =============== -->
-    <div id="contexto-modal" class="modal">
-        <div class="modal-content" style="max-width: 480px;">
-            <div class="modal-header">
-                <h3>Cambiar Contexto</h3>
-            </div>
-
-            <p class="text-muted" style="margin: 0 0 12px; font-size: 0.9rem;">
-                Elige un participante para ver la aplicación como si hubieras iniciado sesión con su cuenta. Vas a poder volver a tu panel de Administrador en cualquier momento.
-            </p>
-
-            <div class="participantes-picker-search">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="11" cy="11" r="8"/>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-                <input type="text" id="contexto-buscar" placeholder="Buscar por nombre, usuario o cargo..." oninput="filtrarContextoLista()">
-            </div>
-
-            <div id="contexto-lista" class="participantes-picker-lista"></div>
-
-            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
-                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarContextoModal()">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
@@ -8742,9 +7976,6 @@
         }
 
         async function loginSuccess() {
-            // Quita el aviso "Ingresando..." y, con él, el fondo oscuro que
-            // quedaba pegado en el body después de un login exitoso.
-            hideAlert('login-error');
             document.getElementById('login-usuario').value = '';
             const passwordInput = document.getElementById('login-password');
             if (passwordInput) {
@@ -8797,126 +8028,10 @@
             }
         }
 
-        // ===== ALTERAR CONTEXTO (admin viendo la app como un participante) =====
-        // Guarda los datos del admin real mientras está "viendo como" otro
-        // participante, para poder volver sin cerrar sesión ni loguearse de
-        // nuevo. Se queda en null cuando nadie está en modo "ver como".
-        let contextoAdminOriginal = null;
-
-        function abrirContextoModal() {
-            renderContextoLista();
-            document.getElementById('contexto-modal').classList.add('active');
-        }
-
-        function cerrarContextoModal() {
-            document.getElementById('contexto-modal').classList.remove('active');
-        }
-
-        function renderContextoLista() {
-            const cont = document.getElementById('contexto-lista');
-            const buscar = document.getElementById('contexto-buscar');
-            if (buscar) buscar.value = '';
-            if (!cont) return;
-
-            const participantes = [...appState.participantesRegistrados].sort((a, b) =>
-                (a.nombreCompleto || '').localeCompare(b.nombreCompleto || '')
-            );
-
-            if (participantes.length === 0) {
-                cont.innerHTML = '<div class="participantes-picker-empty">No hay participantes registrados todavía.</div>';
-                return;
-            }
-
-            cont.innerHTML = participantes.map(p => {
-                const nombre = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
-                const subtitulo = `${p.login || '-'}${p.cargo ? ' · ' + p.cargo : ''}`;
-                const busqueda = (nombre + ' ' + (p.login || '') + ' ' + (p.cargo || '')).toLowerCase();
-                return `
-                    <button type="button" class="participantes-picker-item participantes-picker-item-clickable" data-search="${escaparHtml(busqueda)}" onclick="entrarEnContextoParticipante('${p.id}')">
-                        <span class="participantes-picker-avatar">${escaparHtml(inicialesParticipante(nombre))}</span>
-                        <span class="participantes-picker-info">
-                            <strong>${escaparHtml(nombre)}</strong>
-                            <span>${escaparHtml(subtitulo)}</span>
-                        </span>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        // Filtra la lista en vivo por nombre, usuario o cargo, sin volver a pedir
-        // los datos — solo esconde las filas que no coinciden.
-        function filtrarContextoLista() {
-            const buscar = document.getElementById('contexto-buscar');
-            const q = (buscar && buscar.value || '').trim().toLowerCase();
-            document.querySelectorAll('#contexto-lista .participantes-picker-item').forEach(item => {
-                const coincide = !q || (item.dataset.search || '').includes(q);
-                item.style.display = coincide ? '' : 'none';
-            });
-        }
-
-        // Cambia el appState para mostrar el panel del participante elegido,
-        // sin tocar la sesión real de Firebase Authentication — el admin
-        // sigue siendo quien inició sesión, solo cambia lo que se ve.
-        function entrarEnContextoParticipante(participanteId) {
-            const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
-            if (!participante) return;
-
-            // Si ya estaba viendo como otro participante y elige uno nuevo, no
-            // pisa el admin original guardado — solo lo guarda la primera vez.
-            if (!contextoAdminOriginal) {
-                contextoAdminOriginal = appState.usuarioActual;
-            }
-
-            appState.usuarioActual = participante;
-            appState.esAdmin = false;
-
-            cerrarContextoModal();
-            switchPanel('usuario');
-            document.getElementById('usuario-nombre').textContent = (participante.nombreCompleto || '').toUpperCase();
-            document.getElementById('usuario-filial').textContent = 'Unidad de Negocio: ' + (participante.centroNombre || '-');
-            mostrarBannerContexto(participante);
-            loadUsuarioData();
-        }
-
-        function mostrarBannerContexto(participante) {
-            const banner = document.getElementById('contexto-banner');
-            if (!banner) return;
-            const texto = banner.querySelector('.contexto-banner-texto');
-            if (texto) texto.textContent = 'Viendo como: ' + (participante.nombreCompleto || participante.login || '');
-            banner.style.display = 'flex';
-        }
-
-        // Restaura el panel de Administrador con los datos del admin real,
-        // guardados al entrar en el modo "ver como".
-        function salirDeContexto() {
-            if (!contextoAdminOriginal) return;
-            appState.usuarioActual = contextoAdminOriginal;
-            appState.esAdmin = true;
-            contextoAdminOriginal = null;
-
-            const banner = document.getElementById('contexto-banner');
-            if (banner) banner.style.display = 'none';
-
-            switchPanel('admin');
-            document.getElementById('admin-nombre').textContent = appState.usuarioActual.nombreCompleto;
-            const metaEl = document.getElementById('admin-meta');
-            if (metaEl) {
-                const cargo = appState.usuarioActual.cargo || 'Administrador';
-                const centro = appState.usuarioActual.centroNombre || 'Sin centro asignado';
-                metaEl.textContent = cargo + ' · Unidad de Negocio: ' + centro;
-            }
-        }
-
         function handleLogout() {
             auth.signOut();
             appState.usuarioActual = null;
             appState.esAdmin = false;
-
-            // Si el admin estaba "viendo como" un participante, limpia ese
-            // estado también — si no, quedaría guardado para la próxima sesión.
-            contextoAdminOriginal = null;
-            const contextoBanner = document.getElementById('contexto-banner');
-            if (contextoBanner) contextoBanner.style.display = 'none';
 
             // Cierra cualquier modal que haya quedado abierto (ej: el menú de opciones)
             document.querySelectorAll('.modal.active').forEach(modal => modal.classList.remove('active'));
@@ -9646,17 +8761,7 @@
             }
             if (key === 'fecha_registro') {
                 const raw = participante.fecha_registro || participante.fechaRegistro || '';
-                if (!raw) return 0;
-                // El registro real casi siempre llega como Timestamp de
-                // Firestore (tiene .toDate()), no como string — "new
-                // Date(raw)" sobre ese objeto da Invalid Date y todos
-                // terminaban empatados en 0, por eso no se notaba la hora.
-                let date;
-                if (typeof raw === 'object' && typeof raw.toDate === 'function') {
-                    date = raw.toDate();
-                } else {
-                    date = new Date(raw);
-                }
+                const date = raw ? new Date(raw) : null;
                 return date && !Number.isNaN(date.getTime()) ? date.getTime() : 0;
             }
             return '';
@@ -9904,7 +9009,7 @@
                 const grupoVinculado = vinculadoAGrupo ? appState.gruposActuales.find(g => g.id === p.grupos[0]) : null;
                 const nombreMostrar = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
                 const codigoCentro = getCodigoCentroParticipante(p);
-                const fechaRegistro = formatDateTime(p.fecha_registro || p.fechaRegistro || '');
+                const fechaRegistro = formatDate(p.fecha_registro || p.fechaRegistro || '');
                 return `
                 <tr data-vinculado="${vinculadoAGrupo ? 'si' : 'no'}">
                     <td class="participante-checkbox-col">
@@ -9993,7 +9098,7 @@
                     p.telefono || '',
                     p.cargo || '',
                     getCodigoCentroParticipante(p),
-                    formatDateTime(p.fecha_registro || p.fechaRegistro || '')
+                    formatDate(p.fecha_registro || p.fechaRegistro || '')
                 ]);
             });
 
@@ -10364,7 +9469,7 @@
         }
 
         function cerrarTodosModalesGrupo() {
-            ['grupo-acciones-modal', 'grupo-editar-modal', 'grupo-participantes-modal', 'grupo-resultados-modal', 'grupo-context-modal'].forEach(id => {
+            ['grupo-acciones-modal', 'grupo-editar-modal', 'grupo-participantes-modal', 'grupo-resultados-modal'].forEach(id => {
                 const modal = document.getElementById(id);
                 if (modal) modal.classList.remove('active');
             });
@@ -10391,6 +9496,12 @@
                 centroSelect.disabled = tieneParticipantes;
             }
             if (centroHint) centroHint.style.display = tieneParticipantes ? 'block' : 'none';
+
+            const btnEliminar = document.getElementById('grupo-detalle-eliminar-btn');
+            if (btnEliminar) btnEliminar.style.display = 'flex';
+
+            const btnResetear = document.getElementById('grupo-detalle-resetear-btn');
+            if (btnResetear) btnResetear.style.display = (grupo.estado === 'sorteado' || grupo.estado === 'revelado') ? 'flex' : 'none';
 
             cerrarGrupoAccionesModal();
             document.getElementById('grupo-editar-modal').classList.add('active');
@@ -10547,84 +9658,7 @@
             iniciarSorteoDesdeAcciones();
         }
 
-        // ===== PULSACIÓN LARGA EN LA TARJETA DE GRUPO (menú de opciones) =====
-        // Al mantener presionada una tarjeta de grupo se abre un menú con
-        // "Rehacer Sorteo" y "Eliminar Grupo" en vez de tener esos botones
-        // siempre visibles en el modal de edición.
-        let grupoLongPressTimer = null;
-        let grupoLongPressActivado = false;
-        let grupoLongPressStartX = 0;
-        let grupoLongPressStartY = 0;
-        let grupoContextId = null;
-
-        function iniciarPulsacionLargaGrupo(event, grupoId) {
-            grupoLongPressActivado = false;
-            grupoLongPressStartX = event.clientX;
-            grupoLongPressStartY = event.clientY;
-            clearTimeout(grupoLongPressTimer);
-            grupoLongPressTimer = setTimeout(() => {
-                grupoLongPressActivado = true;
-                if (navigator.vibrate) navigator.vibrate(12);
-                abrirMenuContextoGrupo(grupoId);
-            }, 500);
-        }
-
-        function cancelarPulsacionLargaGrupo() {
-            clearTimeout(grupoLongPressTimer);
-        }
-
-        // Solo cancela la pulsación larga si el dedo se movió lo suficiente
-        // como para ser un scroll/arrastre — un pequeño temblor normal al
-        // mantener presionado no debe cancelarla.
-        function moverPulsacionLargaGrupo(event) {
-            const dx = Math.abs(event.clientX - grupoLongPressStartX);
-            const dy = Math.abs(event.clientY - grupoLongPressStartY);
-            if (dx > 10 || dy > 10) {
-                clearTimeout(grupoLongPressTimer);
-            }
-        }
-
-        function abrirMenuContextoGrupo(grupoId) {
-            const grupo = appState.gruposActuales.find(g => g.id === grupoId);
-            if (!grupo) return;
-            grupoContextId = grupoId;
-
-            const nombreEl = document.getElementById('grupo-context-nombre');
-            if (nombreEl) nombreEl.textContent = grupo.nombre || 'Grupo';
-
-            const btnResetear = document.getElementById('grupo-context-resetear-btn');
-            if (btnResetear) btnResetear.style.display = (grupo.estado === 'sorteado' || grupo.estado === 'revelado') ? 'flex' : 'none';
-
-            document.getElementById('grupo-context-modal').classList.add('active');
-        }
-
-        function cerrarGrupoContextModal() {
-            document.getElementById('grupo-context-modal').classList.remove('active');
-            grupoContextId = null;
-        }
-
-        function resetearSorteoDesdeContexto() {
-            if (!grupoContextId) return;
-            grupoDetalleActualId = grupoContextId;
-            cerrarGrupoContextModal();
-            resetearSorteo();
-        }
-
-        function eliminarGrupoDesdeContexto() {
-            if (!grupoContextId) return;
-            grupoDetalleActualId = grupoContextId;
-            cerrarGrupoContextModal();
-            eliminarGrupo();
-        }
-
         function abrirEditarGrupoDesdeCard(grupoId) {
-            // Si la pulsación larga ya abrió el menú de opciones, este click
-            // que llega justo después (al soltar el dedo) no debe además
-            // abrir el modal de edición.
-            if (grupoLongPressActivado) {
-                grupoLongPressActivado = false;
-                return;
-            }
             grupoDetalleActualId = grupoId;
             grupoParticipantesDraft = null;
             abrirEditarGrupoModal();
@@ -10641,23 +9675,6 @@
             grupoDetalleActualId = grupoId;
             grupoParticipantesDraft = [...(grupo.participantes || [])];
             abrirVincularParticipantesModal();
-        }
-
-        // Misma acción de "+ Participante" que ya existe en la tarjeta del
-        // grupo y en "Gestionar Grupo", pero llamada desde dentro del modal
-        // Editar Grupo, donde grupoDetalleActualId ya está definido.
-        function abrirVincularDesdeEditar() {
-            if (!grupoDetalleActualId) return;
-            abrirVincularDesdeCard(null, grupoDetalleActualId);
-        }
-
-        // Misma acción de "Ver Participantes" que ya existe en la tarjeta
-        // del grupo y en "Gestionar Grupo", pero llamada desde dentro del
-        // modal Editar Grupo.
-        function abrirParticipantesDesdeEditar() {
-            if (!grupoDetalleActualId) return;
-            grupoParticipantesDraft = null;
-            abrirParticipantesGrupoModal();
         }
 
         function abrirParticipantesDesdeCard(event, grupoId) {
@@ -11389,26 +10406,18 @@
                                             ${(sorteadoInfo.deseos && sorteadoInfo.deseos[grupo.id] && sorteadoInfo.deseos[grupo.id].length > 0) ? `
                                                 <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Le gustaría recibir:</p>
                                                 <p style="font-size: 0.95rem; font-weight: 600;">${sorteadoInfo.deseos[grupo.id].join(' · ')}</p>
-                                            ` : ''}
+                                            ` : `
+                                                <p style="font-size: 0.85rem; margin-top: 12px; opacity: 0.9;">Aún no sugirió ideas de regalo.</p>
+                                            `}
                                             <p class="sorteado-flip-back-hint">Toca de nuevo para ocultarlo</p>
                                         </div>
                                     </div>
                                 </div>
                             ` : `
                                 <div class="sorteado-teaser">
-                                    <p class="sorteado-teaser-eyebrow">✨ Todo está preparado</p>
-                                    <p class="sorteado-teaser-title">Tu amigo secreto ya fue elegido</p>
-                                    <div class="sorteado-gift-stage" aria-hidden="true">
-                                        <span class="sorteado-spark sorteado-spark-one">✦</span>
-                                        <span class="sorteado-spark sorteado-spark-two">✧</span>
-                                        <span class="sorteado-spark sorteado-spark-three">✦</span>
-                                        <div class="sorteado-teaser-icon">🎁</div>
-                                    </div>
-                                    <p class="sorteado-teaser-sub">El destino ya decidió quién recibirá tu regalo. Hasta entonces, el secreto está guardado.</p>
-                                    <div class="sorteado-reveal-date">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
-                                        <span>Lo vas a descubrir el <strong>${formatDateTime(grupo.fecha_revelacion)}</strong></span>
-                                    </div>
+                                    <div class="sorteado-teaser-icon">🎁</div>
+                                    <p class="sorteado-teaser-mystery">???</p>
+                                    <p class="sorteado-teaser-sub">Ya sabemos quién es tu amigo secreto... pero por ahora es un misterio 🤫<br>Lo vas a descubrir el <strong>${formatDateTime(grupo.fecha_revelacion)}</strong>.</p>
                                 </div>
                             `}
                         </div>
@@ -11423,27 +10432,17 @@
 
             document.getElementById('grupos-usuario').innerHTML = html || `
                 <div class="grupos-empty-state">
-                    <div class="grupos-empty-eyebrow">Algo especial está por comenzar</div>
+                    <div class="grupos-empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="20 12 20 22 4 22 4 12"/>
+                            <rect x="2" y="7" width="20" height="5"/>
+                            <line x1="12" y1="22" x2="12" y2="7"/>
+                            <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+                            <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+                        </svg>
+                    </div>
                     <h3>Tu sorpresa todavía se está preparando</h3>
-                    <div class="grupos-empty-gift-stage" aria-hidden="true">
-                        <span class="grupos-empty-spark grupos-empty-spark-one">✦</span>
-                        <span class="grupos-empty-spark grupos-empty-spark-two">✦</span>
-                        <span class="grupos-empty-spark grupos-empty-spark-three">✦</span>
-                        <div class="grupos-empty-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 12 20 22 4 22 4 12"/>
-                                <rect x="2" y="7" width="20" height="5" rx="1"/>
-                                <line x1="12" y1="22" x2="12" y2="7"/>
-                                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
-                                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <p>Cuando el administrador te agregue a un grupo, todos los detalles van a aparecer acá. La sorpresa ya está en camino.</p>
-                    <div class="grupos-empty-status">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"></path><path d="M12 6v6l4 2"></path></svg>
-                        <span>Esperando asignación del administrador</span>
-                    </div>
+                    <p>Aún no fuiste agregado a ningún grupo de Amigo Secreto. En cuanto el administrador te asigne a uno, va a aparecer justo acá. ¡Prepárate! 🎁</p>
                 </div>
             `;
         }
@@ -11729,9 +10728,10 @@
                 const tieneResultado = g.sorteados && Object.keys(g.sorteados).length > 0;
 
                 return `
-                <div class="grupo-card grupo-admin-card grupo-status-${g.estado} grupo-card-clickable" onclick="abrirEditarGrupoDesdeCard('${g.id}')" onpointerdown="iniciarPulsacionLargaGrupo(event, '${g.id}')" onpointerup="cancelarPulsacionLargaGrupo()" onpointerleave="cancelarPulsacionLargaGrupo()" onpointercancel="cancelarPulsacionLargaGrupo()" onpointermove="moverPulsacionLargaGrupo(event)" oncontextmenu="return false;" role="button" tabindex="0" aria-label="Editar grupo ${g.nombre}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); abrirEditarGrupoDesdeCard('${g.id}');}">
+                <div class="grupo-card grupo-admin-card grupo-status-${g.estado} grupo-card-clickable" onclick="abrirEditarGrupoDesdeCard('${g.id}')" role="button" tabindex="0" aria-label="Editar grupo ${g.nombre}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); abrirEditarGrupoDesdeCard('${g.id}');}">
                     <div class="grupo-card-header">
-                        <div class="grupo-title-row">
+                        <div class="grupo-title">${g.nombre}</div>
+                        <div class="grupo-header-actions">
                             <button type="button" class="grupo-participantes-resumen-btn" onclick="abrirParticipantesDesdeCard(event, '${g.id}')" aria-label="Ver participantes del grupo ${g.nombre}" title="Ver participantes">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -11740,9 +10740,7 @@
                                     <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                                 </svg>
                             </button>
-                            <div class="grupo-title">${g.nombre}</div>
-                        </div>
-                        <div class="grupo-header-actions">
+
                             ${tieneResultado ? `
                                 <button type="button" class="grupo-accion-btn grupo-accion-card-header grupo-accion-resultados-header" onclick="abrirResultadosDesdeCard(event, '${g.id}')" aria-label="Ver resultado del sorteo del grupo ${g.nombre}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -13292,105 +12290,9 @@
                     minuteIncrement: 5,
                     disableMobile: true, // fuerza el mismo selector táctil también en el celular
                     allowInput: false,
-                    static: true, // ancla el calendario justo debajo del campo (en vez de flotar suelto por la pantalla), clave para que se vea bien dentro de un modal
-                    onReady: (selectedDates, dateStr, instance) => {
-                        montarCabeceraYPildoraFecha(instance);
-                    },
-                    onChange: (selectedDates, dateStr, instance) => {
-                        actualizarCabeceraYPildoraFecha(instance);
-                    },
-                    onMonthChange: (selectedDates, dateStr, instance) => {
-                        actualizarCabeceraYPildoraFecha(instance);
-                    },
-                    onOpen: (selectedDates, dateStr, instance) => {
-                        instance._valorAlAbrir = selectedDates[0] ? new Date(selectedDates[0]) : null;
-                    }
+                    static: true // ancla el calendario justo debajo del campo (en vez de flotar suelto por la pantalla), clave para que se vea bien dentro de un modal
                 });
             });
-        }
-
-        // ===== BANNER "AÑO + DÍA DE LA SEMANA" Y PÍLDORA DE HORA =====
-        // Le da al calendario de flatpickr el mismo lenguaje visual que el
-        // selector de fecha/hora nativo de Android (banner grande arriba,
-        // hora en una píldora aparte que abre un reloj circular), pero con
-        // los colores de la marca en vez del violeta del sistema.
-        const RELOJ_DIAS_SEMANA = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-        const RELOJ_MESES = ['ene.', 'feb.', 'mar.', 'abr.', 'may.', 'jun.', 'jul.', 'ago.', 'sep.', 'oct.', 'nov.', 'dic.'];
-
-        function formatearBannerFecha(date) {
-            if (!date) date = new Date();
-            const dia = RELOJ_DIAS_SEMANA[date.getDay()];
-            const diaCorto = dia.slice(0, 3);
-            return `${diaCorto}., ${date.getDate()} de ${RELOJ_MESES[date.getMonth()]}`;
-        }
-
-        function montarCabeceraYPildoraFecha(instance) {
-            const calendar = instance.calendarContainer;
-            if (!calendar || calendar.querySelector('.reloj-fecha-banner')) return;
-
-            const fechaActual = instance.selectedDates[0] || new Date();
-
-            const banner = document.createElement('div');
-            banner.className = 'reloj-fecha-banner';
-            banner.innerHTML = `
-                <p class="reloj-fecha-banner-anio">${fechaActual.getFullYear()}</p>
-                <p class="reloj-fecha-banner-dia">${formatearBannerFecha(fechaActual)}</p>
-            `;
-            calendar.insertBefore(banner, calendar.firstChild);
-
-            const pildoraRow = document.createElement('div');
-            pildoraRow.className = 'reloj-hora-pildora-row';
-            pildoraRow.innerHTML = `
-                <button type="button" class="reloj-hora-pildora">
-                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="9"/>
-                        <polyline points="12 7 12 12 15.5 14"/>
-                    </svg>
-                    <span class="reloj-hora-pildora-texto">${formatearHoraCorta(fechaActual)}</span>
-                </button>
-            `;
-            pildoraRow.querySelector('.reloj-hora-pildora').addEventListener('click', () => {
-                abrirRelojClock(instance);
-            });
-            calendar.appendChild(pildoraRow);
-
-            const footer = document.createElement('div');
-            footer.className = 'reloj-picker-footer';
-            footer.innerHTML = `
-                <button type="button" data-accion="cancelar">Cancelar</button>
-                <button type="button" data-accion="ok">OK</button>
-            `;
-            footer.querySelector('[data-accion="cancelar"]').addEventListener('click', () => {
-                if (instance._valorAlAbrir) {
-                    instance.setDate(instance._valorAlAbrir, false);
-                } else {
-                    instance.clear();
-                }
-                instance.close();
-            });
-            footer.querySelector('[data-accion="ok"]').addEventListener('click', () => {
-                instance.close();
-            });
-            calendar.appendChild(footer);
-        }
-
-        function actualizarCabeceraYPildoraFecha(instance) {
-            const calendar = instance.calendarContainer;
-            if (!calendar) return;
-            const fechaActual = instance.selectedDates[0] || new Date();
-
-            const anioEl = calendar.querySelector('.reloj-fecha-banner-anio');
-            const diaEl = calendar.querySelector('.reloj-fecha-banner-dia');
-            if (anioEl) anioEl.textContent = fechaActual.getFullYear();
-            if (diaEl) diaEl.textContent = formatearBannerFecha(fechaActual);
-
-            const pildoraTexto = calendar.querySelector('.reloj-hora-pildora-texto');
-            if (pildoraTexto) pildoraTexto.textContent = formatearHoraCorta(fechaActual);
-        }
-
-        function formatearHoraCorta(date) {
-            const pad = (n) => String(n).padStart(2, '0');
-            return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
         }
 
         // Cambia el valor de un campo de fecha/hora y mantiene sincronizado
@@ -13406,172 +12308,6 @@
                     el._flatpickr.setDate(value, false);
                 } else {
                     el._flatpickr.clear();
-                }
-            }
-        }
-
-        // ===== RELOJ CIRCULAR PARA ELEGIR LA HORA =====
-        // Reemplaza el spinner de hora de flatpickr por un reloj circular
-        // como el selector nativo de Android, en dos anillos (1-12 afuera,
-        // 13-00 adentro) porque la app usa formato 24 horas.
-        let relojClockState = null;
-
-        function getRelojClockOverlay() {
-            let overlay = document.getElementById('reloj-clock-overlay');
-            if (overlay) return overlay;
-
-            overlay = document.createElement('div');
-            overlay.id = 'reloj-clock-overlay';
-            overlay.className = 'reloj-clock-overlay';
-            overlay.innerHTML = `
-                <div class="reloj-clock-dialog" role="dialog" aria-label="Elegir hora">
-                    <div class="reloj-clock-banner">
-                        <span id="reloj-clock-hora-display" data-modo="hour">00</span>
-                        <span class="reloj-clock-colon">:</span>
-                        <span id="reloj-clock-minuto-display" data-modo="minute">00</span>
-                    </div>
-                    <div class="reloj-clock-face-wrap" id="reloj-clock-face"></div>
-                    <div class="reloj-clock-actions">
-                        <button type="button" data-accion="cancelar">Cancelar</button>
-                        <button type="button" data-accion="ok">OK</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-
-            overlay.querySelector('#reloj-clock-hora-display').addEventListener('click', () => cambiarModoReloj('hour'));
-            overlay.querySelector('#reloj-clock-minuto-display').addEventListener('click', () => cambiarModoReloj('minute'));
-            overlay.querySelector('[data-accion="cancelar"]').addEventListener('click', cerrarRelojClock);
-            overlay.querySelector('[data-accion="ok"]').addEventListener('click', confirmarRelojClock);
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) cerrarRelojClock();
-            });
-
-            return overlay;
-        }
-
-        function abrirRelojClock(flatpickrInstance) {
-            const base = flatpickrInstance.selectedDates[0] || new Date();
-            relojClockState = {
-                instance: flatpickrInstance,
-                hour: base.getHours(),
-                minute: base.getMinutes() - (base.getMinutes() % 5),
-                modo: 'hour'
-            };
-            const overlay = getRelojClockOverlay();
-            overlay.classList.add('active');
-            renderRelojClock();
-        }
-
-        function cerrarRelojClock() {
-            const overlay = document.getElementById('reloj-clock-overlay');
-            if (overlay) overlay.classList.remove('active');
-            relojClockState = null;
-        }
-
-        function confirmarRelojClock() {
-            if (!relojClockState) return;
-            const { instance, hour, minute } = relojClockState;
-            const base = instance.selectedDates[0] ? new Date(instance.selectedDates[0]) : new Date();
-            base.setHours(hour, minute, 0, 0);
-            instance.setDate(base, true);
-            cerrarRelojClock();
-        }
-
-        function cambiarModoReloj(modo) {
-            if (!relojClockState) return;
-            relojClockState.modo = modo;
-            renderRelojClock();
-        }
-
-        function seleccionarValorReloj(valor) {
-            if (!relojClockState) return;
-            if (relojClockState.modo === 'hour') {
-                relojClockState.hour = valor;
-                renderRelojClock();
-                // Igual que en Android: al elegir la hora, pasa solo a minutos.
-                setTimeout(() => cambiarModoReloj('minute'), 150);
-            } else {
-                relojClockState.minute = valor;
-                renderRelojClock();
-            }
-        }
-
-        function renderRelojClock() {
-            if (!relojClockState) return;
-            const { hour, minute, modo } = relojClockState;
-            const pad = (n) => String(n).padStart(2, '0');
-
-            const horaEl = document.getElementById('reloj-clock-hora-display');
-            const minutoEl = document.getElementById('reloj-clock-minuto-display');
-            if (horaEl) {
-                horaEl.textContent = pad(hour);
-                horaEl.classList.toggle('activo', modo === 'hour');
-            }
-            if (minutoEl) {
-                minutoEl.textContent = pad(minute);
-                minutoEl.classList.toggle('activo', modo === 'minute');
-            }
-
-            const face = document.getElementById('reloj-clock-face');
-            if (!face) return;
-            face.innerHTML = '';
-
-            const radioExterior = 100;
-            const radioInterior = 65;
-            const centro = 125;
-
-            const agregarMano = (valorSeleccionado, radio) => {
-                const angulo = (valorSeleccionado % 12) * 30 - 90;
-                const rad = (angulo * Math.PI) / 180;
-                const largo = radio;
-                const hand = document.createElement('div');
-                hand.className = 'reloj-clock-hand';
-                hand.style.height = `${largo}px`;
-                hand.style.transform = `rotate(${angulo + 90}deg)`;
-                face.appendChild(hand);
-            };
-
-            const agregarNumero = (texto, valor, angGrados, radio, interior) => {
-                const rad = (angGrados * Math.PI) / 180;
-                const x = centro + radio * Math.cos(rad);
-                const y = centro + radio * Math.sin(rad);
-                const num = document.createElement('div');
-                num.className = 'reloj-clock-num' + (interior ? ' reloj-clock-num-interior' : '');
-                num.style.left = `${x}px`;
-                num.style.top = `${y}px`;
-                num.textContent = texto;
-                const esSeleccionado = modo === 'hour' ? (valor === hour) : (valor === minute);
-                if (esSeleccionado) num.classList.add('seleccionado');
-                num.addEventListener('click', () => seleccionarValorReloj(valor));
-                face.appendChild(num);
-            };
-
-            const centroPunto = document.createElement('div');
-            centroPunto.className = 'reloj-clock-center';
-            face.appendChild(centroPunto);
-
-            if (modo === 'hour') {
-                agregarMano(hour, hour >= 1 && hour <= 12 && hour !== 0 ? radioExterior - 18 : radioInterior - 15);
-                // Anillo exterior: 1 a 12 (el 12 representa también el 0/24 del mediodía visual)
-                for (let i = 1; i <= 12; i++) {
-                    const ang = i * 30 - 90;
-                    const valor = i === 12 ? 12 : i;
-                    agregarNumero(String(i), valor, ang, radioExterior, false);
-                }
-                // Anillo interior: 13 a 23, más 00
-                for (let i = 0; i < 12; i++) {
-                    const valor = i === 0 ? 0 : i + 12;
-                    const texto = i === 0 ? '00' : String(valor);
-                    const ang = i * 30 - 90;
-                    agregarNumero(texto, valor, ang, radioInterior, true);
-                }
-            } else {
-                agregarMano(minute / 5, radioExterior - 18);
-                for (let i = 0; i < 12; i++) {
-                    const valorMin = i * 5;
-                    const ang = i * 30 - 90;
-                    agregarNumero(pad(valorMin), valorMin, ang, radioExterior, false);
                 }
             }
         }
@@ -13911,9 +12647,9 @@
                     // no) — le ponemos un selector en vez de dejarla vacía.
                     if (columnIndex === 0 && table.id === 'participantes-table' && th.querySelector('input[type="checkbox"]')) {
                         const select = document.createElement('select');
-                        select.className = 'table-filter-select table-filter-select-icon-only';
+                        select.className = 'table-filter-select';
                         select.innerHTML = `
-                            <option value=""></option>
+                            <option value="">Todos</option>
                             <option value="si">Vinculado</option>
                             <option value="no">No vinculado</option>
                         `;
