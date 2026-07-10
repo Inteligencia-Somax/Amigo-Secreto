@@ -517,6 +517,26 @@
             margin-bottom: 10px;
         }
 
+        /* Envuelve el botón de participantes junto con el nombre del grupo,
+           para que el ícono quede pegado a la izquierda del título en vez
+           de aparecer suelto entre los demás botones de acción. */
+        .grupo-title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .grupo-title-row .grupo-title {
+            margin-bottom: 0;
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .grupo-title-row .grupo-participantes-resumen-btn {
+            flex: 0 0 auto;
+        }
+
         .grupo-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1570,11 +1590,35 @@
             border-color: #d32f2f;
         }
 
+        /* Variante de peligro (contorno rojo) usada en el menú de opciones
+           que se abre al mantener presionada una tarjeta de grupo. */
+        .grupo-accion-btn.grupo-accion-peligro {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .grupo-accion-btn.grupo-accion-peligro:hover {
+            background: var(--error);
+            border-color: var(--error);
+            color: var(--white);
+        }
+
+        .grupo-accion-btn.grupo-accion-reset {
+            border-color: #96691c;
+            color: #96691c;
+        }
+
+        .grupo-accion-btn.grupo-accion-reset:hover {
+            background: #96691c;
+            border-color: #96691c;
+            color: var(--white);
+        }
+
         /* ==================== MENÚ "OPCIONES" (engranaje del header) ==================== */
         .header-menu-list {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 8px;
         }
 
         .header-menu-item {
@@ -1583,7 +1627,7 @@
             gap: 14px;
             width: 100%;
             padding: 10px;
-            background: transparent;
+            background: #eaf5ee;
             border: none;
             border-radius: 12px;
             color: var(--text);
@@ -1595,7 +1639,7 @@
         }
 
         .header-menu-item:hover {
-            background: #f4faf7;
+            background: #dcefe3;
         }
 
         .header-menu-item-icon {
@@ -1606,7 +1650,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 11px;
-            background: #eaf5ee;
+            background: #ffffff;
             color: var(--primary);
             transition: background 0.15s ease, color 0.15s ease;
         }
@@ -1640,8 +1684,12 @@
             margin: 8px 6px;
         }
 
-        .header-menu-item.is-danger .header-menu-item-icon {
+        .header-menu-item.is-danger {
             background: #fdecea;
+        }
+
+        .header-menu-item.is-danger .header-menu-item-icon {
+            background: #ffffff;
             color: var(--error);
         }
 
@@ -1650,7 +1698,7 @@
         }
 
         .header-menu-item.is-danger:hover {
-            background: #fdecea;
+            background: #fbdedb;
         }
 
         .header-menu-item.is-danger:hover .header-menu-item-icon {
@@ -5554,17 +5602,17 @@
                 flex: 1 1 auto;
             }
 
-            /* El selector "Todos / Abierto / Sorteado / Revelado" queda del
-               ancho de su contenido en vez de estirarse a todo el ancho de
-               la pantalla — así no ocupa una fila entera para poco texto. */
+            /* El selector "Todos / Abierto / Sorteado / Revelado" aprovecha
+               todo el ancho de la pantalla en el celular, igual que el
+               botón "+ Crear" arriba de él. */
             #ver-grupos .grupo-filter-select-group {
-                flex: 0 0 auto;
+                flex: 1 1 100%;
                 min-width: 0;
-                width: auto;
+                width: 100%;
             }
 
             #grupo-status-filter {
-                width: auto;
+                width: 100%;
                 min-width: 0;
             }
 
@@ -7257,6 +7305,28 @@
             </div>
 
             <div class="grupo-detail-form">
+                <div class="grupo-acciones-lista" style="margin-bottom: 18px;">
+                    <button type="button" class="grupo-accion-btn" onclick="abrirParticipantesDesdeEditar()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Ver Participantes
+                    </button>
+                    <button type="button" class="grupo-accion-btn" onclick="abrirVincularDesdeEditar()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            <line x1="19" y1="8" x2="19" y2="14"/>
+                            <line x1="16" y1="11" x2="22" y2="11"/>
+                        </svg>
+                        + Participante
+                    </button>
+                </div>
                 <div class="grupo-detail-fields">
                     <div class="form-group participante-modal-full">
                         <label for="grupo-detalle-nombre-input">Nombre del Grupo</label>
@@ -7291,22 +7361,45 @@
                             <line x1="6" y1="6" x2="18" y2="18"/>
                         </svg>
                     </button>
-                    <button id="grupo-detalle-resetear-btn" class="icon-action-btn icon-reset" type="button" aria-label="Resetear sorteo" title="Resetear sorteo (vuelve a Abierto, mantiene los participantes)" onclick="resetearSorteo()" style="margin-left: auto; display: none;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <polyline points="1 4 1 10 7 10"/>
-                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-                        </svg>
-                    </button>
-                    <button id="grupo-detalle-eliminar-btn" class="icon-action-btn icon-delete" type="button" aria-label="Eliminar grupo" title="Eliminar grupo" onclick="eliminarGrupo()">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <polyline points="3 6 5 6 21 6"/>
-                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                            <path d="M10 11v6"/>
-                            <path d="M14 11v6"/>
-                            <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
-                        </svg>
-                    </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============== MODAL OPCIONES DEL GRUPO (pulsación larga en la tarjeta) =============== -->
+    <div id="grupo-context-modal" class="modal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3 id="grupo-context-nombre">Grupo</h3>
+            </div>
+
+            <div class="grupo-acciones-lista">
+                <button type="button" id="grupo-context-resetear-btn" class="grupo-accion-btn grupo-accion-reset" style="display:none;" onclick="resetearSorteoDesdeContexto()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="1 4 1 10 7 10"/>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                    </svg>
+                    Rehacer Sorteo
+                </button>
+                <button type="button" id="grupo-context-eliminar-btn" class="grupo-accion-btn grupo-accion-peligro" onclick="eliminarGrupoDesdeContexto()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6"/>
+                        <path d="M14 11v6"/>
+                        <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    Eliminar Grupo
+                </button>
+            </div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarGrupoContextModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -9831,7 +9924,7 @@
         }
 
         function cerrarTodosModalesGrupo() {
-            ['grupo-acciones-modal', 'grupo-editar-modal', 'grupo-participantes-modal', 'grupo-resultados-modal'].forEach(id => {
+            ['grupo-acciones-modal', 'grupo-editar-modal', 'grupo-participantes-modal', 'grupo-resultados-modal', 'grupo-context-modal'].forEach(id => {
                 const modal = document.getElementById(id);
                 if (modal) modal.classList.remove('active');
             });
@@ -9858,12 +9951,6 @@
                 centroSelect.disabled = tieneParticipantes;
             }
             if (centroHint) centroHint.style.display = tieneParticipantes ? 'block' : 'none';
-
-            const btnEliminar = document.getElementById('grupo-detalle-eliminar-btn');
-            if (btnEliminar) btnEliminar.style.display = 'flex';
-
-            const btnResetear = document.getElementById('grupo-detalle-resetear-btn');
-            if (btnResetear) btnResetear.style.display = (grupo.estado === 'sorteado' || grupo.estado === 'revelado') ? 'flex' : 'none';
 
             cerrarGrupoAccionesModal();
             document.getElementById('grupo-editar-modal').classList.add('active');
@@ -10020,7 +10107,84 @@
             iniciarSorteoDesdeAcciones();
         }
 
+        // ===== PULSACIÓN LARGA EN LA TARJETA DE GRUPO (menú de opciones) =====
+        // Al mantener presionada una tarjeta de grupo se abre un menú con
+        // "Rehacer Sorteo" y "Eliminar Grupo" en vez de tener esos botones
+        // siempre visibles en el modal de edición.
+        let grupoLongPressTimer = null;
+        let grupoLongPressActivado = false;
+        let grupoLongPressStartX = 0;
+        let grupoLongPressStartY = 0;
+        let grupoContextId = null;
+
+        function iniciarPulsacionLargaGrupo(event, grupoId) {
+            grupoLongPressActivado = false;
+            grupoLongPressStartX = event.clientX;
+            grupoLongPressStartY = event.clientY;
+            clearTimeout(grupoLongPressTimer);
+            grupoLongPressTimer = setTimeout(() => {
+                grupoLongPressActivado = true;
+                if (navigator.vibrate) navigator.vibrate(12);
+                abrirMenuContextoGrupo(grupoId);
+            }, 500);
+        }
+
+        function cancelarPulsacionLargaGrupo() {
+            clearTimeout(grupoLongPressTimer);
+        }
+
+        // Solo cancela la pulsación larga si el dedo se movió lo suficiente
+        // como para ser un scroll/arrastre — un pequeño temblor normal al
+        // mantener presionado no debe cancelarla.
+        function moverPulsacionLargaGrupo(event) {
+            const dx = Math.abs(event.clientX - grupoLongPressStartX);
+            const dy = Math.abs(event.clientY - grupoLongPressStartY);
+            if (dx > 10 || dy > 10) {
+                clearTimeout(grupoLongPressTimer);
+            }
+        }
+
+        function abrirMenuContextoGrupo(grupoId) {
+            const grupo = appState.gruposActuales.find(g => g.id === grupoId);
+            if (!grupo) return;
+            grupoContextId = grupoId;
+
+            const nombreEl = document.getElementById('grupo-context-nombre');
+            if (nombreEl) nombreEl.textContent = grupo.nombre || 'Grupo';
+
+            const btnResetear = document.getElementById('grupo-context-resetear-btn');
+            if (btnResetear) btnResetear.style.display = (grupo.estado === 'sorteado' || grupo.estado === 'revelado') ? 'flex' : 'none';
+
+            document.getElementById('grupo-context-modal').classList.add('active');
+        }
+
+        function cerrarGrupoContextModal() {
+            document.getElementById('grupo-context-modal').classList.remove('active');
+            grupoContextId = null;
+        }
+
+        function resetearSorteoDesdeContexto() {
+            if (!grupoContextId) return;
+            grupoDetalleActualId = grupoContextId;
+            cerrarGrupoContextModal();
+            resetearSorteo();
+        }
+
+        function eliminarGrupoDesdeContexto() {
+            if (!grupoContextId) return;
+            grupoDetalleActualId = grupoContextId;
+            cerrarGrupoContextModal();
+            eliminarGrupo();
+        }
+
         function abrirEditarGrupoDesdeCard(grupoId) {
+            // Si la pulsación larga ya abrió el menú de opciones, este click
+            // que llega justo después (al soltar el dedo) no debe además
+            // abrir el modal de edición.
+            if (grupoLongPressActivado) {
+                grupoLongPressActivado = false;
+                return;
+            }
             grupoDetalleActualId = grupoId;
             grupoParticipantesDraft = null;
             abrirEditarGrupoModal();
@@ -10037,6 +10201,23 @@
             grupoDetalleActualId = grupoId;
             grupoParticipantesDraft = [...(grupo.participantes || [])];
             abrirVincularParticipantesModal();
+        }
+
+        // Misma acción de "+ Participante" que ya existe en la tarjeta del
+        // grupo y en "Gestionar Grupo", pero llamada desde dentro del modal
+        // Editar Grupo, donde grupoDetalleActualId ya está definido.
+        function abrirVincularDesdeEditar() {
+            if (!grupoDetalleActualId) return;
+            abrirVincularDesdeCard(null, grupoDetalleActualId);
+        }
+
+        // Misma acción de "Ver Participantes" que ya existe en la tarjeta
+        // del grupo y en "Gestionar Grupo", pero llamada desde dentro del
+        // modal Editar Grupo.
+        function abrirParticipantesDesdeEditar() {
+            if (!grupoDetalleActualId) return;
+            grupoParticipantesDraft = null;
+            abrirParticipantesGrupoModal();
         }
 
         function abrirParticipantesDesdeCard(event, grupoId) {
@@ -11098,10 +11279,9 @@
                 const tieneResultado = g.sorteados && Object.keys(g.sorteados).length > 0;
 
                 return `
-                <div class="grupo-card grupo-admin-card grupo-status-${g.estado} grupo-card-clickable" onclick="abrirEditarGrupoDesdeCard('${g.id}')" role="button" tabindex="0" aria-label="Editar grupo ${g.nombre}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); abrirEditarGrupoDesdeCard('${g.id}');}">
+                <div class="grupo-card grupo-admin-card grupo-status-${g.estado} grupo-card-clickable" onclick="abrirEditarGrupoDesdeCard('${g.id}')" onpointerdown="iniciarPulsacionLargaGrupo(event, '${g.id}')" onpointerup="cancelarPulsacionLargaGrupo()" onpointerleave="cancelarPulsacionLargaGrupo()" onpointercancel="cancelarPulsacionLargaGrupo()" onpointermove="moverPulsacionLargaGrupo(event)" oncontextmenu="return false;" role="button" tabindex="0" aria-label="Editar grupo ${g.nombre}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); abrirEditarGrupoDesdeCard('${g.id}');}">
                     <div class="grupo-card-header">
-                        <div class="grupo-title">${g.nombre}</div>
-                        <div class="grupo-header-actions">
+                        <div class="grupo-title-row">
                             <button type="button" class="grupo-participantes-resumen-btn" onclick="abrirParticipantesDesdeCard(event, '${g.id}')" aria-label="Ver participantes del grupo ${g.nombre}" title="Ver participantes">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -11110,7 +11290,9 @@
                                     <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                                 </svg>
                             </button>
-
+                            <div class="grupo-title">${g.nombre}</div>
+                        </div>
+                        <div class="grupo-header-actions">
                             ${tieneResultado ? `
                                 <button type="button" class="grupo-accion-btn grupo-accion-card-header grupo-accion-resultados-header" onclick="abrirResultadosDesdeCard(event, '${g.id}')" aria-label="Ver resultado del sorteo del grupo ${g.nombre}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
