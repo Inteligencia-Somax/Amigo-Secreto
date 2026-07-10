@@ -1767,20 +1767,23 @@
             text-align: left;
         }
 
-        /* Fila "Ver Participantes" (solo ícono) + "+ Participante" del modal
-           Editar Grupo: van una al lado de la otra, en una sola línea. */
+        /* Fila "Ver Participantes" + "+ Participante" del modal Editar Grupo.
+           Padronizada con los botones equivalentes de la tarjeta del grupo. */
         #grupo-editar-modal .grupo-editar-acciones-lista {
+            display: flex;
             flex-direction: row;
             align-items: center;
+            gap: 10px;
         }
 
+        /* Botón lateral "Ver Participantes" igual al botón del card. */
         #grupo-editar-modal .grupo-ver-participantes-icon-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 46px;
-            height: 46px;
-            min-width: 46px;
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
             padding: 0;
             border: 1px solid #d7e3dc;
             border-radius: 10px;
@@ -1788,33 +1791,58 @@
             box-shadow: 0 4px 10px rgba(26, 95, 63, 0.08);
             color: var(--primary);
             cursor: pointer;
-            transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
             flex: 0 0 auto;
+            transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, color 0.18s ease;
         }
 
         #grupo-editar-modal .grupo-ver-participantes-icon-btn svg {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
+            color: currentColor;
+            flex: 0 0 20px;
         }
 
         #grupo-editar-modal .grupo-ver-participantes-icon-btn:hover {
+            color: var(--primary);
             background: #eef7f1;
             border-color: var(--primary);
             box-shadow: 0 6px 14px rgba(26, 95, 63, 0.12);
             transform: translateY(-1px);
         }
 
+        /* Botón "+ Participante" igual al botón del card. */
         #grupo-editar-modal .grupo-agregar-participante-btn {
             flex: 1 1 auto;
+            width: auto;
+            height: 38px;
+            min-height: 38px;
+            padding: 0 12px;
+            border-radius: 10px;
+            font-size: 0.86rem;
+            font-weight: 700;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            background: var(--secondary);
-            border-color: var(--secondary);
-            color: var(--dark);
+            gap: 8px;
+            background: #fff8ec;
+            border: 1.5px solid #f1d8a2;
+            color: #8a5b00;
+            text-transform: none;
+            box-shadow: none;
+        }
+
+        #grupo-editar-modal .grupo-agregar-participante-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            flex-shrink: 0;
         }
 
         #grupo-editar-modal .grupo-agregar-participante-btn:hover {
-            background: #ff9500;
-            border-color: #ff9500;
+            background: #f7e4ba;
+            border-color: var(--secondary);
+            color: #7a5200;
             transform: translateY(-1px);
         }
 
@@ -4261,6 +4289,26 @@
             #grupo-detalle-participantes .grupo-participantes-readonly-table {
                 min-width: 560px;
             }
+        }
+
+        /* Variante enxuta da tabela do modal de participantes: apenas Nome + Ação */
+        #grupo-detalle-participantes .grupo-participantes-readonly-table.grupo-participantes-nombre-only th:nth-child(1),
+        #grupo-detalle-participantes .grupo-participantes-readonly-table.grupo-participantes-nombre-only td:nth-child(1) {
+            width: auto;
+            min-width: 0;
+        }
+
+        #grupo-detalle-participantes .grupo-participantes-readonly-table.grupo-participantes-nombre-only th:nth-child(2),
+        #grupo-detalle-participantes .grupo-participantes-readonly-table.grupo-participantes-nombre-only td:nth-child(2) {
+            width: 56px;
+            min-width: 56px;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        #grupo-detalle-participantes .grupo-participantes-readonly-table.grupo-participantes-nombre-only .grupo-participantes-nombre strong {
+            display: inline-block;
+            max-width: 100%;
         }
 
         .participante-edit-input,
@@ -7884,7 +7932,7 @@
                             <span class="resultado-sorteo-icon">✓</span>
                             <span id="grupo-participantes-nombre">Participantes del grupo</span>
                         </div>
-                        <p>Listado de personas vinculadas a este grupo, con usuario, cargo, teléfono y unidad de negocio.</p>
+                        <p>Listado de personas vinculadas a este grupo.</p>
                     </div>
                     <div class="resultado-sorteo-hero-meta">
                         <div class="resultado-mini-card">
@@ -7906,10 +7954,8 @@
                 </div>
 
                 <div class="resultado-sorteo-footer-actions participantes-footer-actions">
-                    <div class="grupo-detail-created">Fecha de Creación: <span id="grupo-detalle-creado">-</span></div>
                     <div class="participantes-actions-right">
                         <button type="button" id="grupo-participantes-ver-resultado-btn" class="btn-ver-resultado-inline" style="display:none;" onclick="verResultadoDesdeParticipantesModal()">Ver Resultado</button>
-                        <button type="button" class="btn-excel" onclick="exportarGrupoExcel()">Excel</button>
                         <button id="grupo-participantes-save-btn" class="icon-action-btn icon-save" type="button" aria-label="Guardar" title="Guardar" onclick="guardarParticipantesGrupoModal()">
                             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <polyline points="20 6 9 17 4 12"/>
@@ -10523,7 +10569,8 @@
             if (unidadParticipantesEl) unidadParticipantesEl.textContent = grupo.centroNombre || '-';
             if (nombreParticipantesEl) nombreParticipantesEl.textContent = grupo.nombre ? 'Participantes · ' + grupo.nombre : 'Participantes del grupo';
 
-            document.getElementById('grupo-detalle-creado').textContent = formatDate(grupo.fecha_sorteio);
+            const grupoDetalleCreadoEl = document.getElementById('grupo-detalle-creado');
+            if (grupoDetalleCreadoEl) grupoDetalleCreadoEl.textContent = formatDate(grupo.fecha_sorteio);
             renderParticipantesDeGrupo(grupo);
             const btnGuardarParticipantes = document.getElementById('grupo-participantes-save-btn');
             if (btnGuardarParticipantes) btnGuardarParticipantes.style.display = grupo.estado === 'sorteado' ? 'none' : 'inline-flex';
@@ -10964,7 +11011,8 @@
             grupo.fecha_evento = nuevaFechaEvento;
             syncGrupoFirestore(grupo);
 
-            document.getElementById('grupo-detalle-creado').textContent = formatDate(grupo.fecha_sorteio);
+            const grupoDetalleCreadoEl = document.getElementById('grupo-detalle-creado');
+            if (grupoDetalleCreadoEl) grupoDetalleCreadoEl.textContent = formatDate(grupo.fecha_sorteio);
             document.getElementById('grupo-detalle-creado-resultados').textContent = formatDate(grupo.fecha_sorteio);
             showAlert('admin-success', 'Grupo actualizado');
             updateGruposList();
@@ -11083,25 +11131,19 @@
                     <td class="grupo-participantes-nombre">
                         <strong title="${escaparHtml(nombreCompleto)}">${escaparHtml(nombreCompleto)}</strong>${adminChip}
                     </td>
-                    <td>${escaparHtml(p.login || '-')}</td>
-                    <td><span class="grupo-participantes-cargo" title="${escaparHtml(p.cargo || '-')}">${escaparHtml(p.cargo || '-')}</span></td>
-                    <td>${escaparHtml(p.telefono || '-')}</td>
                     ${actionCell}
                 </tr>
             `;
             }).join('');
 
             const actionHeader = puedeQuitar ? '<th class="grupo-participante-action"></th>' : '';
-            const tableClass = puedeQuitar ? 'grupo-participantes-table grupo-participantes-readonly-table' : 'grupo-participantes-table grupo-participantes-readonly-table grupo-participantes-sem-acao';
+            const tableClass = puedeQuitar ? 'grupo-participantes-table grupo-participantes-readonly-table grupo-participantes-nombre-only' : 'grupo-participantes-table grupo-participantes-readonly-table grupo-participantes-sem-acao grupo-participantes-nombre-only';
 
             cont.innerHTML = `
                 <table class="${tableClass}">
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Usuario</th>
-                            <th>Cargo</th>
-                            <th>Teléfono</th>
                             ${actionHeader}
                         </tr>
                     </thead>
@@ -11375,7 +11417,8 @@
                     }
                     document.getElementById('grupo-detalle-total-participantes').textContent = (grupoActualizado.participantes || []).length + ' personas';
                     document.getElementById('grupo-detalle-total-participantes-resultados').textContent = (grupoActualizado.participantes || []).length + ' personas';
-                    document.getElementById('grupo-detalle-creado').textContent = formatDate(grupoActualizado.fecha_sorteio);
+                    const grupoDetalleCreadoEl = document.getElementById('grupo-detalle-creado');
+                    if (grupoDetalleCreadoEl) grupoDetalleCreadoEl.textContent = formatDate(grupoActualizado.fecha_sorteio);
                     document.getElementById('grupo-detalle-creado-resultados').textContent = formatDate(grupoActualizado.fecha_sorteio);
                     renderParticipantesDeGrupo(grupoActualizado);
                     renderResultadoSorteoGrupo(grupoActualizado);
