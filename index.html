@@ -390,6 +390,59 @@
             width: auto;
         }
 
+        /* Botones grandes de la pantalla de bienvenida (Acceder / Inscribirse) */
+        .auth-choice-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .btn-choice {
+            width: 100%;
+            padding: 22px;
+            border-radius: 14px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+        }
+
+        .btn-choice-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: var(--white);
+            box-shadow: 0 4px 14px rgba(26, 95, 63, 0.35);
+        }
+
+        .btn-choice-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(26, 95, 63, 0.45);
+        }
+
+        .btn-choice-outline {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            color: var(--white);
+            border: none;
+            box-shadow: 0 4px 14px rgba(13, 59, 38, 0.35);
+        }
+
+        .btn-choice-outline:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(13, 59, 38, 0.45);
+        }
+
+        .btn-choice svg {
+            width: 22px;
+            height: 22px;
+        }
+
         /* ==================== USER PANEL ==================== */
         .user-header {
             display: flex;
@@ -6414,45 +6467,47 @@
 
         <!-- =============== AUTH PANEL (REGISTRO + LOGIN) =============== -->
         <div id="auth-panel" class="panel active">
+
+            <!-- PANTALLA DE BIENVENIDA (elección: Acceder o Inscribirse) -->
+            <div id="auth-choice">
+                <h2>Bienvenido</h2>
+                <div class="auth-choice-buttons">
+                    <button class="btn-choice btn-choice-primary" onclick="switchAuthForm('login')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Acceder
+                    </button>
+                    <button class="btn-choice btn-choice-outline" onclick="switchAuthForm('registro')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <line x1="19" y1="8" x2="19" y2="14"></line>
+                            <line x1="22" y1="11" x2="16" y2="11"></line>
+                        </svg>
+                        Inscribirse
+                    </button>
+                </div>
+            </div>
             
-            <!-- REGISTRO FORM (oculto inicialmente; la pantalla inicial es Login) -->
+            <!-- REGISTRO FORM (oculto inicialmente; la pantalla inicial es la de bienvenida) -->
             <div id="registro-form" style="display: none;">
                 <h2>Registrarse</h2>
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="registro-nombre">Nombre *</label>
-                        <input type="text" id="registro-nombre" placeholder="Ej: Juan" onchange="formatNombre()" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registro-apellido">Apellido *</label>
-                        <input type="text" id="registro-apellido" placeholder="Ej: García" onchange="formatNombre()" required>
-                    </div>
+                <div class="form-group">
+                    <label for="registro-nombre">Nombre Completo *</label>
+                    <input type="text" id="registro-nombre" placeholder="Ej: Juan García" onchange="formatNombre()" required>
                 </div>
 
-                <!-- Login + Teléfono (lado a lado) -->
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="registro-login">Usuario (login) *</label>
-                        <div class="login-check-row">
-                            <input type="text" id="registro-login" placeholder="Ej: jgarcia" oninput="formatLogin(); resetLoginHint();" required>
-                            <button type="button" class="btn-verificar-login" onclick="verificarLoginDisponible()">Verificar</button>
-                        </div>
-                        <p id="registro-login-hint" class="login-hint"></p>
-                    </div>
                     <div class="form-group">
                         <label for="registro-telefono">Teléfono *</label>
                         <div class="phone-input-group">
                             <span class="phone-flag-prefix" title="Paraguay" aria-hidden="true">🇵🇾 <span class="phone-flag-code">+595</span></span>
                             <input type="tel" id="registro-telefono" placeholder="Ej: 984 123456" oninput="formatTelefono()" onblur="formatTelefono()" required>
                         </div>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="registro-cargo">Cargo *</label>
-                        <input type="text" id="registro-cargo" placeholder="Ej: Analista de Ventas" onchange="formatCargo()" onblur="formatCargo()" required>
                     </div>
                     <div class="form-group">
                         <label for="registro-filial">Unidad de Negocio *</label>
@@ -6499,10 +6554,14 @@
                     <button class="btn btn-outline btn-small" onclick="switchAuthForm('login')">Ir a Login</button>
                 </div>
 
+                <div style="margin-top: 12px; text-align: center;">
+                    <button class="btn btn-outline btn-small" onclick="switchAuthForm('inicio')">← Volver</button>
+                </div>
+
             </div>
 
-            <!-- LOGIN FORM (pantalla inicial) -->
-            <div id="login-form">
+            <!-- LOGIN FORM (oculto inicialmente; se abre desde la pantalla de bienvenida) -->
+            <div id="login-form" style="display: none;">
                 <h2>Iniciar Sesión</h2>
                 
                 <div class="form-group">
@@ -6526,8 +6585,12 @@
                 <button class="btn btn-primary" onclick="handleLogin()">Ingresar</button>
 
                 <div class="login-link-actions">
-                    <button class="btn btn-outline btn-small" onclick="switchAuthForm('registro')">Registrar-te</button>
+                    <button class="btn btn-outline btn-small" onclick="switchAuthForm('registro')">Registrarte</button>
                     <button class="btn btn-outline btn-small" onclick="mostrarRecuperacion()">¿Olvidaste tu contraseña?</button>
+                </div>
+
+                <div style="margin-top: 12px; text-align: center;">
+                    <button class="btn btn-outline btn-small" onclick="switchAuthForm('inicio')">← Volver</button>
                 </div>
 
             </div>
@@ -7947,13 +8010,22 @@
                 passwordInput.type = 'password';
             }
 
+            const authChoice = document.getElementById('auth-choice');
+
             if (form === 'registro') {
+                if (authChoice) authChoice.style.display = 'none';
                 document.getElementById('registro-form').style.display = 'block';
                 document.getElementById('login-form').style.display = 'none';
                 document.getElementById('recuperacion-form').style.display = 'none';
             } else if (form === 'login') {
+                if (authChoice) authChoice.style.display = 'none';
                 document.getElementById('registro-form').style.display = 'none';
                 document.getElementById('login-form').style.display = 'block';
+                document.getElementById('recuperacion-form').style.display = 'none';
+            } else if (form === 'inicio') {
+                if (authChoice) authChoice.style.display = 'block';
+                document.getElementById('registro-form').style.display = 'none';
+                document.getElementById('login-form').style.display = 'none';
                 document.getElementById('recuperacion-form').style.display = 'none';
             }
         }
@@ -7964,6 +8036,8 @@
                 passwordInput.value = '';
                 passwordInput.type = 'password';
             }
+            const authChoice = document.getElementById('auth-choice');
+            if (authChoice) authChoice.style.display = 'none';
             document.getElementById('registro-form').style.display = 'none';
             document.getElementById('login-form').style.display = 'none';
             document.getElementById('recuperacion-form').style.display = 'block';
@@ -7978,64 +8052,50 @@
         // ===== REGISTRO FUNCTIONS =====
         function formatNombre() {
             const nombre = document.getElementById('registro-nombre');
-            const apellido = document.getElementById('registro-apellido');
-
-            if (nombre.value) {
+            if (nombre && nombre.value) {
                 nombre.value = capitalize(nombre.value);
             }
-            if (apellido.value) {
-                apellido.value = capitalize(apellido.value);
-            }
         }
 
-        function formatCargo() {
-            const cargo = document.getElementById('registro-cargo');
-            if (cargo && cargo.value) {
-                cargo.value = capitalize(cargo.value);
+        // Genera un login (usuario) automáticamente a partir del nombre completo,
+        // sin pedírselo a la persona. Sigue la misma convención que se usaba antes
+        // a mano (ej: "Juan García" → "jgarcia": inicial del nombre + apellido).
+        function generarLoginDesdeNombre(nombreCompleto) {
+            const limpiar = (s) => (s || '')
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita acentos
+                .toLowerCase()
+                .replace(/[^a-z]/g, '');
+
+            const partes = (nombreCompleto || '').trim().split(/\s+/).filter(Boolean);
+            if (partes.length === 0) return '';
+
+            const primerNombre = limpiar(partes[0]);
+            const apellido = partes.length > 1 ? limpiar(partes[partes.length - 1]) : '';
+
+            let base = apellido ? (primerNombre.charAt(0) + apellido) : primerNombre;
+            if (base.length < 4) {
+                // Si queda muy corto (ej: "Ana Li"), usa el nombre completo en vez de solo la inicial
+                base = apellido ? (primerNombre + apellido) : primerNombre;
             }
+            base = base.slice(0, 20);
+            if (base.length < 4) base = base.padEnd(4, 'x');
+            return base;
         }
 
-        function formatLogin() {
-            const loginInput = document.getElementById('registro-login');
-            // Solo letras minúsculas. Sin espacios, sin números, sin guion bajo ni otros símbolos.
-            loginInput.value = loginInput.value.toLowerCase().replace(/[^a-z]/g, '');
-        }
+        // Agrega un sufijo numérico si el login generado ya está en uso
+        function generarLoginUnico(nombreCompleto) {
+            const base = generarLoginDesdeNombre(nombreCompleto) || 'user';
+            const enUso = (login) => appState.participantesRegistrados.some(
+                p => (p.login || '').toLowerCase() === login.toLowerCase()
+            );
 
-        function resetLoginHint() {
-            const hint = document.getElementById('registro-login-hint');
-            if (!hint) return;
-            hint.textContent = '';
-            hint.className = 'login-hint';
-        }
-
-        function verificarLoginDisponible() {
-            formatLogin();
-            const hint = document.getElementById('registro-login-hint');
-            const login = document.getElementById('registro-login').value.trim();
-            if (!hint) return;
-
-            if (!login) {
-                hint.textContent = 'Escribe un usuario para verificar';
-                hint.className = 'login-hint login-hint-error';
-                return;
+            let candidato = base;
+            let intento = 2;
+            while (enUso(candidato) && intento < 100) {
+                candidato = (base + intento).slice(0, 20);
+                intento++;
             }
-
-            if (!/^[a-z]{4,20}$/.test(login)) {
-                hint.textContent = '✗ Debe tener 4-20 letras minúsculas, sin espacios ni números';
-                hint.className = 'login-hint login-hint-error';
-                return;
-            }
-
-            const loginLower = login.toLowerCase();
-            const existe = appState.participantesRegistrados.some(p => (p.login || '').toLowerCase() === loginLower);
-
-            if (existe) {
-                hint.textContent = '✗ Este usuario ya está en uso, elige otro';
-                hint.className = 'login-hint login-hint-error';
-            } else {
-                hint.textContent = '✓ Usuario disponible';
-                hint.className = 'login-hint login-hint-success';
-            }
+            return candidato;
         }
 
         function formatLoginParticipanteNuevo() {
@@ -8250,32 +8310,20 @@
         }
 
         async function handleRegistro() {
-            const nombre = document.getElementById('registro-nombre').value.trim();
-            const apellido = document.getElementById('registro-apellido').value.trim();
-
-            // Refuerza el formato del login antes de validar (minúsculas, sin espacios/caracteres especiales)
-            formatLogin();
-            const login = document.getElementById('registro-login').value.trim();
+            formatNombre();
+            const nombreCompletoInput = document.getElementById('registro-nombre').value.trim();
 
             // Refuerza el formato del teléfono antes de validar (garantiza consistencia en mobile)
             formatTelefono();
-            formatCargo();
             const telefonoNacional = document.getElementById('registro-telefono').value.trim();
             const telefono = telefonoNacional ? '+595 ' + telefonoNacional : '';
-            const cargo = document.getElementById('registro-cargo').value.trim();
             const filial = document.getElementById('registro-filial').value;
             const password = document.getElementById('registro-password').value;
             const passwordConfirm = document.getElementById('registro-password-confirm').value;
 
             // Validaciones - todos los campos son obligatorios
-            if (!nombre || !apellido || !login || !telefonoNacional || !cargo || !filial || !password || !passwordConfirm) {
+            if (!nombreCompletoInput || !telefonoNacional || !filial || !password || !passwordConfirm) {
                 showAlert('registro-error', 'Todos los campos son obligatorios');
-                return;
-            }
-
-            // Validar formato del usuario (login): solo letras minúsculas, sin espacios, números ni símbolos
-            if (!/^[a-z]{4,20}$/.test(login)) {
-                showAlert('registro-error', 'Usuario debe tener 4-20 letras minúsculas, sin espacios, números ni símbolos');
                 return;
             }
 
@@ -8296,6 +8344,16 @@
                 return;
             }
 
+            // Separa el nombre completo en nombre/apellido (primer palabra = nombre,
+            // el resto = apellido) para mantener compatibilidad con el resto de la app
+            const partesNombre = nombreCompletoInput.split(/\s+/).filter(Boolean);
+            const nombre = partesNombre[0] || nombreCompletoInput;
+            const apellido = partesNombre.slice(1).join(' ');
+            const nombreCompleto = apellido ? `${nombre} ${apellido}` : nombre;
+
+            // El usuario (login) se genera automáticamente, la persona no lo elige
+            const login = generarLoginUnico(nombreCompletoInput);
+
             // Obtener datos de la unidad de negocio seleccionada
             const centroDatos = appState.centrosActuales.find(c => c.id === filial);
             const nombreCentro = centroDatos ? centroDatos.nombre : filial;
@@ -8315,10 +8373,10 @@
                     id: uid,
                     nombre: nombre,
                     apellido: apellido,
-                    nombreCompleto: nombre + ' ' + apellido,
+                    nombreCompleto: nombreCompleto,
                     login: login,
                     telefono: telefono,
-                    cargo: cargo,
+                    cargo: '',
                     centroId: filial,
                     centroNombre: nombreCentro,
                     grupos: [],
@@ -8366,10 +8424,7 @@
 
         function limpiarRegistro() {
             document.getElementById('registro-nombre').value = '';
-            document.getElementById('registro-apellido').value = '';
-            document.getElementById('registro-login').value = '';
             document.getElementById('registro-telefono').value = '';
-            document.getElementById('registro-cargo').value = '';
             document.getElementById('registro-filial').value = '';
             document.getElementById('registro-password').value = '';
             document.getElementById('registro-password-confirm').value = '';
