@@ -7438,6 +7438,172 @@
             text-align: center !important;
         }
 
+        /* Exceção da tela de boas-vindas: somente Acceder e Inscribirse têm 80 px. */
+        #auth-panel #auth-choice .btn-choice {
+            height: 80px !important;
+            min-height: 80px !important;
+            max-height: 80px !important;
+        }
+
+        /* Centraliza completamente a coluna de ações do modal Participantes. */
+        #grupo-detalle-participantes th.grupo-participante-action,
+        #grupo-detalle-participantes td.grupo-participante-action {
+            width: 56px !important;
+            min-width: 56px !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+        #grupo-detalle-participantes td.grupo-participante-action .icon-action-btn {
+            display: inline-flex !important;
+            margin: 0 auto !important;
+            vertical-align: middle !important;
+        }
+
+
+
+        /* ==================== AJUSTES V20 ==================== */
+        /* Ícone que abre o grupo: exatamente o mesmo quadrado do checkbox (18x18). */
+        #participantes-table .participante-grupo-icon-btn {
+            width: 18px !important;
+            min-width: 18px !important;
+            max-width: 18px !important;
+            height: 18px !important;
+            min-height: 18px !important;
+            max-height: 18px !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
+            border-radius: 5px !important;
+            box-sizing: border-box !important;
+            font-size: 0.62rem !important;
+            line-height: 1 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            vertical-align: middle !important;
+        }
+
+        /* Filtro Vinculado/No vinculado: apenas uma seta, centralizada na célula. */
+        #participantes-table thead tr.table-filter-row th:first-child {
+            padding: 0 !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+        #participantes-table .table-filter-select-icon-only {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            display: block !important;
+            width: 18px !important;
+            min-width: 18px !important;
+            max-width: 18px !important;
+            height: 18px !important;
+            min-height: 18px !important;
+            max-height: 18px !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 4px !important;
+            color: transparent !important;
+            background-color: transparent !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231a5f3f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='7 10 12 15 17 10'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            background-size: 18px 18px !important;
+            box-shadow: none !important;
+            cursor: pointer !important;
+            line-height: 18px !important;
+        }
+
+        #participantes-table .table-filter-select-icon-only:hover,
+        #participantes-table .table-filter-select-icon-only:focus {
+            background-color: #eef7f1 !important;
+            outline: none !important;
+            border: 0 !important;
+            box-shadow: none !important;
+        }
+
+        #participantes-table .table-filter-select-icon-only option {
+            color: var(--text) !important;
+            background: var(--white) !important;
+        }
+
+        /* Barra de seleção: Vincular e Eliminar com a mesma largura. */
+        #participantes-vincular-grupo-btn,
+        #participantes-eliminar-seleccionados-btn {
+            width: 126px !important;
+            min-width: 126px !important;
+            max-width: 126px !important;
+            flex: 0 0 126px !important;
+        }
+
+        /* Evita espaços artificiais em "Eliminar (33)" causados pelo gap flex. */
+        #participantes-eliminar-seleccionados-btn {
+            gap: 0 !important;
+            white-space: nowrap !important;
+        }
+
+        /* Fecha de Revelación: campo consistente de 40px e calendário flutuante. */
+        .date-friendly-input {
+            width: 100% !important;
+            height: 40px !important;
+            min-height: 40px !important;
+            max-height: 40px !important;
+            padding: 0 42px 0 12px !important;
+            border: 1.5px solid #d7e3dc !important;
+            border-radius: 10px !important;
+            background-color: var(--white) !important;
+            background-position: right 12px center !important;
+            background-size: 18px 18px !important;
+            color: var(--text) !important;
+            font-size: 0.95rem !important;
+            line-height: 40px !important;
+            box-shadow: none !important;
+            box-sizing: border-box !important;
+        }
+
+        .date-friendly-input:hover {
+            border-color: #b9d0c3 !important;
+        }
+
+        .date-friendly-input:focus {
+            outline: none !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(26, 95, 63, 0.12) !important;
+        }
+
+        .flatpickr-calendar {
+            z-index: 5000 !important;
+            border: 1px solid #dce8e1 !important;
+            border-radius: 14px !important;
+            overflow: hidden !important;
+            box-shadow: 0 16px 38px rgba(13, 59, 38, 0.24) !important;
+        }
+
+        .flatpickr-calendar.open {
+            display: block !important;
+        }
+
+        .flatpickr-months,
+        .flatpickr-weekdays {
+            background: #f7fbf8 !important;
+        }
+
+        .flatpickr-time {
+            height: 44px !important;
+            min-height: 44px !important;
+            border-top: 1px solid #e1ebe5 !important;
+        }
+
+        .flatpickr-time input,
+        .flatpickr-time .flatpickr-am-pm {
+            height: 44px !important;
+            line-height: 44px !important;
+            font-size: 0.95rem !important;
+        }
+
 </style>
 </head>
 <body>
@@ -10594,7 +10760,7 @@
                 // Ninguno de los seleccionados tiene todavía un grupo abierto en
                 // su propia unidad de negocio (o no existe, o ya fue sorteado) —
                 // se lo decimos en el propio select en vez de esconder la opción.
-                select.innerHTML = '<option value="" disabled selected>Sin grupo abierto para esta unidad</option>';
+                select.innerHTML = '<option value="" disabled selected>Sin grupo abierto</option>';
                 select.value = '';
                 const btnVincular = document.getElementById('participantes-vincular-grupo-btn');
                 if (btnVincular) btnVincular.disabled = true;
@@ -11543,7 +11709,7 @@
 
             const infoEl = document.getElementById('sorteio-modal-revelacion-info');
             if (infoEl) {
-                infoEl.textContent = `Cada participante va a poder ver a quién le regala recién el ${formatDateTime(grupo.fecha_revelacion)} (fecha y hora de Revelación configurada para este grupo). La Fecha del Evento es aparte y no afecta cuándo se revela.`;
+                infoEl.textContent = `Cada participante va a poder ver a quién le regala recién el ${formatDateTime(grupo.fecha_revelacion)} (fecha y hora de Revelación configurada para este grupo).`;
             }
 
             cerrarGrupoAccionesModal();
@@ -14309,9 +14475,12 @@
                     altFormat: 'd/m/Y H:i',
                     altInputClass: 'date-friendly-input',
                     minuteIncrement: 5,
-                    disableMobile: true, // fuerza el mismo selector táctil también en el celular
-                    allowInput: false,
-                    static: true // ancla el calendario justo debajo del campo (en vez de flotar suelto por la pantalla), clave para que se vea bien dentro de un modal
+                    disableMobile: true,
+                    allowInput: true,
+                    clickOpens: true,
+                    static: false,
+                    appendTo: document.body,
+                    position: 'auto left'
                 });
             });
         }
