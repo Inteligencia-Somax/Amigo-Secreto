@@ -427,15 +427,15 @@
         }
 
         .btn-choice-outline {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             color: var(--white);
             border: none;
-            box-shadow: 0 4px 14px rgba(13, 59, 38, 0.35);
+            box-shadow: 0 4px 14px rgba(26, 95, 63, 0.35);
         }
 
         .btn-choice-outline:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 22px rgba(13, 59, 38, 0.45);
+            box-shadow: 0 8px 22px rgba(26, 95, 63, 0.45);
         }
 
         .btn-choice svg {
@@ -6501,20 +6501,11 @@
                     <input type="text" id="registro-nombre" placeholder="Ej: Juan García" onchange="formatNombre()" required>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="registro-telefono">Teléfono *</label>
-                        <div class="phone-input-group">
-                            <span class="phone-flag-prefix" title="Paraguay" aria-hidden="true">🇵🇾 <span class="phone-flag-code">+595</span></span>
-                            <input type="tel" id="registro-telefono" placeholder="Ej: 984 123456" oninput="formatTelefono()" onblur="formatTelefono()" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="registro-filial">Unidad de Negocio *</label>
-                        <select id="registro-filial" required>
-                            <option value="">-- Cargando --</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label for="registro-filial">Unidad de Negocio *</label>
+                    <select id="registro-filial" required>
+                        <option value="">-- Cargando --</option>
+                    </select>
                 </div>
 
                 <!-- Contraseña + Confirmar Contraseña (lado a lado) -->
@@ -6547,12 +6538,7 @@
                     </div>
                 </div>
 
-                <button class="btn btn-primary" onclick="handleRegistro()">Crear Cuenta</button>
-
-                <div style="margin-top: 20px; text-align: center;">
-                    <p class="text-muted" style="margin-bottom: 10px; font-size: 0.95rem;">¿Ya tienes cuenta?</p>
-                    <button class="btn btn-outline btn-small" onclick="switchAuthForm('login')">Ir a Login</button>
-                </div>
+                <button class="btn btn-primary" onclick="handleRegistro()">Inscribirse</button>
 
                 <div style="margin-top: 12px; text-align: center;">
                     <button class="btn btn-outline btn-small" onclick="switchAuthForm('inicio')">← Volver</button>
@@ -6565,8 +6551,8 @@
                 <h2>Iniciar Sesión</h2>
                 
                 <div class="form-group">
-                    <label for="login-usuario">Usuario</label>
-                    <input type="text" id="login-usuario" placeholder="Login" autocapitalize="none" autocomplete="username" spellcheck="false" oninput="formatLoginUsuario()" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); handleLogin(); }">
+                    <label for="login-usuario">Nombre Completo</label>
+                    <input type="text" id="login-usuario" placeholder="Ej: Juan García" autocomplete="name" spellcheck="false" onchange="formatLoginUsuario()" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); handleLogin(); }">
                 </div>
 
                 <div class="form-group">
@@ -6585,7 +6571,6 @@
                 <button class="btn btn-primary" onclick="handleLogin()">Ingresar</button>
 
                 <div class="login-link-actions">
-                    <button class="btn btn-outline btn-small" onclick="switchAuthForm('registro')">Registrarte</button>
                     <button class="btn btn-outline btn-small" onclick="mostrarRecuperacion()">¿Olvidaste tu contraseña?</button>
                 </div>
 
@@ -8241,8 +8226,8 @@
 
         function formatLoginUsuario() {
             const loginInput = document.getElementById('login-usuario');
-            if (!loginInput) return;
-            loginInput.value = loginInput.value.toLowerCase().replace(/[^a-z]/g, '');
+            if (!loginInput || !loginInput.value) return;
+            loginInput.value = capitalize(loginInput.value);
         }
 
         function capitalize(text) {
@@ -8312,24 +8297,13 @@
         async function handleRegistro() {
             formatNombre();
             const nombreCompletoInput = document.getElementById('registro-nombre').value.trim();
-
-            // Refuerza el formato del teléfono antes de validar (garantiza consistencia en mobile)
-            formatTelefono();
-            const telefonoNacional = document.getElementById('registro-telefono').value.trim();
-            const telefono = telefonoNacional ? '+595 ' + telefonoNacional : '';
             const filial = document.getElementById('registro-filial').value;
             const password = document.getElementById('registro-password').value;
             const passwordConfirm = document.getElementById('registro-password-confirm').value;
 
             // Validaciones - todos los campos son obligatorios
-            if (!nombreCompletoInput || !telefonoNacional || !filial || !password || !passwordConfirm) {
+            if (!nombreCompletoInput || !filial || !password || !passwordConfirm) {
                 showAlert('registro-error', 'Todos los campos son obligatorios');
-                return;
-            }
-
-            // Validar formato de teléfono (número nacional: 3 dígitos de operadora + 6 dígitos)
-            if (!/^\d{3} \d{6}$/.test(telefonoNacional)) {
-                showAlert('registro-error', 'Teléfono debe estar en formato: XXX XXXXXX');
                 return;
             }
 
@@ -8375,7 +8349,7 @@
                     apellido: apellido,
                     nombreCompleto: nombreCompleto,
                     login: login,
-                    telefono: telefono,
+                    telefono: '',
                     cargo: '',
                     centroId: filial,
                     centroNombre: nombreCentro,
@@ -8424,7 +8398,6 @@
 
         function limpiarRegistro() {
             document.getElementById('registro-nombre').value = '';
-            document.getElementById('registro-telefono').value = '';
             document.getElementById('registro-filial').value = '';
             document.getElementById('registro-password').value = '';
             document.getElementById('registro-password-confirm').value = '';
@@ -8468,18 +8441,38 @@
 
         async function handleLogin() {
             formatLoginUsuario();
-            const login = document.getElementById('login-usuario').value.trim();
+            const nombreCompleto = document.getElementById('login-usuario').value.trim();
             const password = document.getElementById('login-password').value;
 
-            if (!login || !password) {
-                showAlert('login-error', 'Usuario y contraseña son requeridos');
+            if (!nombreCompleto || !password) {
+                showAlert('login-error', 'Nombre y contraseña son requeridos');
                 return;
             }
 
             showAlert('login-error', 'Ingresando...', 'info');
 
             try {
-                const credencial = await comTimeout(auth.signInWithEmailAndPassword(loginParaEmailFake(login), password));
+                // Ahora se entra con el nombre completo (no con un usuario/login),
+                // así que primero hay que encontrar el login interno que le
+                // corresponde a ese nombre dentro de "participantes".
+                let loginInterno = null;
+                try {
+                    const snap = await comTimeout(
+                        db.collection('participantes').where('nombreCompleto', '==', nombreCompleto).limit(1).get()
+                    );
+                    if (!snap.empty) {
+                        loginInterno = snap.docs[0].data().login;
+                    }
+                } catch (e) {
+                    // Si la búsqueda por nombre falla, sigue con el fallback de abajo
+                    // en vez de cortar el login por completo.
+                }
+
+                // Fallback: cuentas que no viven en "participantes" (ej: el admin)
+                // siguen entrando tal cual con lo que hayan escrito.
+                const loginParaEmail = loginInterno || nombreCompleto;
+
+                const credencial = await comTimeout(auth.signInWithEmailAndPassword(loginParaEmailFake(loginParaEmail), password));
                 const ok = await cargarPerfilUsuarioLogado(credencial.user);
                 if (!ok) {
                     showAlert('login-error', 'No encontramos tu perfil. Contacta al administrador.');
