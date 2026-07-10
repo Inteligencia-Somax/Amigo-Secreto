@@ -9679,14 +9679,17 @@
                 // Ahora se entra con el nombre completo (no con un usuario/login),
                 // así que primero hay que encontrar el login interno que le
                 // corresponde a ese nombre dentro de "participantes".
+                // OJO: esto NO se puede leer directo del Firestore desde el
+                // cliente, porque todavía no hay sesión iniciada y las reglas
+                // de seguridad bloquean la lectura de "participantes" sin auth
+                // (y así debe ser, para no exponer los grupos/sorteos de todos).
+                // Por eso se usa una Cloud Function con privilegios de admin,
+                // que devuelve únicamente el "login" (nunca la contraseña).
                 let loginInterno = null;
                 try {
-                    const snap = await comTimeout(
-                        db.collection('participantes').where('nombreCompleto', '==', nombreCompleto).limit(1).get()
-                    );
-                    if (!snap.empty) {
-                        loginInterno = snap.docs[0].data().login;
-                    }
+                    const buscarLogin = functionsFirebase.httpsCallable('buscarLoginPorNombre');
+                    const resultado = await comTimeout(buscarLogin({ nombreCompleto }), 15000);
+                    loginInterno = resultado.data && resultado.data.login;
                 } catch (e) {
                     // Si la búsqueda por nombre falla, sigue con el fallback de abajo
                     // en vez de cortar el login por completo.
