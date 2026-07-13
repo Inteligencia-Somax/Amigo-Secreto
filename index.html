@@ -138,6 +138,16 @@
             transition: border-color 0.3s;
         }
 
+        select.select-placeholder {
+            color: #9aa39d;
+            background: #f3f5f4;
+        }
+
+        select option {
+            color: var(--text);
+            background: var(--white);
+        }
+
         input[type="email"]:focus,
         input[type="password"]:focus,
         input[type="text"]:focus,
@@ -607,6 +617,25 @@
             color: rgba(255,255,255,0.84);
             font-size: 0.91rem;
             line-height: 1.55;
+        }
+
+        #grupos-usuario > .grupos-empty-state .grupos-empty-gift-stage + h3 {
+            margin-top: 2px;
+        }
+
+        #grupos-usuario > .grupos-empty-state.grupos-empty-state--joined {
+            margin-top: 0;
+        }
+
+        #grupos-usuario > .grupos-empty-state.grupos-empty-state--joined .sorteado-reveal-date {
+            margin-top: 16px;
+        }
+
+        #grupos-usuario > .grupos-empty-state .grupos-empty-icon--emoji {
+            font-size: 3.8rem;
+            line-height: 1;
+            color: #ffd76b;
+            text-shadow: 0 0 14px rgba(255, 215, 107, 0.22);
         }
 
         .grupos-empty-gift-stage {
@@ -7459,6 +7488,28 @@
 
 
 
+        /* ==================== CONTADOR DA LISTA DE PARTICIPANTES ==================== */
+        .participantes-total-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            min-height: 32px;
+            margin-top: 8px;
+            padding: 0 4px;
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .participantes-total-footer {
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+
         /* ==================== PADRÃO GLOBAL FINAL: BOTÕES 40 PX ====================
            Mantém todos os botões da aplicação com a mesma altura, inclusive
            ações, menus, modais, login, participantes, grupos e botões de ícone. */
@@ -7704,7 +7755,15 @@
             font-size: 0.95rem !important;
         }
 
-</style>
+
+        /* O botão "Rehacer Sorteo" só pode aparecer quando o sorteio já existe.
+           Esta regra prevalece sobre o padrão global que força botões a display:flex. */
+        #grupo-context-resetear-btn[style*="display:none"],
+        #grupo-context-resetear-btn[style*="display: none"] {
+            display: none !important;
+        }
+
+    </style>
 </head>
 <body>
     <div id="verificando-sesion-overlay" style="position:fixed; inset:0; z-index:5000; background:var(--dark, #1a5f3f); display:flex; align-items:center; justify-content:center;">
@@ -7757,7 +7816,7 @@
                 <div class="form-group">
                     <label for="registro-filial">Unidad de Negocio *</label>
                     <select id="registro-filial" required>
-                        <option value="">-- Cargando --</option>
+                        <option value="">Cargando...</option>
                     </select>
                 </div>
 
@@ -7970,6 +8029,9 @@
                 <div id="participantes-list-container" class="table-container">
                     <div class="spinner"></div>
                 </div>
+                <div id="participantes-total-footer" class="participantes-total-footer" aria-live="polite">
+                    Total: 0 participantes
+                </div>
             </div>
 
             <!-- ===== Tab: Matriz de Sorteo ===== -->
@@ -7979,7 +8041,7 @@
                 <div class="form-group">
                     <label for="grupo-select-matriz">Selecciona Grupo</label>
                     <select id="grupo-select-matriz" onchange="updateMatrizSorteio()">
-                        <option value="">-- Cargando grupos --</option>
+                        <option value="">Cargando grupos...</option>
                     </select>
                 </div>
 
@@ -8491,7 +8553,7 @@
                 <div class="form-group">
                     <label for="import-edit-centro">Unidad de Negocio</label>
                     <select id="import-edit-centro">
-                        <option value="">-- Selecciona --</option>
+                        <option value="">Selecciona</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -8584,7 +8646,7 @@
                 <div class="form-group">
                     <label for="participante-nuevo-centro">Unidad de Negocio</label>
                     <select id="participante-nuevo-centro">
-                        <option value="">-- Selecciona --</option>
+                        <option value="">Selecciona</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -8632,7 +8694,7 @@
             <div class="form-group">
                 <label for="grupo-nuevo-centro">Unidad de Negocio</label>
                 <select id="grupo-nuevo-centro" onchange="renderParticipantesCentroEnCrearGrupo()">
-                    <option value="">-- Selecciona --</option>
+                    <option value="">Selecciona</option>
                 </select>
             </div>
 
@@ -10385,10 +10447,10 @@
 
         function opcionesCentrosGrupoHtml(selectedId = '', grupoIdIgnorado = null) {
             if (!appState.centrosActuales || appState.centrosActuales.length === 0) {
-                return '<option value="">-- No hay unidades de negocio disponibles --</option>';
+                return '<option value="">No hay unidades de negocio disponibles</option>';
             }
 
-            return '<option value="">-- Selecciona --</option>' +
+            return '<option value="">Selecciona</option>' +
                 appState.centrosActuales.map(c => {
                     const usadoPorOtroGrupo = centroTieneGrupo(c.id, grupoIdIgnorado);
                     const selected = c.id === selectedId ? 'selected' : '';
@@ -10405,21 +10467,21 @@
             const centrosDisponibles = appState.centrosActuales.filter(c => !centroTieneGrupo(c.id));
 
             if (centrosDisponibles.length === 0) {
-                select.innerHTML = '<option value="">-- No hay unidades de negocio disponibles --</option>';
+                select.innerHTML = '<option value="">No hay unidades de negocio disponibles</option>';
                 return;
             }
 
-            select.innerHTML = '<option value="">-- Selecciona --</option>' +
+            select.innerHTML = '<option value="">Selecciona</option>' +
                 centrosDisponibles.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
         }
 
 
         function opcionesCentrosHtml(selectedId = '') {
             if (!appState.centrosActuales || appState.centrosActuales.length === 0) {
-                return '<option value="">-- No hay unidades de negocio disponibles --</option>';
+                return '<option value="">No hay unidades de negocio disponibles</option>';
             }
 
-            return '<option value="">-- Selecciona --</option>' +
+            return '<option value="">Selecciona</option>' +
                 appState.centrosActuales.map(c =>
                     `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.nombre}</option>`
                 ).join('');
@@ -10430,11 +10492,11 @@
             if (!select) return;
 
             if (appState.centrosActuales.length === 0) {
-                select.innerHTML = '<option value="">-- No hay unidades de negocio disponibles --</option>';
+                select.innerHTML = '<option value="">No hay unidades de negocio disponibles</option>';
                 return;
             }
 
-            select.innerHTML = '<option value="">-- Selecciona --</option>' +
+            select.innerHTML = '<option value="">Selecciona</option>' +
                 appState.centrosActuales.map(c =>
                     `<option value="${c.id}">${c.nombre}</option>`
                 ).join('');
@@ -11142,24 +11204,42 @@
 
             if (!confirm(`¿Eliminar ${seleccionados.length} participante(s) seleccionado(s)? Esta acción no se puede deshacer.`)) return;
 
-            showAlert('admin-error', `Eliminando ${seleccionados.length} participante(s)...`, 'info');
+            const botonEliminar = document.getElementById('participantes-eliminar-seleccionados-btn');
+            if (botonEliminar) botonEliminar.disabled = true;
+
+            showAlert('admin-error', `Preparando la eliminación de ${seleccionados.length} participante(s)... Por favor, espera.`, 'info');
+
+            // Da tiempo al navegador para dibujar el fondo y el indicador antes
+            // de iniciar las solicitudes a Firebase.
+            await new Promise(resolve => requestAnimationFrame(() => resolve()));
 
             let eliminados = 0;
             let errores = 0;
 
-            for (const id of seleccionados) {
-                try {
-                    const excluir = functionsFirebase.httpsCallable('excluirParticipante');
-                    await comTimeout(excluir({ participanteUid: id }), 20000);
-                    appState.participantesRegistrados = appState.participantesRegistrados.filter(p => p.id !== id);
-                    eliminados++;
-                } catch (error) {
-                    console.error('Error al eliminar participante ' + id + ':', error);
-                    errores++;
+            try {
+                for (let indice = 0; indice < seleccionados.length; indice++) {
+                    const id = seleccionados[indice];
+                    showAlert(
+                        'admin-error',
+                        `Eliminando participante ${indice + 1} de ${seleccionados.length}... Por favor, espera.`,
+                        'info'
+                    );
+
+                    try {
+                        const excluir = functionsFirebase.httpsCallable('excluirParticipante');
+                        await comTimeout(excluir({ participanteUid: id }), 20000);
+                        appState.participantesRegistrados = appState.participantesRegistrados.filter(p => p.id !== id);
+                        eliminados++;
+                    } catch (error) {
+                        console.error('Error al eliminar participante ' + id + ':', error);
+                        errores++;
+                    }
                 }
+            } finally {
+                hideAlert('admin-error');
+                if (botonEliminar) botonEliminar.disabled = false;
             }
 
-            hideAlert('admin-error');
             if (errores === 0) {
                 showAlert('admin-success', `${eliminados} participante(s) eliminado(s) exitosamente`);
             } else {
@@ -11169,11 +11249,27 @@
             updateParticipantesList();
         }
 
+        function actualizarContadorParticipantes(cantidadVisible) {
+            const pie = document.getElementById('participantes-total-footer');
+            if (!pie) return;
+
+            const total = (appState.participantesRegistrados || []).length;
+            const visibles = Number.isFinite(cantidadVisible) ? cantidadVisible : total;
+            const palabraTotal = total === 1 ? 'participante' : 'participantes';
+
+            pie.textContent = visibles === total
+                ? `Total: ${total} ${palabraTotal}`
+                : `Mostrando ${visibles} de ${total} ${palabraTotal}`;
+        }
+
         function updateParticipantesList() {
             const cont = document.getElementById('participantes-list-container');
             if (!cont) return;
 
             renderParticipanteCentroFilter();
+
+            const participantesFiltrados = getParticipantesFiltradosOrdenados();
+            actualizarContadorParticipantes(participantesFiltrados.length);
 
             if (appState.participantesRegistrados.length === 0) {
                 cont.innerHTML = '<p class="text-muted" style="padding: 10px 0;">Todavía no hay participantes registrados.</p>';
@@ -11182,7 +11278,6 @@
 
             const busquedaInput = document.getElementById('participante-buscar-input');
             const busqueda = busquedaInput ? busquedaInput.value.trim().toLowerCase() : '';
-            const participantesFiltrados = getParticipantesFiltradosOrdenados();
 
             if (participantesFiltrados.length === 0) {
                 cont.innerHTML = '<p class="text-muted" style="padding: 10px 0;">' + (busqueda ? 'No se encontraron participantes para la búsqueda.' : 'No hay participantes para la unidad de negocio seleccionada.') + '</p>';
@@ -12569,11 +12664,11 @@
             const select = document.getElementById('registro-filial');
 
             if (appState.centrosActuales.length === 0) {
-                select.innerHTML = '<option value="">-- Selecciona --</option><option value="" disabled>No hay unidades de negocio disponibles</option>';
+                select.innerHTML = '<option value="">Selecciona</option><option value="" disabled>No hay unidades de negocio disponibles</option>';
                 return;
             }
 
-            const options = '<option value="">-- Selecciona --</option>' + 
+            const options = '<option value="">Selecciona</option>' + 
                 appState.centrosActuales.map(c => 
                     `<option value="${c.id}">${c.nombre}</option>`
                 ).join('');
@@ -12655,21 +12750,19 @@
                             `}
                         </div>
                     ` : `
-                        <div class="sorteado-box">
-                            <div class="sorteado-teaser">
-                                <p class="sorteado-teaser-eyebrow">🎄 Ya estás participando</p>
-                                <p class="sorteado-teaser-title">Tu amigo secreto se elegirá pronto</p>
-                                <div class="sorteado-gift-stage" aria-hidden="true">
-                                    <span class="sorteado-spark sorteado-spark-one">✦</span>
-                                    <span class="sorteado-spark sorteado-spark-two">✧</span>
-                                    <span class="sorteado-spark sorteado-spark-three">✦</span>
-                                    <div class="sorteado-teaser-icon">🎁</div>
-                                </div>
-                                <p class="sorteado-teaser-sub">Todavía falta el sorteo. En cuanto se realice, vas a poder ver quién te tocó.</p>
-                                <div class="sorteado-reveal-date">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
-                                    <span>El sorteo se realiza el <strong>${formatDate(grupo.fecha_sorteio)}</strong></span>
-                                </div>
+                        <div class="grupos-empty-state grupos-empty-state--joined">
+                            <div class="grupos-empty-eyebrow">🎄 Ya estás participando</div>
+                            <div class="grupos-empty-gift-stage" aria-hidden="true">
+                                <span class="grupos-empty-spark grupos-empty-spark-one">✦</span>
+                                <span class="grupos-empty-spark grupos-empty-spark-two">✦</span>
+                                <span class="grupos-empty-spark grupos-empty-spark-three">✦</span>
+                                <div class="grupos-empty-icon grupos-empty-icon--emoji">🎁</div>
+                            </div>
+                            <h3>Tu amigo secreto se elegirá pronto</h3>
+                            <p>Todavía falta el sorteo. En cuanto se realice, vas a poder ver quién te tocó.</p>
+                            <div class="sorteado-reveal-date">
+                                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>
+                                <span>El sorteo se realiza el <strong>${formatDate(grupo.fecha_sorteio)}</strong></span>
                             </div>
                         </div>
                     `}
@@ -12679,7 +12772,6 @@
             document.getElementById('grupos-usuario').innerHTML = html || `
                 <div class="grupos-empty-state">
                     <div class="grupos-empty-eyebrow">Algo especial está por comenzar</div>
-                    <h3>Tu sorpresa todavía se está preparando</h3>
                     <div class="grupos-empty-gift-stage" aria-hidden="true">
                         <span class="grupos-empty-spark grupos-empty-spark-one">✦</span>
                         <span class="grupos-empty-spark grupos-empty-spark-two">✦</span>
@@ -12694,6 +12786,7 @@
                             </svg>
                         </div>
                     </div>
+                    <h3>Tu sorpresa todavía se está preparando</h3>
                 </div>
             `;
         }
@@ -14592,6 +14685,11 @@
             el.classList.remove('alert-error', 'alert-success', 'alert-info');
             el.classList.add('alert-' + type);
 
+            // hideAlert deja style="display:none" inline. Antes de activar el aviso,
+            // eliminamos esa propiedad para que la clase .active pueda mostrarlo.
+            // Sin esto, el fondo se oscurecía pero el cuadro de carga quedaba invisible.
+            el.style.removeProperty('display');
+
             el.innerHTML = type === 'info'
                 ? `<svg class="alert-spinner-svg" viewBox="0 0 44 44" aria-hidden="true">
                        <circle class="alert-spinner-track" cx="22" cy="22" r="18" fill="none" stroke-width="4"></circle>
@@ -15245,5 +15343,39 @@
     <div class="alert alert-error" id="login-error"></div>
     <div class="alert alert-error" id="admin-error" style="display: none;"></div>
     <div class="alert alert-success" id="admin-success" style="display: none;"></div>
+
+    <script>
+        function updateSelectPlaceholderState(select) {
+            if (!select) return;
+            const hasEmptyValue = select.value === '' || select.value == null;
+            select.classList.toggle('select-placeholder', hasEmptyValue);
+        }
+
+        function refreshAllSelectPlaceholderStates(root = document) {
+            root.querySelectorAll('select').forEach(updateSelectPlaceholderState);
+        }
+
+        document.addEventListener('change', function (event) {
+            if (event.target && event.target.tagName === 'SELECT') {
+                updateSelectPlaceholderState(event.target);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshAllSelectPlaceholderStates();
+
+            const observer = new MutationObserver(function () {
+                refreshAllSelectPlaceholderStates();
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['value']
+            });
+        });
+    </script>
+
 </body>
 </html>
