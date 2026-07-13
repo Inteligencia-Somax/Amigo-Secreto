@@ -7525,11 +7525,24 @@
             text-align: center !important;
         }
 
-        /* Exceção da tela de boas-vindas: somente Acceder e Inscribirse têm 80 px. */
+        /* Tela de boas-vindas: Acceder mantém 80 px. */
         #auth-panel #auth-choice .btn-choice {
             height: 80px !important;
             min-height: 80px !important;
             max-height: 80px !important;
+        }
+
+        /* Inscribirse fica acima e com o dobro da altura. */
+        #auth-panel #auth-choice .btn-choice-register {
+            height: 160px !important;
+            min-height: 160px !important;
+            max-height: 160px !important;
+            font-size: 1.4rem !important;
+        }
+
+        #auth-panel #auth-choice .btn-choice-register svg {
+            width: 32px !important;
+            height: 32px !important;
         }
 
         /* Centraliza completamente a coluna de ações do modal Participantes. */
@@ -7712,15 +7725,7 @@
             <div id="auth-choice">
                 <h2>Bienvenido</h2>
                 <div class="auth-choice-buttons">
-                    <button class="btn-choice btn-choice-primary" onclick="switchAuthForm('login')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                            <polyline points="10 17 15 12 10 7"></polyline>
-                            <line x1="15" y1="12" x2="3" y2="12"></line>
-                        </svg>
-                        Acceder
-                    </button>
-                    <button class="btn-choice btn-choice-outline" onclick="switchAuthForm('registro')">
+                    <button class="btn-choice btn-choice-outline btn-choice-register" onclick="switchAuthForm('registro')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
@@ -7728,6 +7733,14 @@
                             <line x1="22" y1="11" x2="16" y2="11"></line>
                         </svg>
                         Inscribirse
+                    </button>
+                    <button class="btn-choice btn-choice-primary" onclick="switchAuthForm('login')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        Acceder
                     </button>
                 </div>
             </div>
@@ -12680,11 +12693,6 @@
                                 <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
                             </svg>
                         </div>
-                    </div>
-                    <p>Cuando el administrador te agregue a un grupo, todos los detalles van a aparecer acá. La sorpresa ya está en camino.</p>
-                    <div class="grupos-empty-status">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"></path><path d="M12 6v6l4 2"></path></svg>
-                        <span>Esperando asignación del administrador</span>
                     </div>
                 </div>
             `;
