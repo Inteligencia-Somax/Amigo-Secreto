@@ -140,7 +140,7 @@
 
         select.select-placeholder {
             color: #9aa39d;
-            background: #f3f5f4;
+            background: #ffffff;
         }
 
         select option {
@@ -7782,7 +7782,7 @@
 
             <!-- PANTALLA DE BIENVENIDA (elección: Acceder o Inscribirse) -->
             <div id="auth-choice">
-                <h2>Bienvenido</h2>
+                <h2>¡Bienvenido!</h2>
                 <div class="auth-choice-buttons">
                     <button class="btn-choice btn-choice-outline btn-choice-register" onclick="switchAuthForm('registro')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -7945,7 +7945,7 @@
         <div id="admin-panel" class="panel">
             <div class="user-header">
                 <div class="user-info">
-                    <h2>Bienvenido, <span id="admin-nombre">Admin</span></h2>
+                    <h2>¡Bienvenido, <span id="admin-nombre">Admin</span>!</h2>
                     <p id="admin-meta" class="text-muted">Administrador</p>
                 </div>
                 <button class="header-gear-btn" type="button" aria-label="Opciones" title="Opciones" onclick="abrirAdminHeaderMenu()">
@@ -9785,7 +9785,8 @@
                     grupos: [],
                     deseos: {}, // Ideas de regalo sugeridas por el participante, por grupo (máx. 5 c/u)
                     debesCambiarPassword: false,
-                    fecha_registro: new Date().toISOString() // valor local, solo para mostrar de inmediato en esta sesión
+                    origenRegistro: 'autoinscripcion',
+                    fecha_registro: new Date().toISOString() // valor local, solo para mostrar de imediato en esta sesión
                 };
 
                 // Lo que realmente queda guardado en el Firestore usa el reloj del
@@ -11304,7 +11305,8 @@
                 // Fecha Registro se muestra con hora incluida en esta tabla.
                 const fechaRegistro = formatDateTime(p.fecha_registro || p.fechaRegistro || '');
                 const esNuevo = participantesNuevosIds.has(p.id);
-                const badgeNuevo = esNuevo ? '<span class="badge-participante-nuevo">Nuevo</span>' : '';
+                const fueAutoInscripcion = (p.origenRegistro || p.origemRegistro || '') === 'autoinscripcion';
+                const badgeNuevo = (esNuevo && fueAutoInscripcion) ? '<span class="badge-participante-nuevo">Nuevo</span>' : '';
 
                 const celdasPorColumna = {
                     nombre: `<td title="${nombreMostrar}"><strong>${nombreMostrar}</strong>${badgeNuevo}</td>`,
@@ -11601,15 +11603,14 @@
                     cargo: d.cargo,
                     centroId: d.centroId,
                     centroNombre: centro ? centro.nombre : '',
-                    password: d.password
+                    password: d.password,
+                    origenRegistro: d.origenRegistro || 'admin'
                 };
             });
 
             const criarFn = functionsFirebase.httpsCallable('criarParticipantes');
             const respuesta = await comTimeout(criarFn({ participantes: listaParaEnviar }), 180000);
             const resultados = (respuesta.data && respuesta.data.resultados) || [];
-
-            const gruposParaSincronizar = new Set();
 
             resultados.forEach(r => {
                 if (!r.ok) return;
@@ -11630,24 +11631,11 @@
                     grupos: [],
                     deseos: {},
                     debesCambiarPassword: false,
+                    origenRegistro: original.origenRegistro || 'admin',
                     fecha_registro: new Date().toISOString()
                 };
 
-                // Vincula automáticamente al grupo abierto de su unidad de negocio, si ya existe uno.
-                const grupoDelCentro = obtenerGrupoAbiertoParaCentro(centro);
-                if (grupoDelCentro && !grupoDelCentro.participantes.includes(nuevoParticipante.id)) {
-                    grupoDelCentro.participantes.push(nuevoParticipante.id);
-                    nuevoParticipante.grupos.push(grupoDelCentro.id);
-                    gruposParaSincronizar.add(grupoDelCentro.id);
-                }
-
                 appState.participantesRegistrados.push(nuevoParticipante);
-            });
-
-            // Sincroniza en Firestore los grupos que ganaron participantes nuevos.
-            gruposParaSincronizar.forEach(grupoId => {
-                const grupo = appState.gruposActuales.find(g => g.id === grupoId);
-                if (grupo) syncGrupoFirestore(grupo);
             });
 
             const creados = resultados.filter(r => r.ok);
@@ -11686,7 +11674,7 @@
 
             try {
                 const { creados, errores } = await crearParticipantesEnLote([
-                    { nombre, apellido, login, telefono: '', cargo: '', centroId, password }
+                    { nombre, apellido, login, telefono: '', cargo: '', centroId, password, origenRegistro: 'admin' }
                 ]);
 
                 if (creados.length === 0) {
@@ -14023,14 +14011,9 @@
                 esAdmin: false,
                 pinTemporal: null,
                 debesCambiarPassword: false,
+                origenRegistro: origen === 'manual' ? 'admin' : origen,
                 fecha_registro: new Date().toISOString()
             };
-
-            const grupoDelCentro = obtenerGrupoAbiertoParaCentro(centro);
-            if (grupoDelCentro && !grupoDelCentro.participantes.includes(nuevoParticipante.id)) {
-                grupoDelCentro.participantes.push(nuevoParticipante.id);
-                nuevoParticipante.grupos.push(grupoDelCentro.id);
-            }
 
             appState.participantesRegistrados.push(nuevoParticipante);
             return { ok: true, participante: nuevoParticipante };
