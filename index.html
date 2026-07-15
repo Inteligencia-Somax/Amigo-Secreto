@@ -8093,6 +8093,192 @@
         .grupos-admin-table[data-resizable-columns="true"] col {
             width: auto;
         }
+
+
+        /* Ajuste final v7: lista de grupos alinhada ao padrão de participantes, mantendo separadores nas ações */
+        #grupos-admin-list.grupos-list-view .grupos-admin-table {
+            min-width: 980px !important;
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table th,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table td {
+            box-sizing: border-box !important;
+            height: 48px !important;
+            min-height: 48px !important;
+            max-height: 48px !important;
+            padding: 8px 12px !important;
+            line-height: 1.2 !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table tbody tr {
+            height: 48px !important;
+            max-height: 48px !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table th:nth-child(1),
+        #grupos-admin-list.grupos-list-view .grupos-admin-table td:nth-child(1) {
+            width: 29% !important;
+            text-align: left !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table th:nth-child(2),
+        #grupos-admin-list.grupos-list-view .grupos-admin-table td:nth-child(2) {
+            width: 21% !important;
+            text-align: left !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table th:nth-child(3),
+        #grupos-admin-list.grupos-list-view .grupos-admin-table td:nth-child(3) {
+            width: 11% !important;
+            text-align: left !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table th:nth-child(4),
+        #grupos-admin-list.grupos-list-view .grupos-admin-table td:nth-child(4) {
+            width: 17% !important;
+            text-align: left !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table th:nth-child(5),
+        #grupos-admin-list.grupos-list-view .grupos-admin-table td:nth-child(5) {
+            width: 10% !important;
+            text-align: left !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table th:nth-child(6),
+        #grupos-admin-list.grupos-list-view .grupos-admin-table td:nth-child(6) {
+            width: 12% !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-nombre {
+            min-width: 0 !important;
+            max-width: none !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            font-weight: 400 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-nombre strong,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-nombre-text {
+            display: block !important;
+            width: 100% !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            font-weight: 400 !important;
+            text-align: left !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-centro,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-fecha {
+            min-width: 0 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-acciones {
+            min-width: 148px !important;
+            width: 148px !important;
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+            text-align: center !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-wrap {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-result,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-draw,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-add {
+            position: relative !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 34px !important;
+            min-width: 34px !important;
+            height: 34px !important;
+            min-height: 34px !important;
+            flex: 0 0 34px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            border-radius: 8px !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn + .grupo-list-action-btn::before {
+            content: '' !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 1px !important;
+            height: 16px !important;
+            background: #dbe5df !important;
+            pointer-events: none !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn svg {
+            width: 16px !important;
+            height: 16px !important;
+            display: block !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-result,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-draw {
+            color: #2f67a2 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-result:hover,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-draw:hover {
+            color: #1f4f83 !important;
+            background: #eef4ff !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn {
+            color: #2f7d5f !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn:hover {
+            color: #1f6348 !important;
+            background: #edf7f0 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-add {
+            color: #3a946c !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-add:hover {
+            color: #277352 !important;
+            background: #e7f5ec !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .estado-badge {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 34px !important;
+            padding: 0 14px !important;
+            white-space: nowrap !important;
+        }
+
 </style>
 </head>
 <body>
@@ -13145,7 +13331,7 @@
 
                 return `
                     <tr onclick="abrirEditarGrupoDesdeCard('${g.id}')" tabindex="0" role="button" aria-label="Editar grupo ${escaparHtml(g.nombre || '')}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); abrirEditarGrupoDesdeCard('${g.id}');}">
-                        <td class="grupo-list-nombre"><strong>${escaparHtml(g.nombre || '-')}</strong></td>
+                        <td class="grupo-list-nombre"><span class="grupo-list-nombre-text">${escaparHtml(g.nombre || '-')}</span></td>
                         <td class="grupo-list-centro">${escaparHtml(g.centroNombre || '-')}</td>
                         <td>${participantes.length}</td>
                         <td class="grupo-list-fecha">${formatDateTime(g.fecha_revelacion)}</td>
