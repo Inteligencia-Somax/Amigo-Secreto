@@ -8011,6 +8011,54 @@
             background: #ffefc7 !important;
             border-color: #e2b94f !important;
         }
+
+
+        /* Ajuste v6: columnas redimensionables en la lista de grupos */
+        .grupos-admin-table[data-resizable-columns="true"] th {
+            position: relative;
+            overflow: visible;
+        }
+
+        .grupos-admin-table .grupo-col-resizer {
+            position: absolute;
+            top: 0;
+            right: -4px;
+            width: 8px;
+            height: 100%;
+            cursor: col-resize;
+            user-select: none;
+            touch-action: none;
+            z-index: 12;
+        }
+
+        .grupos-admin-table .grupo-col-resizer::after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            bottom: 8px;
+            left: 3px;
+            width: 2px;
+            border-radius: 2px;
+            background: rgba(255,255,255,.28);
+            opacity: 0;
+            transition: opacity .15s ease, background-color .15s ease;
+        }
+
+        .grupos-admin-table th:hover .grupo-col-resizer::after,
+        .grupos-admin-table .grupo-col-resizer.is-dragging::after {
+            opacity: 1;
+            background: rgba(255,255,255,.9);
+        }
+
+        body.grupo-col-resizing,
+        body.grupo-col-resizing * {
+            cursor: col-resize !important;
+            user-select: none !important;
+        }
+
+        .grupos-admin-table[data-resizable-columns="true"] col {
+            width: auto;
+        }
 </style>
 </head>
 <body>
@@ -13073,7 +13121,15 @@
             }).join('');
 
             return `
-                <table class="participantes-admin-table grupos-admin-table">
+                <table class="participantes-admin-table grupos-admin-table" data-resizable-columns="true">
+                    <colgroup>
+                        <col data-col-key="grupo">
+                        <col data-col-key="unidad">
+                        <col data-col-key="participantes">
+                        <col data-col-key="fecha">
+                        <col data-col-key="estado">
+                        <col data-col-key="acciones">
+                    </colgroup>
                     <thead>
                         <tr>
                             <th>Grupo</th>
@@ -13130,6 +13186,7 @@
             if (gruposViewMode === 'list') {
                 container.classList.add('grupos-list-view');
                 container.innerHTML = renderGruposTable(grupos);
+                requestAnimationFrame(() => inicializarColumnasRedimensionablesGrupos());
                 return;
             }
 
@@ -15490,7 +15547,105 @@ function actualizarCentroDeParticipante(participante, centroId) {
                 }, 250);
             });
         })();
-    </script>
+    
+
+        function inicializarColumnasRedimensionablesGrupos() {
+            const table = document.querySelector('#grupos-admin-list .grupos-admin-table[data-resizable-columns="true"]');
+            if (!table || table.dataset.resizeReady === 'true') return;
+
+            const storageKey = 'amigoInvisible_grupos_columnas_v1';
+            const cols = Array.from(table.querySelectorAll('colgroup col'));
+            const headers = Array.from(table.querySelectorAll('thead tr:first-child th'));
+            const defaults = [300, 190, 120, 170, 105, 138];
+            const minimums = [180, 120, 90, 135, 85, 118];
+
+            let saved = null;
+            try {
+                saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+            } catch (_) {
+                saved = null;
+            }
+
+            const initialWidths = cols.map((col, index) => {
+                const key = col.dataset.colKey;
+                const stored = saved && Number(saved[key]);
+                return Number.isFinite(stored) && stored >= minimums[index] ? stored : defaults[index];
+            });
+
+            function applyWidths(widths) {
+                widths.forEach((width, index) => {
+                    if (cols[index]) cols[index].style.width = `${Math.round(width)}px`;
+                });
+                table.style.width = `${Math.round(widths.reduce((sum, value) => sum + value, 0))}px`;
+                table.style.minWidth = table.style.width;
+            }
+
+            function saveWidths(widths) {
+                const data = {};
+                cols.forEach((col, index) => {
+                    data[col.dataset.colKey || index] = Math.round(widths[index]);
+                });
+                try { localStorage.setItem(storageKey, JSON.stringify(data)); } catch (_) {}
+            }
+
+            const widths = initialWidths.slice();
+            applyWidths(widths);
+
+            headers.forEach((th, index) => {
+                if (index >= headers.length - 1) return;
+                const handle = document.createElement('span');
+                handle.className = 'grupo-col-resizer';
+                handle.setAttribute('role', 'separator');
+                handle.setAttribute('aria-orientation', 'vertical');
+                handle.setAttribute('aria-label', `Redimensionar columna ${th.textContent.trim() || index + 1}`);
+                handle.title = 'Arrastre para aumentar o disminuir la columna';
+                th.appendChild(handle);
+
+                handle.addEventListener('pointerdown', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    handle.setPointerCapture?.(event.pointerId);
+                    handle.classList.add('is-dragging');
+                    document.body.classList.add('grupo-col-resizing');
+
+                    const startX = event.clientX;
+                    const startCurrent = widths[index];
+                    const startNext = widths[index + 1];
+                    const totalPair = startCurrent + startNext;
+
+                    const onMove = (moveEvent) => {
+                        const delta = moveEvent.clientX - startX;
+                        let nextCurrent = Math.max(minimums[index], startCurrent + delta);
+                        let nextAdjacent = totalPair - nextCurrent;
+
+                        if (nextAdjacent < minimums[index + 1]) {
+                            nextAdjacent = minimums[index + 1];
+                            nextCurrent = totalPair - nextAdjacent;
+                        }
+
+                        widths[index] = nextCurrent;
+                        widths[index + 1] = nextAdjacent;
+                        applyWidths(widths);
+                    };
+
+                    const onUp = () => {
+                        handle.classList.remove('is-dragging');
+                        document.body.classList.remove('grupo-col-resizing');
+                        saveWidths(widths);
+                        window.removeEventListener('pointermove', onMove);
+                        window.removeEventListener('pointerup', onUp);
+                        window.removeEventListener('pointercancel', onUp);
+                    };
+
+                    window.addEventListener('pointermove', onMove);
+                    window.addEventListener('pointerup', onUp);
+                    window.addEventListener('pointercancel', onUp);
+                });
+            });
+
+            table.dataset.resizeReady = 'true';
+        }
+</script>
 
 </body>
 </html>
