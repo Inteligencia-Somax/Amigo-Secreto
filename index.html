@@ -7980,36 +7980,70 @@
         }
 
         .grupo-list-action-wrap {
-            gap: 4px !important;
+            gap: 0 !important;
+            justify-content: flex-end !important;
         }
 
         .grupo-list-action-btn,
         .grupo-list-action-btn.is-result,
         .grupo-list-action-btn.is-draw,
         .grupo-list-action-btn.is-add {
-            width: 30px !important;
-            min-width: 30px !important;
-            height: 30px !important;
-            min-height: 30px !important;
-            flex: 0 0 30px !important;
-            border-radius: 7px !important;
+            position: relative !important;
+            width: 34px !important;
+            min-width: 34px !important;
+            height: 34px !important;
+            min-height: 34px !important;
+            flex: 0 0 34px !important;
+            border: 0 !important;
+            border-radius: 8px !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .grupo-list-action-btn + .grupo-list-action-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 1px;
+            height: 16px;
+            background: #dbe5df;
+            pointer-events: none;
         }
 
         .grupo-list-action-btn svg {
-            width: 15px !important;
-            height: 15px !important;
+            width: 16px !important;
+            height: 16px !important;
+        }
+
+        .grupo-list-action-btn {
+            color: #2e6d58 !important;
+        }
+
+        .grupo-list-action-btn:hover {
+            background: #edf6f0 !important;
+            color: #17583a !important;
+        }
+
+        .grupo-list-action-btn.is-result,
+        .grupo-list-action-btn.is-draw {
+            color: #24548a !important;
+        }
+
+        .grupo-list-action-btn.is-result:hover,
+        .grupo-list-action-btn.is-draw:hover {
+            background: #eef4ff !important;
+            color: #173e69 !important;
         }
 
         .grupo-list-action-btn.is-add {
-            color: #8a6100 !important;
-            background: #fff7e5 !important;
-            border-color: #efcf86 !important;
+            color: #2f7d5f !important;
         }
 
         .grupo-list-action-btn.is-add:hover {
-            color: #704d00 !important;
-            background: #ffefc7 !important;
-            border-color: #e2b94f !important;
+            color: #1f6348 !important;
+            background: #edf7f0 !important;
         }
 
 
@@ -8059,155 +8093,6 @@
         .grupos-admin-table[data-resizable-columns="true"] col {
             width: auto;
         }
-
-
-        /* Ajuste final solicitado: lista de grupos compacta y mejor aprovechada */
-        #grupos-admin-list.grupos-list-view {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: auto;
-        }
-
-        #grupos-admin-list.grupos-list-view .grupos-admin-table {
-            width: 100% !important;
-            min-width: 900px !important;
-            table-layout: fixed !important;
-        }
-
-        /* Misma altura de la tabla de Participantes */
-        .grupos-admin-table thead th,
-        .grupos-admin-table tbody td,
-        .grupos-admin-table tbody tr {
-            height: var(--table-row-height) !important;
-            min-height: var(--table-row-height) !important;
-            max-height: var(--table-row-height) !important;
-        }
-
-        .grupos-admin-table thead th,
-        .grupos-admin-table tbody td {
-            padding: 0 10px !important;
-            line-height: 1.2 !important;
-        }
-
-        /* Distribución más equilibrada para aprovechar el ancho disponible */
-        .grupos-admin-table th:nth-child(1),
-        .grupos-admin-table td:nth-child(1) { width: 23% !important; }
-        .grupos-admin-table th:nth-child(2),
-        .grupos-admin-table td:nth-child(2) { width: 21% !important; }
-        .grupos-admin-table th:nth-child(3),
-        .grupos-admin-table td:nth-child(3) { width: 10% !important; }
-        .grupos-admin-table th:nth-child(4),
-        .grupos-admin-table td:nth-child(4) { width: 18% !important; }
-        .grupos-admin-table th:nth-child(5),
-        .grupos-admin-table td:nth-child(5) { width: 11% !important; }
-        .grupos-admin-table th:nth-child(6),
-        .grupos-admin-table td:nth-child(6) { width: 17% !important; }
-
-        /* Grupo alineado a la izquierda y sin negrita */
-        .grupos-admin-table th:first-child,
-        .grupos-admin-table td.grupo-list-nombre {
-            text-align: left !important;
-        }
-
-        .grupos-admin-table td.grupo-list-nombre {
-            font-weight: 400 !important;
-            min-width: 0 !important;
-        }
-
-        /* Estado completo, sin puntos suspensivos fuera de la etiqueta */
-        .grupos-admin-table th.grupo-list-estado,
-        .grupos-admin-table td.grupo-list-estado {
-            overflow: visible !important;
-            text-overflow: clip !important;
-            white-space: nowrap !important;
-        }
-
-        .grupos-admin-table td.grupo-list-estado .estado-badge {
-            max-width: none !important;
-            white-space: nowrap !important;
-            overflow: visible !important;
-            text-overflow: clip !important;
-        }
-
-        /* Acciones 34 x 34 y mejor encajadas en la columna */
-        .grupos-admin-table .grupo-list-acciones {
-            min-width: 0 !important;
-            padding-left: 3px !important;
-            padding-right: 3px !important;
-            overflow: visible !important;
-        }
-
-        .grupos-admin-table .grupo-list-action-wrap {
-            gap: 3px !important;
-            justify-content: flex-end !important;
-            overflow: visible !important;
-        }
-
-        .grupos-admin-table .grupo-list-action-btn,
-        .grupos-admin-table .grupo-list-action-btn.is-result,
-        .grupos-admin-table .grupo-list-action-btn.is-draw,
-        .grupos-admin-table .grupo-list-action-btn.is-add {
-            width: 34px !important;
-            min-width: 34px !important;
-            max-width: 34px !important;
-            height: 34px !important;
-            min-height: 34px !important;
-            max-height: 34px !important;
-            flex: 0 0 34px !important;
-            border-radius: 8px !important;
-        }
-
-        .grupos-admin-table .grupo-list-action-btn svg {
-            width: 17px !important;
-            height: 17px !important;
-        }
-
-        /* Botones relacionados con participantes: verde muy claro en lista */
-        .grupos-admin-table .grupo-list-action-btn.is-participant,
-        .grupos-admin-table .grupo-list-action-btn.is-add.is-participant {
-            color: var(--primary) !important;
-            background: #eef8f2 !important;
-            border-color: #c9e2d3 !important;
-        }
-
-        .grupos-admin-table .grupo-list-action-btn.is-participant:hover,
-        .grupos-admin-table .grupo-list-action-btn.is-add.is-participant:hover {
-            color: var(--primary) !important;
-            background: #e2f2e8 !important;
-            border-color: #9fc9af !important;
-        }
-
-        /* Mismo verde claro para participantes en la vista de cuadrícula */
-        #grupos-admin-list .grupo-participantes-resumen-btn {
-            width: 34px !important;
-            min-width: 34px !important;
-            max-width: 34px !important;
-            height: 34px !important;
-            min-height: 34px !important;
-            max-height: 34px !important;
-            background: #eef8f2 !important;
-            border-color: #c9e2d3 !important;
-            color: var(--primary) !important;
-        }
-
-        #grupos-admin-list .grupo-participantes-resumen-btn:hover {
-            background: #e2f2e8 !important;
-            border-color: #9fc9af !important;
-            color: var(--primary) !important;
-        }
-
-        #grupos-admin-list .grupo-header-actions .grupo-accion-participantes-header {
-            background: #eef8f2 !important;
-            border-color: #c9e2d3 !important;
-            color: var(--primary) !important;
-        }
-
-        #grupos-admin-list .grupo-header-actions .grupo-accion-participantes-header:hover {
-            background: #e2f2e8 !important;
-            border-color: #9fc9af !important;
-            color: var(--primary) !important;
-        }
-
 </style>
 </head>
 <body>
@@ -13249,22 +13134,22 @@
                             <button type="button" class="grupo-list-action-btn is-draw" title="Realizar sorteo" aria-label="Realizar sorteo" onclick="event.stopPropagation(); iniciarSorteoDesdeCard(event, '${g.id}')">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
                             </button>` : ''}
-                        <button type="button" class="grupo-list-action-btn is-participant" title="Ver participantes" aria-label="Ver participantes" onclick="event.stopPropagation(); abrirParticipantesDesdeCard(event, '${g.id}')">
+                        <button type="button" class="grupo-list-action-btn" title="Ver participantes" aria-label="Ver participantes" onclick="event.stopPropagation(); abrirParticipantesDesdeCard(event, '${g.id}')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         </button>
                         ${g.estado === 'abierto' ? `
-                            <button type="button" class="grupo-list-action-btn is-add is-participant" title="Agregar participante" aria-label="Agregar participante" onclick="event.stopPropagation(); abrirVincularDesdeCard(event, '${g.id}')">
+                            <button type="button" class="grupo-list-action-btn is-add" title="Agregar participante" aria-label="Agregar participante" onclick="event.stopPropagation(); abrirVincularDesdeCard(event, '${g.id}')">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="16" y1="11" x2="22" y2="11"></line></svg>
                             </button>` : ''}
                     </div>`;
 
                 return `
                     <tr onclick="abrirEditarGrupoDesdeCard('${g.id}')" tabindex="0" role="button" aria-label="Editar grupo ${escaparHtml(g.nombre || '')}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); abrirEditarGrupoDesdeCard('${g.id}');}">
-                        <td class="grupo-list-nombre">${escaparHtml(g.nombre || '-')}</td>
+                        <td class="grupo-list-nombre"><strong>${escaparHtml(g.nombre || '-')}</strong></td>
                         <td class="grupo-list-centro">${escaparHtml(g.centroNombre || '-')}</td>
                         <td>${participantes.length}</td>
                         <td class="grupo-list-fecha">${formatDateTime(g.fecha_revelacion)}</td>
-                        <td class="grupo-list-estado"><span class="estado-badge estado-${g.estado}">${estadoTexto}</span></td>
+                        <td><span class="estado-badge estado-${g.estado}">${estadoTexto}</span></td>
                         <td class="grupo-list-acciones">${acciones}</td>
                     </tr>`;
             }).join('');
@@ -13285,7 +13170,7 @@
                             <th>Unidad de Negocio</th>
                             <th>Participantes</th>
                             <th>Fecha de Revelación</th>
-                            <th class="grupo-list-estado">Estado</th>
+                            <th>Estado</th>
                             <th aria-label="Acciones"></th>
                         </tr>
                     </thead>
