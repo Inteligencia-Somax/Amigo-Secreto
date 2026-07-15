@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- VERSAO_VALIDADA_2026-07-15: participante sem botao Importar; grupos com Grade/Lista -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -1152,6 +1153,11 @@
 
         .sorteado-box {
             position: relative;
+            height: var(--altura-titulo-principal, auto);
+            min-height: var(--altura-titulo-principal, 300px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             overflow: hidden;
             isolation: isolate;
             background:
@@ -3270,6 +3276,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
+            padding: 0 10px;
+            font-size: .82rem;
+            font-weight: 700;
             cursor: pointer;
             line-height: 1;
         }
@@ -6139,6 +6149,13 @@
             flex: 0 1 auto;
         }
 
+        #ver-grupos .grupo-export-btn {
+            flex: 0 0 auto;
+            min-width: 92px;
+            height: 40px;
+            margin: 0;
+        }
+
         #ver-grupos .grupo-filter-chips {
             display: flex;
             align-items: center;
@@ -6270,14 +6287,19 @@
             }
 
             #ver-grupos .grupo-filter-select-group {
-                flex: 1 1 100%;
+                flex: 1 1 0;
                 min-width: 0;
-                width: 100%;
+                width: auto;
             }
 
             #grupo-status-filter {
                 width: 100%;
                 min-width: 0;
+            }
+
+            #ver-grupos .grupo-export-btn {
+                flex: 0 0 auto;
+                min-width: 92px;
             }
 
             #grupos-admin-list .grupo-header-actions .grupo-accion-card-header,
@@ -7559,7 +7581,213 @@
             display: none !important;
         }
 
-    </style>
+    
+        /* Toolbar de participantes: importación retirada y filtros reorganizados */
+        @media (max-width: 768px) {
+            .participante-filters-row {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 96px 38px;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .participante-filters-row #abrir-registrar-participante-btn {
+                grid-column: 1 / -1;
+                width: 100%;
+                min-width: 0;
+                height: 40px;
+                min-height: 40px;
+            }
+
+            .participante-filters-row .participante-select-group {
+                grid-column: 1;
+                width: 100%;
+                min-width: 0;
+                margin: 0;
+            }
+
+            .participante-filters-row .participante-export-btn {
+                grid-column: 2;
+                width: 96px;
+                min-width: 96px;
+                height: 40px;
+                min-height: 40px;
+                padding: 0 10px;
+            }
+
+            .participante-filters-row .btn-columnas-toggle {
+                grid-column: 3;
+                width: 38px;
+                min-width: 38px;
+                height: 40px;
+                min-height: 40px;
+                margin: 0;
+                align-self: stretch;
+            }
+
+            #participante-centro-filter {
+                height: 40px;
+                min-height: 40px;
+            }
+        }
+
+
+        /* Alternancia de visualización de grupos: cuadrícula / lista */
+        .grupo-view-toggle {
+            display: inline-flex;
+            align-items: center;
+            height: 42px;
+            padding: 3px;
+            border: 1px solid #d9e2dd;
+            border-radius: 10px;
+            background: #f7f9f8;
+            flex: 0 0 auto;
+        }
+
+        .grupo-view-btn {
+            min-width: 82px;
+            width: auto;
+            height: 34px;
+            padding: 0;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #607168;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+        }
+
+        .grupo-view-btn svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .grupo-view-btn:hover {
+            color: var(--primary);
+            background: #edf4f0;
+        }
+
+        .grupo-view-btn.active {
+            color: #fff;
+            background: var(--primary);
+            box-shadow: 0 2px 6px rgba(26, 95, 63, .22);
+        }
+
+        #grupos-admin-list.grupos-list-view {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table {
+            min-width: 900px;
+            margin: 0;
+        }
+
+        .grupos-admin-table th,
+        .grupos-admin-table td {
+            height: 48px;
+            padding: 8px 12px;
+            font-size: .9rem;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .grupos-admin-table th {
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        .grupos-admin-table tbody tr {
+            cursor: pointer;
+        }
+
+        .grupos-admin-table tbody tr:hover {
+            background: #f7faf8;
+        }
+
+        .grupos-admin-table .grupo-list-nombre {
+            min-width: 190px;
+            white-space: normal;
+            line-height: 1.25;
+        }
+
+        .grupos-admin-table .grupo-list-centro {
+            min-width: 150px;
+        }
+
+        .grupos-admin-table .grupo-list-fecha {
+            min-width: 175px;
+        }
+
+        .grupos-admin-table .grupo-list-acciones {
+            min-width: 205px;
+            text-align: right;
+        }
+
+        .grupo-list-action-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .grupo-list-action-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid #d9e2dd;
+            border-radius: 8px;
+            background: #fff;
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .grupo-list-action-btn:hover {
+            background: #edf4f0;
+            border-color: #bad0c4;
+        }
+
+        .grupo-list-action-btn svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .grupo-list-action-btn.is-result {
+            color: #24548a;
+            border-color: #c6d7eb;
+            background: #f4f8fd;
+        }
+
+        .grupo-list-action-btn.is-draw {
+            color: #24548a;
+            border-color: #c6d7eb;
+            background: #eef4ff;
+        }
+
+        @media (max-width: 640px) {
+            .grupo-toolbar {
+                flex-wrap: wrap;
+            }
+
+            .grupo-filter-select-group {
+                flex: 1 1 150px;
+            }
+
+            .grupo-view-toggle,
+            .grupo-export-btn {
+                flex: 0 0 auto;
+            }
+        }
+</style>
 </head>
 <body>
     <div id="verificando-sesion-overlay" style="position:fixed; inset:0; z-index:5000; background:var(--dark, #1a5f3f); display:flex; align-items:center; justify-content:center;">
@@ -7767,6 +7995,29 @@
                                 <label for="grupo-status-filter" class="sr-only" style="display:none;">Estado del grupo</label>
                                 <select id="grupo-status-filter" onchange="updateGruposList()"></select>
                             </div>
+                            <div class="grupo-view-toggle" role="group" aria-label="Forma de visualización de los grupos">
+                                <button type="button" id="grupo-view-grid-btn" class="grupo-view-btn active" aria-label="Vista en cuadrícula" title="Grade" onclick="setGruposViewMode('grid')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                                        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                                        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                                        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                                    </svg>
+                                    <span>Grade</span>
+                                </button>
+                                <button type="button" id="grupo-view-list-btn" class="grupo-view-btn" aria-label="Vista en lista" title="Lista" onclick="setGruposViewMode('list')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                                        <circle cx="4" cy="6" r="1"></circle>
+                                        <circle cx="4" cy="12" r="1"></circle>
+                                        <circle cx="4" cy="18" r="1"></circle>
+                                    </svg>
+                                    <span>Lista</span>
+                                </button>
+                            </div>
+                            <button type="button" class="btn-excel grupo-export-btn" onclick="abrirExportarGruposModal()">Excel</button>
                         </div>
                     </div>
                 </div>
@@ -7778,8 +8029,6 @@
 
 
             <div id="participantes" class="tab-content active">
-                <input type="file" id="participantes-import-input" accept=".xlsx,.xls" style="display:none" onchange="importarParticipantesExcel(event)">
-
                 <div class="participante-filters-row">
                     <button type="button" id="abrir-registrar-participante-btn" class="btn btn-secondary abrir-crear-grupo-btn participante-inline-action-btn" aria-label="Crear participante" title="Crear participante" onclick="abrirCrearParticipanteModal()">+ Crear</button>
 
@@ -7792,7 +8041,6 @@
                         </select>
                     </div>
 
-                    <button type="button" class="btn btn-outline abrir-crear-grupo-btn btn-plain-action participante-inline-action-btn" onclick="abrirImportarParticipantes()">Importar</button>
                     <button type="button" class="btn-excel participante-export-btn" onclick="exportarParticipantesFiltradosExcel()">Excel</button>
                     <button type="button" class="btn-columnas-toggle" aria-label="Configurar columnas" title="Configurar columnas" onclick="abrirColumnasMenuParticipantes()">
                         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -8260,6 +8508,42 @@
 
             <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
                 <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarLogsModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="exportar-grupos-modal" class="modal">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3>Exportar Grupos</h3>
+            </div>
+
+            <div class="grupo-acciones-lista">
+                <button type="button" class="grupo-accion-btn" onclick="exportarGruposExcel(false); cerrarExportarGruposModal();">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="16" rx="2"/>
+                        <path d="M3 10h18M9 4v16"/>
+                    </svg>
+                    Solo información del grupo
+                </button>
+                <button type="button" class="grupo-accion-btn" onclick="exportarGruposExcel(true); cerrarExportarGruposModal();">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Grupos con participantes
+                </button>
+            </div>
+
+            <div class="crear-grupo-actions" style="justify-content: flex-end; margin-top: 16px;">
+                <button class="icon-action-btn icon-cancel" type="button" aria-label="Cerrar" title="Cerrar" onclick="cerrarExportarGruposModal()">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
@@ -12194,8 +12478,8 @@
                     appState.participantesRegistrados.find(p => p.id === sorteadoParaId) : null;
 
                 const hoy = new Date();
-                const fechaRevelacion = new Date(grupo.fecha_revelacion);
-                const puedeVer = hoy >= fechaRevelacion;
+                const fechaRevelacion = normalizarFechaLocal(grupo.fecha_revelacion);
+                const puedeVer = fechaRevelacion ? hoy >= fechaRevelacion : false;
 
                 return `
                     ${grupo.estado === 'sorteado' && sorteadoInfo ? `
@@ -12277,6 +12561,8 @@
                     <h3>Tu sorpresa todavía se está preparando</h3>
                 </div>
             `;
+
+            requestAnimationFrame(sincronizarAlturaTarjetasSorteo);
         }
 
         function renderDeseosBox(grupo) {
@@ -12506,13 +12792,87 @@
             updateGruposList();
         }
 
+        let gruposViewMode = 'grid';
+
+        function setGruposViewMode(mode) {
+            gruposViewMode = mode === 'list' ? 'list' : 'grid';
+            actualizarBotonesVistaGrupos();
+            updateGruposList();
+        }
+
+        function actualizarBotonesVistaGrupos() {
+            const gridBtn = document.getElementById('grupo-view-grid-btn');
+            const listBtn = document.getElementById('grupo-view-list-btn');
+            if (gridBtn) {
+                gridBtn.classList.toggle('active', gruposViewMode === 'grid');
+                gridBtn.setAttribute('aria-pressed', gruposViewMode === 'grid' ? 'true' : 'false');
+            }
+            if (listBtn) {
+                listBtn.classList.toggle('active', gruposViewMode === 'list');
+                listBtn.setAttribute('aria-pressed', gruposViewMode === 'list' ? 'true' : 'false');
+            }
+        }
+
+        function renderGruposTable(grupos) {
+            const filas = grupos.map(g => {
+                const participantes = Array.isArray(g.participantes) ? g.participantes : [];
+                const estadoTexto = g.estado === 'sorteado' ? 'Sorteado' : (g.estado === 'revelado' ? 'Revelado' : 'Abierto');
+                const tieneResultado = g.estado === 'sorteado';
+                const acciones = `
+                    <div class="grupo-list-action-wrap">
+                        ${tieneResultado ? `
+                            <button type="button" class="grupo-list-action-btn is-result" title="Ver resultado" aria-label="Ver resultado del sorteo" onclick="event.stopPropagation(); abrirResultadosDesdeCard(event, '${g.id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="17" y1="7" x2="7" y2="17"></line><polyline points="8 7 17 7 17 16"></polyline></svg>
+                            </button>` : ''}
+                        ${g.estado === 'abierto' && participantes.length >= 2 ? `
+                            <button type="button" class="grupo-list-action-btn is-draw" title="Realizar sorteo" aria-label="Realizar sorteo" onclick="event.stopPropagation(); iniciarSorteoDesdeCard(event, '${g.id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                            </button>` : ''}
+                        <button type="button" class="grupo-list-action-btn" title="Ver participantes" aria-label="Ver participantes" onclick="event.stopPropagation(); abrirParticipantesDesdeCard(event, '${g.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </button>
+                        ${g.estado === 'abierto' ? `
+                            <button type="button" class="grupo-list-action-btn" title="Agregar participante" aria-label="Agregar participante" onclick="event.stopPropagation(); abrirVincularDesdeCard(event, '${g.id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="16" y1="11" x2="22" y2="11"></line></svg>
+                            </button>` : ''}
+                    </div>`;
+
+                return `
+                    <tr onclick="abrirEditarGrupoDesdeCard('${g.id}')" tabindex="0" role="button" aria-label="Editar grupo ${escaparHtml(g.nombre || '')}" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault(); abrirEditarGrupoDesdeCard('${g.id}');}">
+                        <td class="grupo-list-nombre"><strong>${escaparHtml(g.nombre || '-')}</strong></td>
+                        <td class="grupo-list-centro">${escaparHtml(g.centroNombre || '-')}</td>
+                        <td>${participantes.length}</td>
+                        <td class="grupo-list-fecha">${formatDateTime(g.fecha_revelacion)}</td>
+                        <td><span class="estado-badge estado-${g.estado}">${estadoTexto}</span></td>
+                        <td class="grupo-list-acciones">${acciones}</td>
+                    </tr>`;
+            }).join('');
+
+            return `
+                <table class="participantes-admin-table grupos-admin-table">
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>Unidad de Negocio</th>
+                            <th>Participantes</th>
+                            <th>Fecha de Revelación</th>
+                            <th>Estado</th>
+                            <th aria-label="Acciones"></th>
+                        </tr>
+                    </thead>
+                    <tbody>${filas}</tbody>
+                </table>`;
+        }
+
         function updateGruposList() {
             const container = document.getElementById('grupos-admin-list');
             if (!container) return;
 
             renderGrupoStatusFilter();
+            actualizarBotonesVistaGrupos();
 
             if (appState.gruposActuales.length === 0) {
+                container.classList.remove('grupos-list-view');
                 container.innerHTML = '<p class="text-muted" style="padding: 10px 0;">Todavía no hay grupos creados.</p>';
                 return;
             }
@@ -12538,10 +12898,18 @@
                 });
 
             if (grupos.length === 0) {
+                container.classList.remove('grupos-list-view');
                 container.innerHTML = '<p class="text-muted" style="padding: 10px 0;">No hay grupos para el filtro seleccionado.</p>';
                 return;
             }
 
+            if (gruposViewMode === 'list') {
+                container.classList.add('grupos-list-view');
+                container.innerHTML = renderGruposTable(grupos);
+                return;
+            }
+
+            container.classList.remove('grupos-list-view');
             const html = grupos.map(g => {
                 const tieneResultado = g.estado === 'sorteado';
 
@@ -12755,6 +13123,60 @@
 
             const safeFilename = filename.toLowerCase().endsWith('.xlsx') ? filename : `${filename}.xlsx`;
             XLSX.writeFile(workbook, safeFilename);
+        }
+
+        function abrirExportarGruposModal() {
+            const modal = document.getElementById('exportar-grupos-modal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function cerrarExportarGruposModal() {
+            const modal = document.getElementById('exportar-grupos-modal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function obtenerGruposFiltradosParaExcel() {
+            const filtro = document.getElementById('grupo-status-filter');
+            const estadoFiltro = filtro ? filtro.value : 'todos';
+            return (appState.gruposActuales || [])
+                .filter(grupo => estadoFiltro === 'todos' || grupo.estado === estadoFiltro)
+                .slice()
+                .sort((a, b) => String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es', { numeric: true, sensitivity: 'base' }));
+        }
+
+        function exportarGruposExcel(incluirParticipantes) {
+            const grupos = obtenerGruposFiltradosParaExcel();
+            if (!grupos.length) {
+                showAlert('admin-error', 'No hay grupos para exportar con el filtro seleccionado.');
+                return;
+            }
+
+            const rows = incluirParticipantes
+                ? [['Grupo', 'Cantidad de participantes', 'Participante']]
+                : [['Grupo', 'Cantidad de participantes']];
+
+            grupos.forEach(grupo => {
+                const participantesIds = Array.isArray(grupo.participantes) ? grupo.participantes : [];
+                const cantidad = participantesIds.length;
+
+                if (!incluirParticipantes) {
+                    rows.push([grupo.nombre || '', cantidad]);
+                    return;
+                }
+
+                if (cantidad === 0) {
+                    rows.push([grupo.nombre || '', 0, '']);
+                    return;
+                }
+
+                participantesIds.forEach(participanteId => {
+                    const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
+                    rows.push([grupo.nombre || '', cantidad, participante ? (participante.nombreCompleto || '') : '']);
+                });
+            });
+
+            const sufijo = incluirParticipantes ? 'grupos_con_participantes' : 'grupos';
+            exportarXlsx(rows, `${sufijo}.xlsx`, incluirParticipantes ? 'Grupos y participantes' : 'Grupos');
         }
 
         function abrirAdminHeaderMenu() {
@@ -14103,19 +14525,53 @@ function actualizarCentroDeParticipante(participante, centroId) {
             }
         }
 
+        function normalizarFechaLocal(valor) {
+            if (!valor) return null;
+            if (typeof valor === 'object' && typeof valor.toDate === 'function') {
+                const fecha = valor.toDate();
+                return isNaN(fecha.getTime()) ? null : fecha;
+            }
+            if (valor instanceof Date) {
+                return isNaN(valor.getTime()) ? null : new Date(valor.getTime());
+            }
+            if (typeof valor === 'string') {
+                const soloFecha = valor.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                if (soloFecha) {
+                    return new Date(Number(soloFecha[1]), Number(soloFecha[2]) - 1, Number(soloFecha[3]));
+                }
+                const fechaHoraLocal = valor.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/);
+                if (fechaHoraLocal) {
+                    return new Date(
+                        Number(fechaHoraLocal[1]), Number(fechaHoraLocal[2]) - 1, Number(fechaHoraLocal[3]),
+                        Number(fechaHoraLocal[4]), Number(fechaHoraLocal[5]), Number(fechaHoraLocal[6] || 0)
+                    );
+                }
+            }
+            const fecha = new Date(valor);
+            return isNaN(fecha.getTime()) ? null : fecha;
+        }
+
+        function sincronizarAlturaTarjetasSorteo() {
+            const titulo = document.querySelector('header');
+            if (!titulo) return;
+            const altura = Math.round(titulo.getBoundingClientRect().height);
+            if (altura > 0) {
+                document.documentElement.style.setProperty('--altura-titulo-principal', altura + 'px');
+            }
+        }
+
+        window.addEventListener('resize', sincronizarAlturaTarjetasSorteo);
+        window.addEventListener('load', sincronizarAlturaTarjetasSorteo);
+        if (typeof ResizeObserver !== 'undefined') {
+            const observadorTitulo = new ResizeObserver(sincronizarAlturaTarjetasSorteo);
+            const tituloPrincipal = document.querySelector('header');
+            if (tituloPrincipal) observadorTitulo.observe(tituloPrincipal);
+        }
+
         function formatDate(dateStr) {
             if (!dateStr) return '-';
-            let date;
-            // Timestamp del Firestore (tiene .toDate()) — puede llegar así al leer
-            if (typeof dateStr === 'object' && typeof dateStr.toDate === 'function') {
-                date = dateStr.toDate();
-            } else if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-                const [year, month, day] = dateStr.split('-').map(Number);
-                date = new Date(year, month - 1, day);
-            } else {
-                date = new Date(dateStr);
-            }
-            if (isNaN(date.getTime())) return '-';
+            let date = normalizarFechaLocal(dateStr);
+            if (!date || isNaN(date.getTime())) return '-';
             const pad = (n) => String(n).padStart(2, '0');
             return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
         }
@@ -14124,13 +14580,8 @@ function actualizarCentroDeParticipante(participante, centroId) {
         // revelación tiene que pasar a la hora indicada, no "en algún
         function formatDateTime(dateStr) {
             if (!dateStr) return '-';
-            let date;
-            if (typeof dateStr === 'object' && typeof dateStr.toDate === 'function') {
-                date = dateStr.toDate();
-            } else {
-                date = new Date(dateStr);
-            }
-            if (isNaN(date.getTime())) return '-';
+            const date = normalizarFechaLocal(dateStr);
+            if (!date || isNaN(date.getTime())) return '-';
             const pad = (n) => String(n).padStart(2, '0');
             const fecha = `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
             const hora = `${pad(date.getHours())}:${pad(date.getMinutes())}`;
