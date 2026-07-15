@@ -7940,6 +7940,77 @@
             #ver-grupos .grupo-view-toggle { grid-column: 1; }
             #ver-grupos .grupo-export-btn { grid-column: 2; }
         }
+
+
+        /* Ajuste v5: más espacio para Grupo y acciones compactas */
+        #grupos-admin-list.grupos-list-view .grupos-admin-table {
+            min-width: 940px;
+        }
+
+        .grupos-admin-table .grupo-list-nombre {
+            width: 30% !important;
+            min-width: 260px !important;
+        }
+
+        .grupos-admin-table .grupo-list-centro {
+            width: 19% !important;
+            min-width: 150px !important;
+        }
+
+        .grupos-admin-table th:nth-child(3),
+        .grupos-admin-table td:nth-child(3) {
+            width: 10% !important;
+        }
+
+        .grupos-admin-table .grupo-list-fecha {
+            width: 17% !important;
+            min-width: 155px !important;
+        }
+
+        .grupos-admin-table th:nth-child(5),
+        .grupos-admin-table td:nth-child(5) {
+            width: 10% !important;
+        }
+
+        .grupos-admin-table .grupo-list-acciones {
+            width: 138px !important;
+            min-width: 138px !important;
+            padding-left: 6px !important;
+            padding-right: 10px !important;
+        }
+
+        .grupo-list-action-wrap {
+            gap: 4px !important;
+        }
+
+        .grupo-list-action-btn,
+        .grupo-list-action-btn.is-result,
+        .grupo-list-action-btn.is-draw,
+        .grupo-list-action-btn.is-add {
+            width: 30px !important;
+            min-width: 30px !important;
+            height: 30px !important;
+            min-height: 30px !important;
+            flex: 0 0 30px !important;
+            border-radius: 7px !important;
+        }
+
+        .grupo-list-action-btn svg {
+            width: 15px !important;
+            height: 15px !important;
+        }
+
+        .grupo-list-action-btn.is-add {
+            color: #8a6100 !important;
+            background: #fff7e5 !important;
+            border-color: #efcf86 !important;
+        }
+
+        .grupo-list-action-btn.is-add:hover {
+            color: #704d00 !important;
+            background: #ffefc7 !important;
+            border-color: #e2b94f !important;
+        }
 </style>
 </head>
 <body>
@@ -12985,7 +13056,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         </button>
                         ${g.estado === 'abierto' ? `
-                            <button type="button" class="grupo-list-action-btn" title="Agregar participante" aria-label="Agregar participante" onclick="event.stopPropagation(); abrirVincularDesdeCard(event, '${g.id}')">
+                            <button type="button" class="grupo-list-action-btn is-add" title="Agregar participante" aria-label="Agregar participante" onclick="event.stopPropagation(); abrirVincularDesdeCard(event, '${g.id}')">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="16" y1="11" x2="22" y2="11"></line></svg>
                             </button>` : ''}
                     </div>`;
