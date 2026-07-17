@@ -8280,100 +8280,126 @@
         }
 
 
-        /* Ajuste solicitado: lista de grupos com o mesmo padrão visual de Participantes */
-        #ver-grupos #abrir-crear-grupo-btn {
-            background: #fff8ec !important;
-            border: 1px solid #f1d8a2 !important;
-            color: #8a5b00 !important;
+        /* === Ajustes finais: padronização entre grade e lista + altura tabela participantes === */
+        #grupos-admin-list .grupo-participantes-resumen-btn,
+        #grupos-usuario .grupo-participantes-resumen-btn {
+            background: #eef7f1 !important;
+            border-color: #cfe2d6 !important;
+            color: var(--primary) !important;
             box-shadow: none !important;
         }
 
-        #ver-grupos #abrir-crear-grupo-btn:hover {
+        #grupos-admin-list .grupo-participantes-resumen-btn:hover,
+        #grupos-usuario .grupo-participantes-resumen-btn:hover {
+            background: #e2f2e8 !important;
+            border-color: #a8cbb7 !important;
+            color: #154c33 !important;
+            box-shadow: none !important;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header {
+            background: #eef4ff !important;
+            border-color: #b9cff6 !important;
+            color: #164b8f !important;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-sorteo-header:hover {
+            background: #dce9ff !important;
+            border-color: #7aa2e8 !important;
+            color: #123f78 !important;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-participantes-header {
+            background: #fff8ec !important;
+            border-color: #f1d8a2 !important;
+            color: #8a5b00 !important;
+        }
+
+        #grupos-admin-list .grupo-header-actions .grupo-accion-participantes-header:hover {
             background: #f7e4ba !important;
             border-color: var(--secondary) !important;
             color: #7a5200 !important;
-            box-shadow: none !important;
-        }
-
-        #ver-grupos .grupo-export-btn {
-            background: var(--primary) !important;
-            border: 1px solid var(--primary) !important;
-            color: var(--white) !important;
-            box-shadow: none !important;
-        }
-
-        #ver-grupos .grupo-export-btn:hover {
-            background: var(--primary-light) !important;
-            border-color: var(--primary-light) !important;
-            color: var(--white) !important;
-            box-shadow: none !important;
-        }
-
-        #ver-grupos .grupo-view-toggle {
-            background: #f7f9f8 !important;
-            border-color: #d9e2dd !important;
-            box-shadow: none !important;
-        }
-
-        #ver-grupos .grupo-view-btn {
-            background: transparent !important;
-            color: #607168 !important;
-            box-shadow: none !important;
-        }
-
-        #ver-grupos .grupo-view-btn:hover:not(.active) {
-            background: #edf4f0 !important;
-            color: var(--primary) !important;
-        }
-
-        #ver-grupos .grupo-view-btn.active {
-            background: var(--primary) !important;
-            color: var(--white) !important;
-            box-shadow: none !important;
-        }
-
-        #grupos-admin-list.grupos-list-view .grupos-admin-table th,
-        #grupos-admin-list.grupos-list-view .grupos-admin-table td {
-            height: var(--table-row-height, 40px) !important;
-            min-height: var(--table-row-height, 40px) !important;
-            max-height: var(--table-row-height, 40px) !important;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            vertical-align: middle !important;
-        }
-
-        #grupos-admin-list.grupos-list-view .grupos-admin-table tbody tr {
-            height: var(--table-row-height, 40px) !important;
-            min-height: var(--table-row-height, 40px) !important;
-            max-height: var(--table-row-height, 40px) !important;
-        }
-
-        #grupos-admin-list.grupos-list-view .grupos-admin-table .estado-badge {
-            height: 30px !important;
-            min-height: 30px !important;
-            max-height: 30px !important;
-            margin: 0 !important;
-            padding: 0 13px !important;
         }
 
         #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn,
         #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-result,
         #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-draw,
         #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-add {
-            width: 28px !important;
-            min-width: 28px !important;
-            max-width: 28px !important;
-            height: 28px !important;
-            min-height: 28px !important;
-            max-height: 28px !important;
-            flex: 0 0 28px !important;
+            border: 1.5px solid transparent !important;
+            border-radius: 8px !important;
+            background: #ffffff !important;
+            box-shadow: none !important;
         }
 
-        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn svg {
-            width: 16px !important;
-            height: 16px !important;
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn {
+            color: var(--primary) !important;
+            background: #eef7f1 !important;
+            border-color: #cfe2d6 !important;
         }
 
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn:hover {
+            color: #154c33 !important;
+            background: #e2f2e8 !important;
+            border-color: #a8cbb7 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-draw {
+            color: #164b8f !important;
+            background: #eef4ff !important;
+            border-color: #b9cff6 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-draw:hover {
+            color: #123f78 !important;
+            background: #dce9ff !important;
+            border-color: #7aa2e8 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-add {
+            color: #8a5b00 !important;
+            background: #fff8ec !important;
+            border-color: #f1d8a2 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-add:hover {
+            color: #7a5200 !important;
+            background: #f7e4ba !important;
+            border-color: var(--secondary) !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-result {
+            color: var(--primary) !important;
+            background: #eef7f1 !important;
+            border-color: #cfe2d6 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-result:hover {
+            color: #154c33 !important;
+            background: #e2f2e8 !important;
+            border-color: #a8cbb7 !important;
+        }
+
+        #participantes-table thead th,
+        #participantes-table tbody td {
+            height: 38px !important;
+            min-height: 38px !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        #participantes-table tbody td {
+            font-size: 0.87rem !important;
+            line-height: 1.2 !important;
+        }
+
+        #participantes-table .icon-action-btn {
+            width: 34px !important;
+            min-width: 34px !important;
+            max-width: 34px !important;
+            height: 34px !important;
+            min-height: 34px !important;
+            max-height: 34px !important;
+        }
 </style>
 </head>
 <body>
@@ -8604,7 +8630,7 @@
                                     <span>Lista</span>
                                 </button>
                             </div>
-                            <button type="button" class="btn-excel grupo-export-btn" onclick="exportarGruposExcel()">Excel</button>
+                            <button type="button" class="btn-excel grupo-export-btn" onclick="abrirExportarGruposModal()">Excel</button>
                         </div>
                     </div>
                 </div>
@@ -13740,47 +13766,39 @@
                 .sort((a, b) => String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es', { numeric: true, sensitivity: 'base' }));
         }
 
-        function obtenerUnidadNegocioDeGrupo(grupo) {
-            if (!grupo) return null;
-            return (appState.centrosActuales || []).find(centro =>
-                centro.id === grupo.centroId ||
-                centro.codigo === grupo.centroId ||
-                centro.codigo === grupo.centroCodigo ||
-                centro.nombre === grupo.centroNombre
-            ) || null;
-        }
-
-        function exportarGruposExcel() {
+        function exportarGruposExcel(incluirParticipantes) {
             const grupos = obtenerGruposFiltradosParaExcel();
             if (!grupos.length) {
                 showAlert('admin-error', 'No hay grupos para exportar con el filtro seleccionado.');
                 return;
             }
 
-            const rows = [[
-                'Código de la Unidad de Negocio',
-                'Nombre',
-                'Cantidad de participantes'
-            ]];
+            const rows = incluirParticipantes
+                ? [['Grupo', 'Cantidad de participantes', 'Participante']]
+                : [['Grupo', 'Cantidad de participantes']];
 
             grupos.forEach(grupo => {
-                const unidad = obtenerUnidadNegocioDeGrupo(grupo);
                 const participantesIds = Array.isArray(grupo.participantes) ? grupo.participantes : [];
-                const codigoUnidad = (unidad && unidad.codigo) || grupo.centroCodigo || grupo.centroId || '';
-                const nombreUnidad = (unidad && unidad.nombre) || grupo.centroNombre || '';
+                const cantidad = participantesIds.length;
 
-                rows.push([
-                    codigoUnidad,
-                    nombreUnidad,
-                    participantesIds.length
-                ]);
+                if (!incluirParticipantes) {
+                    rows.push([grupo.nombre || '', cantidad]);
+                    return;
+                }
+
+                if (cantidad === 0) {
+                    rows.push([grupo.nombre || '', 0, '']);
+                    return;
+                }
+
+                participantesIds.forEach(participanteId => {
+                    const participante = appState.participantesRegistrados.find(p => p.id === participanteId);
+                    rows.push([grupo.nombre || '', cantidad, participante ? (participante.nombreCompleto || '') : '']);
+                });
             });
 
-            exportarXlsx(
-                rows,
-                'participantes_por_unidad_de_negocio.xlsx',
-                'Participantes por unidad'
-            );
+            const sufijo = incluirParticipantes ? 'grupos_con_participantes' : 'grupos';
+            exportarXlsx(rows, `${sufijo}.xlsx`, incluirParticipantes ? 'Grupos y participantes' : 'Grupos');
         }
 
         function abrirAdminHeaderMenu() {
