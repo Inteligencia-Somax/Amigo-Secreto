@@ -8400,6 +8400,45 @@
             min-height: 34px !important;
             max-height: 34px !important;
         }
+
+        /* === Ajuste final v3: tabela grupo com mesma altura da tabela participantes + espaço entre botões === */
+        #grupos-admin-list.grupos-list-view .grupos-admin-table thead th,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table tbody td {
+            height: 38px !important;
+            min-height: 38px !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            vertical-align: middle !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table tbody td {
+            font-size: 0.87rem !important;
+            line-height: 1.2 !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-acciones {
+            min-width: 168px !important;
+            width: 168px !important;
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-wrap {
+            gap: 6px !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn + .grupo-list-action-btn::before {
+            content: none !important;
+            display: none !important;
+        }
+
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-result,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-draw,
+        #grupos-admin-list.grupos-list-view .grupos-admin-table .grupo-list-action-btn.is-add {
+            margin: 0 !important;
+            flex: 0 0 34px !important;
+        }
 </style>
 </head>
 <body>
