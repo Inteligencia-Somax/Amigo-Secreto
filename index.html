@@ -1152,18 +1152,20 @@
 
         .sorteado-box {
             position: relative;
-            height: var(--altura-titulo-principal, auto);
-            min-height: var(--altura-titulo-principal, 300px);
+            height: auto;
+            min-height: calc(var(--altura-titulo-principal, 300px) + 24px);
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
+            gap: 14px;
             overflow: hidden;
             isolation: isolate;
             background:
                 radial-gradient(circle at 50% 40%, rgba(244, 163, 0, 0.18), transparent 32%),
                 linear-gradient(145deg, #073b28 0%, #0b5a3b 55%, #083d2b 100%);
             color: var(--white);
-            padding: 24px 20px 22px;
+            padding: 24px 20px;
             border: 1px solid rgba(244, 163, 0, 0.72);
             border-radius: 20px;
             margin-bottom: 16px;
@@ -1336,14 +1338,20 @@
         .sorteado-flip-card {
             perspective: 1200px;
             cursor: pointer;
-            margin-top: 4px;
+            width: 100%;
+            margin-top: 0;
             outline: none;
+            display: flex;
+            align-items: stretch;
+            flex: 1 1 auto;
+            min-height: 0;
         }
 
         .sorteado-flip-inner {
             position: relative;
             width: 100%;
-            min-height: 300px;
+            height: 100%;
+            min-height: 250px;
             transition: transform 0.65s cubic-bezier(0.34, 1.1, 0.4, 1);
             transform-style: preserve-3d;
         }
@@ -1361,9 +1369,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 8px;
             border-radius: 12px;
-            padding: 18px;
+            padding: 28px 22px;
             text-align: center;
+            box-sizing: border-box;
         }
 
         .sorteado-flip-front {
@@ -1372,22 +1382,26 @@
         }
 
         .sorteado-flip-front-icon {
-            font-size: 2.4rem;
-            margin-bottom: 8px;
-            animation: sorteadoTeaserFloat 2.6s ease-in-out infinite;
+            font-size: 4rem;
+            margin-bottom: 2px;
+            animation: sorteadoTeaserFloat 2.2s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.18));
         }
 
         .sorteado-flip-front-title {
-            font-size: 1.05rem !important;
+            font-size: 1.5rem !important;
             font-weight: 800 !important;
-            margin: 0 0 4px !important;
+            margin: 0 !important;
             opacity: 1 !important;
+            line-height: 1.1 !important;
         }
 
         .sorteado-flip-front-sub {
-            font-size: 0.82rem !important;
-            opacity: 0.9 !important;
+            font-size: 0.95rem !important;
+            opacity: 0.92 !important;
             margin: 0 !important;
+            max-width: 460px;
+            line-height: 1.35 !important;
         }
 
         .sorteado-flip-back {
@@ -1399,6 +1413,34 @@
             font-size: 0.72rem !important;
             opacity: 0.75 !important;
             margin-top: 14px !important;
+        }
+
+        @media (max-width: 768px) {
+            .sorteado-box {
+                min-height: auto;
+                gap: 10px;
+                padding: 20px 16px;
+            }
+
+            .sorteado-flip-inner {
+                min-height: 220px;
+            }
+
+            .sorteado-flip-front-icon {
+                font-size: 3.2rem;
+            }
+
+            .sorteado-flip-front-title {
+                font-size: 1.25rem !important;
+            }
+
+            .sorteado-flip-front-sub {
+                font-size: 0.88rem !important;
+            }
+
+            .sorteado-name {
+                font-size: 2rem;
+            }
         }
 
         .estado-badge {
@@ -7406,21 +7448,19 @@
         }
 
         #auth-panel #auth-choice .btn-choice {
-            height: 80px !important;
-            min-height: 80px !important;
-            max-height: 80px !important;
-        }
-
-        #auth-panel #auth-choice .btn-choice-register {
-            height: 160px !important;
-            min-height: 160px !important;
-            max-height: 160px !important;
+            height: 240px !important;
+            min-height: 240px !important;
+            max-height: 240px !important;
             font-size: 1.4rem !important;
         }
 
-        #auth-panel #auth-choice .btn-choice-register svg {
+        #auth-panel #auth-choice .btn-choice svg {
             width: 32px !important;
             height: 32px !important;
+        }
+
+        #contexto-lista .participantes-picker-item[hidden] {
+            display: none !important;
         }
 
         #grupo-detalle-participantes th.grupo-participante-action,
@@ -8460,15 +8500,6 @@
             <div id="auth-choice">
                 <h2>¡Bienvenido!</h2>
                 <div class="auth-choice-buttons">
-                    <button class="btn-choice btn-choice-outline btn-choice-register" onclick="switchAuthForm('registro')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <line x1="19" y1="8" x2="19" y2="14"></line>
-                            <line x1="22" y1="11" x2="16" y2="11"></line>
-                        </svg>
-                        Inscribirse
-                    </button>
                     <button class="btn-choice btn-choice-primary" onclick="switchAuthForm('login')">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
@@ -10650,6 +10681,15 @@
             document.getElementById('contexto-modal').classList.remove('active');
         }
 
+        function normalizarTextoContexto(valor) {
+            return String(valor || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
         function renderContextoLista() {
             const cont = document.getElementById('contexto-lista');
             const buscar = document.getElementById('contexto-buscar');
@@ -10669,7 +10709,7 @@
                 const nombre = p.nombreCompleto || ((p.nombre || '') + ' ' + (p.apellido || '')).trim();
                 const centro = appState.centrosActuales.find(c => c.id === p.centroId);
                 const unidad = p.centroNombre || (centro ? centro.nombre : '') || getCodigoCentroParticipante(p) || 'Sin unidad';
-                const busqueda = (nombre + ' ' + unidad).toLowerCase();
+                const busqueda = normalizarTextoContexto(nombre + ' ' + unidad);
                 return `
                     <button type="button" class="participantes-picker-item participantes-picker-item-clickable" data-search="${escaparHtml(busqueda)}" onclick="entrarEnContextoParticipante('${p.id}')">
                         <span class="participantes-picker-info">
@@ -10683,10 +10723,10 @@
 
         function filtrarContextoLista() {
             const buscar = document.getElementById('contexto-buscar');
-            const q = (buscar && buscar.value || '').trim().toLowerCase();
+            const q = normalizarTextoContexto(buscar ? buscar.value : '');
             document.querySelectorAll('#contexto-lista .participantes-picker-item').forEach(item => {
-                const coincide = !q || (item.dataset.search || '').includes(q);
-                item.style.display = coincide ? '' : 'none';
+                const coincide = !q || normalizarTextoContexto(item.dataset.search).includes(q);
+                item.hidden = !coincide;
             });
         }
 
